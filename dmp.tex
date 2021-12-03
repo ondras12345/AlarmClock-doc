@@ -1,0 +1,100 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage[a4paper]{geometry}
+% mensi okraje
+%\usepackage[a4paper,includefoot,bottom=20mm]{geometry}
+\usepackage{array}
+%\usepackage{multirow}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{booktabs}
+%\usepackage{calc} % e.g. for calculations in desky-predni
+%\usepackage{refcount} % calculations with references (Lastpage in desky-predni)
+%\usepackage{makecell} % for multiline cells in desky-predni
+%\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{titling}
+%\usepackage{tabularx}
+%\usepackage{colortbl}
+%\usepackage{hhline}
+\usepackage{float}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=iso-numeric]{biblatex}
+\addbibresource{reference.bib}
+\usepackage[czech]{varioref}
+\usepackage[unicode,hidelinks]{hyperref}
+\usepackage{pdflscape}
+\usepackage{amsmath}
+%\usepackage{wrapfig}
+\usepackage{caption}
+%\usepackage{subcaption}
+%\usepackage{catchfile}
+%\usepackage{placeins} % provides \FloatBarrier
+\usepackage[EFvoltages,siunitx,european, american inductors]{circuitikz}
+
+\usepackage{enumitem}
+\usepackage{listings}
+
+%\usepackage{arydshln} % dashed lines in tabular; should be one of the last packages (http://texdoc.net/texmf-dist/doc/latex/arydshln/arydshln-man.pdf)
+
+\graphicspath{{hodnoty/}} % gnuplot EPS stuff
+
+
+% TODO patching babel failed
+\makeatletter
+\newcommand\my@hyphen{-}
+\patchcmd\select@language{-}{\my@hyphen }{}{\fail}
+\makeatother
+
+\newcommand{\shellcmd}{\texttt}
+\newcommand{\HAentity}{\texttt}  % TODO underscores
+\newcommand{\HAstate}{\texttt}
+\newcommand{\topic}{\texttt}
+
+\title{Chytrý budík}
+\author{Ondřej Sluka}
+\date{2021}  % DOPLN
+
+\frenchspacing
+\sisetup{
+    output-decimal-marker = {,},
+    list-separator = {; },
+    list-final-separator = { a~},
+    list-pair-separator = { a~},
+    group-digits,
+    group-minimum-digits=4,
+    range-phrase=\text{--},
+    range-units=single,
+    exponent-product=\ensuremath{\cdot}
+}
+
+% headers and footers
+\setlength{\headheight}{14pt} % prevents a warning most likely caused by diacritics
+\pagestyle{fancy}
+%\renewcommand{\headrulewidth}{0pt}
+\fancyhf{} % clears header and footer, otherwise "plain" will appear
+%\fancyhead{} % only clears the header
+\lhead{\theauthor}
+\rhead{\thepage}
+\fancyhfoffset{0pt} % fixes width after \newgeometry
+
+% Roztrhana matika
+\allowdisplaybreaks
+
+\begin{document}
+
+\maketitle  % TODO
+
+\input{uvod}
+\section{Hardware} % TODO
+\input{zvuk}
+\section{Software}  % TODO
+\input{MQTTping}
+
+% Reference a odkazy
+\printbibliography[title={Odkazy a~literatura}]
+
+\end{document}

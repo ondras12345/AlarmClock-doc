@@ -1,0 +1,87 @@
+\subsection{Zvukový výstup}
+Aby mohl budík plnit svou funkci, musí mít možnost vytvářet akustické signály.
+To je možné řešit mnoha jednoduchými způsoby, například piezoelektrickým
+bzučákem. Aby bylo akustické buzení pro uživatele přijatelnější, je vhodné
+plynule zvyšovat amplitudu akustického signálu. Výhodná je také možnost měnit
+frekvenci zvuku, aby mohl uživatel snadno rozlišit různé typy buzení podle
+tónu.
+
+Požadavky na blok zvukového výstupu jsou tedy
+\begin{itemize}[nosep]
+    \item nastavitelná frekvence (v rozsahu alespoň \SI{50}{\hertz} až % TODO
+        \SI{8}{\kilo\hertz}),
+    \item nastavitelná amplituda (s rozlišením 8 bitů, tedy ve 256 krocích),
+    \item práce s nesymetrickým napájením \SI{5}{\volt},
+    \item dokonalé ticho ve stavu softwarového vypnutí zvukového výstupu,
+    \item vysoká účinnost,
+    \item míra zkreslení dostatečné nízká na to, aby na uživatele nepůsobila
+        příliš rušivě (obdélníkový signál není přijatelný).
+\end{itemize}
+
+Pro přímé generování harmonického (sinusového) analogového signálu akustických
+frekvencí (D/A převod) pomocí mikrokontroléru můžeme využít přímý převod na
+analogový signál pomocí odporové sítě nebo nepřímý převod pomocí pulzně šířkové
+modulace (PWM).
+
+Přímý DAC (D/A převodník) s dostatečným rozlišením by vyžadoval využití osmi
+výstupních pinů, těch je ale u použitého MCU nedostatek. Oproti tomu PWM signál
+můžeme snadno generovat pomocí vestavěného čítače/časovače a výstupem je
+obdélníkový signál s časově proměnnou střídou na jednom výstupním pinu. Po
+průchodu tohoto signálu dolní propustí získáváme analogový signál, jehož
+okamžitou hodnotu určuje střída PWM signálu v daném okamžiku.
+
+Aby bylo dosaženo dostatečného časového rozlišení (počet \uv{vzorků} za dobu
+jedné periody výsledné sinusoidy), musí být frekvence PWM signálu
+několikanásobně vyšší než frekvence sinusového signálu. Poměrně vysoká
+frekvence PWM signálu navíc zjednodušuje návrh potřebné dolní propusti, protože
+potřebná strmost její útlumové frekvenční charakteristiky není tak velká.
+
+Příliš vysoká frekvence PWM signálu zase přináší problémy s implementací na
+straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
+
+Z hlediska zesilování výstupního signálu máme dvě možnosti -- můžeme zesilovat
+vyfiltrovaný sinusový signál pomocí lineární zesilovač (zesilovač pracující
+v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM signál \uv{spínaným}
+zesilovačem (obdoba třídy D) a filtrovat až zesílený signál.
+
+
+\paragraph{Lineární zesilovač}
+Při prvotním vývoji zvukového výstupu byl z důvodu jednoduchosti využit
+lineární zesilovač založený na integrovaném obvodu TDA2030. Pro přizpůsobení
+signálu na úroveň vhodnou pro zpracování zesilovačem byl použit obvod zobrazený
+na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
+
+\begin{figure}[htb]
+    \centering
+    \begin{circuitikz}
+        \draw
+            % TODO hodnoty soucastek
+            (0,2) to [R=$\SI{10}{\kilo\ohm}$, o-] (2,2)
+            to [R=$\SI{10}{\kilo\ohm}$] (5,2)
+            to [short, -o] (6,2)
+            (2,2) to [C=$\SI{100}{\nano\farad}$, *-] (2,0)
+            to [short, -o] (0,0)
+            (5,2) to [C=$\SI{10}{\nano\farad}$, *-] (5,0)
+            to [short, -*] (2,0)
+            (5,0) to [short, *-o] (6,0)
+            ;
+    \end{circuitikz}
+    \caption{Schéma zapojení jednoduchého filtru a útlumového článku
+        umožňujícího využití zesilovače s TDA2030 pro ověření funkce zvukového
+        výstupu}
+    \label{fig:zvuk filtr linearni}
+\end{figure}
+
+Nevýhodou takového řešení je nízká účinnost zesilovače a poměrná složitost
+obvodového řešení, kdy musíme signál vyfiltrovat, upravit na vhodnou amplitudu,
+správně navrženým analogovým zesilovačem zesílit.
+
+
+\paragraph{Spínaný zesilovač}
+Účinnějším (a z hlediska počtu součástek jednodušším) řešením je zesilování PWM
+signálu spínacími tranzistory. Filtrace je řešena na výstupu zesilovače.
+
+Protože máme k dispozici pouze nesymetrické napájení \SI{5}{\volt}, musíme
+výstup spínacích prvků připojit na filtr a reproduktor přes sériový kondenzátor
+odstraňující stejnosměrnou složku.
+% TODO

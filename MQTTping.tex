@@ -1,0 +1,130 @@
+\subsection{MQTT ping}  % TODO
+Kvůli chybě ve firmwaru jiného zařízení nesouvisejícího s tímto projektem jsem
+zjistil, že když MQTT broker Mosquitto zahltím zprávami, mohu způsobit jeho
+selhání. Zaseknutý broker nenahlásí žádné chyby, neukončí se, takže ho
+\shellcmd{systemd} nemůže automaticky restartovat, nebrání klientům
+v připojení, ale přestane doručovat zprávy.
+
+Řešením problému byla oprava chyby ve firmware zmíněného zařízení. Abych
+v budoucnu zabránil podobným problémům, které by mohly ovlivnit i tento
+projekt, vytvořil jsem v systému Home Assistant automatizaci monitorující stav
+MQTT brokeru. Automatizace zašle v případě problémů s MQTT brokerem e-mailovou
+notifikaci.
+
+% TODO language
+Relevantní části souboru \texttt{configuration.yaml}:
+\begin{lstlisting}
+recorder:
+  # ...
+  exclude:
+    entities:
+      - sensor.last_mqtt_ping
+      # MQTT ping automation often updates last_triggered
+      - automation.mqtt_ping_2
+      # ...
+
+
+template:
+  - trigger:
+    # update the sensor every minute
+    - platform: time_pattern
+      seconds: 3
+    binary_sensor:
+      - name: MQTT broker
+        device_class: connectivity
+        state: >-
+          {{
+          states("sensor.last_mqtt_ping") != "unknown" and
+          as_timestamp(now()) - as_timestamp(states("sensor.last_mqtt_ping")) < 620
+          }}
+
+
+sensor:
+  - platform: mqtt
+    name: Last MQTT ping
+    state_topic: mqttping
+
+
+notify:
+  - platform: smtp
+    name: email example
+    sender: homeassistant@example.com
+    # recipient is only used when the service is called without a `target`
+    recipient: user@example.com
+    server: smtp.example.com
+    port: 465
+    encryption: tls
+    username: !secret smtp_username
+    password: !secret smtp_password
+
+  - platform: group
+    name: MQTT ping failed
+    services:
+      - service: email_example
+        data:
+          target: user@example.com
+      - service: persistent_notification
+\end{lstlisting}
+
+
+Vlastní automatizace:
+\begin{lstlisting}
+- id: '1629722205484'
+  alias: MQTT ping
+  description: Periodically send test message to the MQTT broker.
+  trigger:
+  - platform: time_pattern
+    minutes: /10
+  - platform: homeassistant
+    event: start
+  - platform: state
+    entity_id: sensor.last_mqtt_ping
+    to: unknown
+  condition: []
+  action:
+  - service: mqtt.publish
+    data:
+      topic: mqttping
+      payload_template: '{{now()}}'
+  mode: single
+
+- id: '1629722456228'
+  alias: MQTT broken
+  description: Notify ondra if the MQTT broker is broken.
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.mqtt_broker
+    to: 'off'
+    for: 00:00:10
+  condition: []
+  action:
+  - service: notify.mqtt_ping_failed
+    data:
+      title: MQTT broker is broken
+      message: 'MQTT pings are failing.
+
+        Time: {{now()}}
+
+        states("sensor.last_mqtt_ping"): {{states("sensor.last_mqtt_ping")}}'
+  mode: single
+\end{lstlisting}
+
+
+Související nastavení ACL brokeru Mosquitto:
+\begin{verbatim}
+user hass
+topic readwrite mqttping
+\end{verbatim}
+
+
+První automatizace každých 10 minut posílá aktuální čas ve formátu ISO8601 na
+topic \topic{mqttping}. Senzor \HAentity{sensor.last\_mqtt\_ping} zachycuje
+zprávy na tomto topicu a jeho stav je shodný s payloadem přijaté zprávy.
+Senzor \HAentity{binary\_sensor.mqtt\_broker} každou minutu ověřuje, jestli je
+stav senzoru \HAentity{sensor.last\_mqtt\_ping} parsovaný jako čas déle starší
+než \SI{620}{\second}. Pokud ano, nabývá binární senzor hodnoty \HAstate{off}.
+V opačném případě nabývá hodnoty \HAstate{on}.
+
+Druhá automatizace se spustí, pokud je stav senzoru
+\HAentity{binary\_sensor.mqtt\_broker} \HAstate{off} déle než \SI{10}{\second},
+a rozešle notifikace o zaseknutí brokeru.
