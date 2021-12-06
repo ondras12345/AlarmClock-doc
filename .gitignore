@@ -1,3 +1,6 @@
+sim/*.raw
+sim/graf-*.eps
+sim/graf-*.tex
 
 ## LaTeX
 dmp.pdf

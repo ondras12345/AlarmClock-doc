@@ -118,13 +118,13 @@ topic readwrite mqttping
 
 
 První automatizace každých 10 minut posílá aktuální čas ve formátu ISO8601 na
-topic \topic{mqttping}. Senzor \HAentity{sensor.last\_mqtt\_ping} zachycuje
+topic \topic{mqttping}. Senzor \HAentity{sensor.last_mqtt_ping} zachycuje
 zprávy na tomto topicu a jeho stav je shodný s payloadem přijaté zprávy.
-Senzor \HAentity{binary\_sensor.mqtt\_broker} každou minutu ověřuje, jestli je
-stav senzoru \HAentity{sensor.last\_mqtt\_ping} parsovaný jako čas déle starší
+Senzor \HAentity{binary_sensor.mqtt_broker} každou minutu ověřuje, jestli je
+stav senzoru \HAentity{sensor.last_mqtt_ping} parsovaný jako čas déle starší
 než \SI{620}{\second}. Pokud ano, nabývá binární senzor hodnoty \HAstate{off}.
 V opačném případě nabývá hodnoty \HAstate{on}.
 
 Druhá automatizace se spustí, pokud je stav senzoru
-\HAentity{binary\_sensor.mqtt\_broker} \HAstate{off} déle než \SI{10}{\second},
+\HAentity{binary_sensor.mqtt_broker} \HAstate{off} déle než \SI{10}{\second},
 a rozešle notifikace o zaseknutí brokeru.

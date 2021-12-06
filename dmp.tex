@@ -40,7 +40,7 @@
 
 %\usepackage{arydshln} % dashed lines in tabular; should be one of the last packages (http://texdoc.net/texmf-dist/doc/latex/arydshln/arydshln-man.pdf)
 
-\graphicspath{{hodnoty/}} % gnuplot EPS stuff
+\graphicspath{{sim/}} % gnuplot EPS stuff
 
 
 % TODO patching babel failed
@@ -49,8 +49,12 @@
 \patchcmd\select@language{-}{\my@hyphen }{}{\fail}
 \makeatother
 
+
+% http://www.gnuplotting.org/labels-with-white-background-in-latex-terminals/
+\newcommand{\hl}[1]{\setlength{\fboxsep}{0.75pt}\colorbox{white}{#1}}
+
 \newcommand{\shellcmd}{\texttt}
-\newcommand{\HAentity}{\texttt}  % TODO underscores
+\newcommand{\HAentity}[1]{\texttt{\detokenize{#1}}}  % detokenize makes underscores printable
 \newcommand{\HAstate}{\texttt}
 \newcommand{\topic}{\texttt}
 
@@ -87,6 +91,8 @@
 \begin{document}
 
 \maketitle  % TODO
+
+\tableofcontents
 
 \input{uvod}
 \section{Hardware} % TODO

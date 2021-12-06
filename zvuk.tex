@@ -18,10 +18,9 @@ Požadavky na blok zvukového výstupu jsou tedy
         příliš rušivě (obdélníkový signál není přijatelný).
 \end{itemize}
 
-Pro přímé generování harmonického (sinusového) analogového signálu akustických
-frekvencí (D/A převod) pomocí mikrokontroléru můžeme využít přímý převod na
-analogový signál pomocí odporové sítě nebo nepřímý převod pomocí pulzně šířkové
-modulace (PWM).
+Pro generování harmonického (sinusového) analogového signálu akustických
+frekvencí (D/A převod) pomocí mikrokontroléru můžeme využít přímý převod pomocí
+odporové sítě nebo nepřímý převod pomocí pulzně šířkové modulace (PWM).
 
 Přímý DAC (D/A převodník) s dostatečným rozlišením by vyžadoval využití osmi
 výstupních pinů, těch je ale u použitého MCU nedostatek. Oproti tomu PWM signál
@@ -39,6 +38,7 @@ potřebná strmost její útlumové frekvenční charakteristiky není tak velk�
 Příliš vysoká frekvence PWM signálu zase přináší problémy s implementací na
 straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
 
+\subsubsection{Zesilovač}
 Z hlediska zesilování výstupního signálu máme dvě možnosti -- můžeme zesilovat
 vyfiltrovaný sinusový signál pomocí lineární zesilovač (zesilovač pracující
 v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM signál \uv{spínaným}
@@ -55,15 +55,17 @@ na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
     \centering
     \begin{circuitikz}
         \draw
-            % TODO hodnoty soucastek
-            (0,2) to [R=$\SI{10}{\kilo\ohm}$, o-] (2,2)
-            to [R=$\SI{10}{\kilo\ohm}$] (5,2)
-            to [short, -o] (6,2)
-            (2,2) to [C=$\SI{100}{\nano\farad}$, *-] (2,0)
+            (0,2) to [R=$R_1$, a=$\SI{1}{\kilo\ohm}$, o-] (3,2)
+            to [R=$R_2$, a=$\SI{10}{\kilo\ohm}$] (6,2)
+            to [short] (9,2)
+            to [short, -o] (10,2)
+            (3,2) to [C, l_=$C_1$, a^=$\SI{10}{\nano\farad}$, *-] (3,0)
             to [short, -o] (0,0)
-            (5,2) to [C=$\SI{10}{\nano\farad}$, *-] (5,0)
-            to [short, -*] (2,0)
-            (5,0) to [short, *-o] (6,0)
+            (6,2) to [R, l_=$R_3$, a^=$\SI{1}{\kilo\ohm}$, *-] (6,0)
+            to [short, -*] (3,0)
+            (9,2) to [C, l_=$C_2$, a^=$\SI{10}{\nano\farad}$, *-] (9,0)
+            to [short, -*] (6,0)
+            (9,0) to [short, *-o] (10,0)
             ;
     \end{circuitikz}
     \caption{Schéma zapojení jednoduchého filtru a útlumového článku
@@ -72,9 +74,24 @@ na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
     \label{fig:zvuk filtr linearni}
 \end{figure}
 
+\begin{figure}[htb]
+    \centering
+    \input{sim/graf-zvuk-lin-filtr.tex}
+    \caption{%
+        Útlumová frekvenční charakteristika filtru zobrazeného na
+        obrázku~\vref{fig:zvuk filtr linearni} podle simulace v LTspice
+        % TODO zdrojak LTspice simulace do priloh
+    }
+    \label{fig:zvuk filtr linearni utlum}
+\end{figure}
+
+% TODO zapojeni zesilovace s TDA2030
+
 Nevýhodou takového řešení je nízká účinnost zesilovače a poměrná složitost
-obvodového řešení, kdy musíme signál vyfiltrovat, upravit na vhodnou amplitudu,
-správně navrženým analogovým zesilovačem zesílit.
+obvodového řešení, kdy musíme signál vyfiltrovat, upravit na vhodnou amplitudu
+a správně navrženým analogovým zesilovačem zesílit. Obvod také nesplňuje
+požadavek na nesymetrické napájení napětím \SI{5}{\volt} (ale tento problém je
+řešitelný použitím jiného integrovaného obvodu, například LM386).
 
 
 \paragraph{Spínaný zesilovač}
