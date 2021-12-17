@@ -9,12 +9,13 @@ set xrange [10:100e3]
 set yrange [-44:-20]
 set ytics 2
 
-set arrow nohead front from 50e3,-44 to 50e3,-20 ls 3
-set label front right at 50e3,-42 offset -0.8,0 '\hl{$f_\mathrm{PWM} = \SI{50}{\kilo\hertz}$}'
-
 set key bottom left
 
 plot \
     "<sed 's/^Step Information: /\\n\\n# /;s/(//;s/)//;s/dB//;s/\\xb0//;s/,/\\t/' zvuk-lin-filtr.txt" \
        i 1 u 1:2 with lines ls 2 title '$C_2 = 0$', \
-    "" i 2 u 1:2 with lines ls 1 title '$C_2 = \SI{10}{\nano\farad}$'
+    "" i 2 u 1:2 with lines ls 1 title '$C_2 = \SI{10}{\nano\farad}$', \
+    "-" with lines ls 3 title '\hl{$f_\mathrm{PWM} = \SI{50}{\kilo\hertz}$}'
+50e3    -20
+50e3    -44
+e

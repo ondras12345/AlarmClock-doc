@@ -1,4 +1,6 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[12pt,a4paper]{article}
+% TODO radkovani 1,5; ne u literatury
+% TODO okraje
 \usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
 \usepackage[T1]{fontenc}
@@ -32,7 +34,7 @@
 \usepackage{caption}
 %\usepackage{subcaption}
 %\usepackage{catchfile}
-%\usepackage{placeins} % provides \FloatBarrier
+\usepackage{placeins} % provides \FloatBarrier
 \usepackage[EFvoltages,siunitx,european, american inductors]{circuitikz}
 
 \usepackage{enumitem}
@@ -57,6 +59,9 @@
 \newcommand{\HAentity}[1]{\texttt{\detokenize{#1}}}  % detokenize makes underscores printable
 \newcommand{\HAstate}{\texttt}
 \newcommand{\topic}{\texttt}
+\newcommand{\gitrepo}{\texttt}
+\newcommand{\repopath}{\texttt}
+\newcommand{\filename}{\texttt}
 
 \title{Chytrý budík}
 \author{Ondřej Sluka}
@@ -73,6 +78,13 @@
     range-phrase=\text{--},
     range-units=single,
     exponent-product=\ensuremath{\cdot}
+}
+
+\lstset{
+  columns=flexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
 }
 
 % headers and footers
@@ -94,13 +106,26 @@
 
 \tableofcontents
 
+% TODO \section should start on \clearpage
+
 \input{uvod}
+\clearpage
 \section{Hardware} % TODO
-\input{zvuk}
+\input{zvuk}  % TODO POZOR, obsahuje i firmware
+\clearpage
 \section{Software}  % TODO
 \input{MQTTping}
 
 % Reference a odkazy
-\printbibliography[title={Odkazy a~literatura}]
+\printbibliography[title={Odkazy a~literatura}]  % TODO poznamky a odkazy ??
+% TODO abecedni razeni seznamu literatury
+
+
+\section*{Seznam zkratek}
+\begin{itemize}
+    \item MCU -- microcontroller unit -- jednočipový počítač, mikrokontrolér
+    \item LUT -- lookup table -- vyhledávací tabulka
+    \item ISR -- interrupt service routine -- obsluha přerušení
+\end{itemize}
 
 \end{document}

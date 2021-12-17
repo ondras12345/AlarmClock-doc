@@ -1,0 +1,17 @@
+set output "graf-zvuk-silence.tex"
+load "graf-common.gpi"
+
+set xlabel '$t\,[\si{\milli\second}]$'
+set ylabel '$a_U\,[\si{\decibel}]$'
+
+set xrange [0:2]
+set yrange [-2.6:2.6]
+set ytics 0.5
+set xtics 1
+set mxtics 5
+
+set key bottom left
+
+plot \
+    "zvuk-silence.txt" u ($1*1000):2 with lines ls 1 title '$u_1$', \
+    "" u ($1*1000):3 with lines ls 2 title '$u_2$'

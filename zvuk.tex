@@ -8,7 +8,7 @@ tónu.
 
 Požadavky na blok zvukového výstupu jsou tedy
 \begin{itemize}[nosep]
-    \item nastavitelná frekvence (v rozsahu alespoň \SI{50}{\hertz} až % TODO
+    \item nastavitelná frekvence (v rozsahu alespoň \SI{50}{\hertz} až
         \SI{8}{\kilo\hertz}),
     \item nastavitelná amplituda (s rozlišením 8 bitů, tedy ve 256 krocích),
     \item práce s nesymetrickým napájením \SI{5}{\volt},
@@ -38,12 +38,30 @@ potřebná strmost její útlumové frekvenční charakteristiky není tak velk�
 Příliš vysoká frekvence PWM signálu zase přináší problémy s implementací na
 straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
 
+% TODO obrazek PWM signal kodujici sinusoidu
+
 \subsubsection{Zesilovač}
 Z hlediska zesilování výstupního signálu máme dvě možnosti -- můžeme zesilovat
-vyfiltrovaný sinusový signál pomocí lineární zesilovač (zesilovač pracující
-v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM signál \uv{spínaným}
-zesilovačem (obdoba třídy D) a filtrovat až zesílený signál.
+vyfiltrovaný sinusový signál pomocí lineárního zesilovače (zesilovače
+pracujícího v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM signál
+\uv{spínaným} zesilovačem (obdoba třídy D) a filtrovat až zesílený signál.
 
+
+\begin{figure}[htb]
+    \centering
+    \begin{circuitikz}
+        \draw
+            (6,0) node [loudspeakershape, rotate=270] (speaker) {}
+                  node [above=3em,left=0em,anchor=center,align=left] {reproduktor}
+            (0,0) node [vsourcesquareshape, rotate=90] (MCU) {}
+                  node [above=3em,left=0em,anchor=center,align=left] {PWM výstup\\ z~MCU}
+            (MCU.south) to [lowpass,l=dolní propust] (3,0)
+            to [amp, box, l=zesilovač] (speaker.south)
+            ;
+    \end{circuitikz}
+    \caption{Blokové schéma zvukového výstupu s lineárním zesilovačem}
+    \label{fig:zvuk blok linearni}
+\end{figure}
 
 \paragraph{Lineární zesilovač}
 Při prvotním vývoji zvukového výstupu byl z důvodu jednoduchosti využit
@@ -94,6 +112,22 @@ požadavek na nesymetrické napájení napětím \SI{5}{\volt} (ale tento probl�
 řešitelný použitím jiného integrovaného obvodu, například LM386).
 
 
+\begin{figure}[htb]
+    \centering
+    \begin{circuitikz}
+        \draw
+            (6,0) node [loudspeakershape, rotate=270] (speaker) {}
+                  node [above=3em,left=0em,anchor=center,align=left] {reproduktor}
+            (0,0) node [vsourcesquareshape, rotate=90] (MCU) {}
+                  node [above=3em,left=0em,anchor=center,align=left] {PWM výstup\\ z~MCU}
+            (MCU.south) to [amp, box, l=zesilovač] (3,0)
+            to [lowpass,l=dolní propust] (speaker.south)
+            ;
+    \end{circuitikz}
+    \caption{Blokové schéma zvukového výstupu se spínaným zesilovačem}
+    \label{fig:zvuk blok spinany}
+\end{figure}
+
 \paragraph{Spínaný zesilovač}
 Účinnějším (a z hlediska počtu součástek jednodušším) řešením je zesilování PWM
 signálu spínacími tranzistory. Filtrace je řešena na výstupu zesilovače.
@@ -102,3 +136,328 @@ Protože máme k dispozici pouze nesymetrické napájení \SI{5}{\volt}, musíme
 výstup spínacích prvků připojit na filtr a reproduktor přes sériový kondenzátor
 odstraňující stejnosměrnou složku.
 % TODO
+
+
+
+
+\FloatBarrier  % TODO global ??
+\subsubsection{Implementace zvukového výstupu ve firmware}
+Generování obdélníkového signálu s určenou periodou je na MCU nejjednodušeji
+proveditelné s využitím hardwarové periferie čítače/časovače. V této práci
+využitý MCU má těchto periferií několik, pro účely implementace zvukového
+výstupu je ale nejvhodnější 16bitový Timer1.
+
+Protože je cílem generovat sinusový signál, musí se perioda PWM signálu v čase
+měnit. Toho můžeme dosáhnout periodickým přepisováním hodnoty registru
+určujícího střídu. Pro sinusové signály vyšších frekvencí musíme tyto změny
+střídy provádět s periodou kratší než jeden průchod hlavní smyčkou. Proto
+musíme využít přerušení a hodnotu střídy přepisovat v obslužné rutině ISR.
+Toto přerušení potřebujeme spouštět periodicky, tedy při přetečení jednoho
+z časovačů. Vhodnou volbou délky běhu časovače Timer1 můžeme dosáhnout toho, že
+tento časovač bude vhodný jak pro generování PWM signálu, tak i pro spouštění
+ISR.
+
+\paragraph{Testovací verze}
+Pro prvotní ověření konceptu byl vytvořen jednoduchý firmware implementující
+pouze zvukový výstup. V repozitáři \gitrepo{AlarmClock} je umístěn v adresáři
+\repopath{src/development/audio}.  % POZOR tuhle cestu mozna zmenim, pokud nasadim platformio
+
+Aby se testovací implementace přiblížila kódu, který by bylo možné zahrnout do
+hlavního firmware, je pojata formou knihovny v jazyce \texttt{C} a jednoduchého
+Arduino projektu \filename{audio.ino}, který knihovnu využívá.
+
+Hlavičkový soubor \filename{PWMSine.h} definuje API knihovny a je naprosto
+triviální:
+\begin{lstlisting}[language=C++]
+#ifndef PWMSINE_H
+#define PWMSINE_H
+
+// PWM period. 20 us (50 kHz) seems to be optimal for further signal
+// processing.
+#define timer1_us 20
+
+void PWMSine_setup();
+void PWMSine_tone(uint8_t pin, uint16_t freq, uint8_t amplitude=255);
+void PWMSine_noTone(uint8_t pin);
+
+#endif  // PWMSINE_H
+\end{lstlisting}
+
+Knihovna implementuje pouze tři funkce~--
+\lstinline[language=C]!void PWMSine_setup()! provádí inicializaci časovače.
+\lstinline[language=C]!void PWMSine_tone(uint8_t pin, uint16_t freq, uint8_t amplitude=255)!
+zahajuje generování sinusového signálu na výstupním pinu \texttt{pin} (na desce
+Arduino UNO jsou použitou knihovnou \texttt{TimerOne} podporované piny 9
+a~10~\cite{TimerOnedocs}). Generovaný signál má frekvenci \texttt{freq} a jeho
+amplituda je určena 8bitovým číslem \texttt{amplitude}.
+\lstinline[language=C]!void PWMSine_noTone(uint8_t pin)! ukončuje generování
+tónu na výstupním pinu \texttt{pin}.
+
+Vlastní definice funkcí se nachází v souboru \filename{PWMSine.cpp}:
+\begin{lstlisting}[language=C++]
+// https://github.com/PaulStoffregen/TimerOne
+// version 1.1.0 (git tag 1.1)
+#include <TimerOne.h>
+
+#include "PWMSine.h"
+#include "sinlut.h"
+
+uint8_t tone_pin;
+uint8_t tone_amplitude;
+// number of sine wave points per interrupt * 64
+// (*64 increases resolution)
+uint16_t tone_k;
+
+
+void timer1_ISR()
+{
+    static uint16_t i = 0;
+    i += tone_k;
+    int16_t value = int8_t(pgm_read_byte_near(sin_LUT + (uint8_t)(i/64))) * tone_amplitude / 64;
+    Timer1.setPwmDuty(tone_pin, value + 512);
+}
+
+
+void PWMSine_setup()
+{
+    Timer1.initialize(timer1_us);
+    Timer1.stop();
+    Timer1.attachInterrupt(timer1_ISR);
+}
+
+
+void PWMSine_tone(uint8_t pin, uint16_t freq, uint8_t amplitude)
+{
+    tone_k = 64UL * timer1_us * 256UL / (1000000UL/freq);
+    tone_pin = pin;
+    tone_amplitude = amplitude;
+    // Timer1.pwm needs to be called at least once before setPwmDuty can be
+    // used.
+    Timer1.pwm(tone_pin, 512);
+    Timer1.start();
+}
+
+
+void PWMSine_noTone(uint8_t pin)
+{
+    (void)pin;
+    Timer1.stop();
+}
+\end{lstlisting}
+
+Pro generování PWM signálu je využit 16bitový časovač použitého MCU -- Timer1.
+Knihovna \texttt{TimerOne} zprostředkovává jednodušší ovládání této periferie.
+Odkaz na její zdrojový kód a specifikace použité verze jsou uvedeny jako
+komentář na začátku souboru \filename{PWMSine.cpp}. Jde o svobodnou knihovnu
+dostupnou pod podmínkami licence Creative Commons Attribution 3.0 United States
+License~\cite{TimerOnerepo}.
+
+Funkce \verb|PWMSine_setup| provádí inicializaci časovače a nastavuje periodu
+čítání na hodnotu \verb|timer1_us|, tedy \SI{20}{\micro\second}. Poté
+zastavuje časovač a nastavuje, aby byla při jeho přetečení zavolána funkce
+\verb|timer1_ISR|.
+
+Funkce \verb|PWMSine_tone| nastavuje globální proměnnou \verb|tone_k| na
+hodnotu vypočítanou z požadované frekvence sinusového signálu.
+Poté nastavuje proměnnou \verb|tone_pin| na hodnotu určenou parametrem
+\texttt{pin}. To je nutné, protože tuto hodnotu využíváme ve funkci
+\verb|timer1_ISR|. To samé platí pro proměnnou \verb|tone_amplitude|.
+Následně zahajuje generování PWM signálu se střídou \SI{50}{\percent} na
+výstupním pinu \verb|tone_pin| a zahajuje běh časovače Timer1.
+
+Funkce \verb|PWMSine_noTone| sice přijímá jako parametr výstupní pin,
+v současné implementaci ale tuto hodnotu nevyužívá. Aby se zamezilo varování
+kompilátoru \shellcmd{gcc} \uv{unused parameter}, je využita konstrukce jazyka
+\texttt{C}, která varování při kompilaci potlačí, ale neprojeví se na
+generovaném strojovém kódu:
+\begin{lstlisting}[language=C]
+(void)pin;
+\end{lstlisting}
+Jediným projevem funkce je tak zastavení časovače Timer1.
+
+Funkce \verb|timer1_ISR| je volána v důsledku hardwarového přerušení,
+tedy nezávisle na běhu programu. Protože k tomuto přerušení dochází každých
+\SI{20}{\micro\second}, musí mít tato funkce na úrovni strojového kódu co
+nejméně instrukcí, aby se minimalizovalo zpomalení běžných operací prováděných
+v hlavní smyčce firmware. Funkce při každém zavolání nastavuje 16bitové číslo
+$i$ na $i + \mathrm{tone_k}$. Poté určuje výpočtem požadovanou střídu PWM
+signálu $\mathrm{value}+512$, kterou nastavuje na používaném časovači. Střída
+je 10bitové číslo, nabývá tedy hodnot od \num{0} do \num{1023}. Pro nastavení
+střídy PWM signálu je využita metoda \texttt{Timer1.setPwmDuty}, která akci
+provede rychleji než \texttt{Timer1.pwm}. \texttt{Timer1.pwm} se ale musí
+zavolat alespoň jednou před použitím \texttt{Timer1.setPwmDuty}, protože
+provádí inicializaci.~\cite[ověřeno praktickým pokusem]{TimerOnedocs}
+
+Výpočet hodnoty $\mathrm{value}$ určující střídu $\mathrm{value}+512$ pouze
+implementuje následující funkci:
+\begin{equation}
+    d(t) = \num{0,5} + \frac{A}{2} \cdot \sin{(2\pi f t)}
+    \label{eq:duty float}
+\end{equation}
+kde $0 \le d \le 1$ je střída, $f$ je požadovaná frekvence, $0 \le A \le 1$ je
+požadovaná amplituda a $t$ je doba uplynulá od začátku generování signálu.
+
+Výpočty s desetinnými čísly s pohyblivou řádovou čárkou by ale byly příliš
+pomalé pro použití v ISR, proto jsou využity celočíselné proměnné. Část
+výpočtů je též odsunuta do funkce \verb|PWMSine_tone| -- viz proměnná
+\verb|tone_k|.
+
+Střída PWM signálu je určena hodnotou funkce $\sin$. Matematické určování
+těchto hodnot za běhu programu přímo na MCU by ale bylo příliš časově náročné.
+Proto je využita vyhledávací tabulka (LUT) \filename{sinlut.h}, která obsahuje
+hodnoty funkce $\sin$ jako 8bitové číslo se znaménkem pro 256 hodnot argumentu
+od $0$ do $2\pi$. Tato LUT je generována jednoduchým programem napsaným
+v jazyce \texttt{Python}~-- \filename{sinlut.py}~-- spouštěným na standardním
+počítači před kompilací firmware:
+\begin{lstlisting}[language=Python]
+#!/usr/bin/env python3
+"""Generate sinlut.h"""
+
+import math
+
+header = """/*!
+    @file
+    @brief Lookup table for sin.
+
+    This file is automatically generated by `sinlut.py`.
+*/
+
+#ifndef SINLUT_H
+#define SINLUT_H
+
+const int8_t PROGMEM sin_LUT[] = {
+"""
+
+footer = """};
+
+#endif  // SINLUT_H
+"""
+
+
+if __name__ == '__main__':
+    with open('sinlut.h', 'w') as f:
+        f.write(header)
+        for i in range(0, 256):
+            value = int(math.sin(2*math.pi / 256 * i) * 127)
+            f.write(f'    {value},  // {i}\n')
+        f.write(footer)
+\end{lstlisting}
+
+Výstupem je soubor \filename{sinlut.h}:
+\begin{lstlisting}[language=C++]
+/*!
+    @file
+    @brief Lookup table for sin.
+
+    This file is automatically generated by `sinlut.py`.
+*/
+
+#ifndef SINLUT_H
+#define SINLUT_H
+
+const int8_t PROGMEM sin_LUT[] = {
+    0,  // 0
+    3,  // 1
+    6,  // 2
+    // ...
+    -6,  // 254
+    -3,  // 255
+};
+
+#endif  // SINLUT_H
+\end{lstlisting}
+
+Vzorec pro výpočet hodnot funkce $\sin$ pro účely vytvoření LUT je následující:
+\begin{equation}
+    a(i) = \operatorname{int}\left( \num{127}\cdot\sin{\left(2\pi \cdot \frac{i}{256}\right)} \right)
+\end{equation}
+kde $\num{-127} \le a \le \num{127}$ je výstupní hodnota pro LUT
+a~$\num{0} \le i \le \num{255}$ je pořadí hodnoty $a$ v LUT. Hodnota $a$ je
+přetypována na celé číslo ($\operatorname{int}$), desetinná část je tedy
+ignorována.
+
+Arduino projekt \filename{audio.ino} je velmi primitivní a pouze využívá funkce
+výše popsané knihovny ke generování testovacích signálů:
+\begin{lstlisting}[language=C++]
+#include "PWMSine.h"
+
+#define pin_speaker 9  // needs to be supported by TimerOne
+
+void setup()
+{
+    PWMSine_setup();
+}
+
+
+void loop()
+{
+    PWMSine_tone(pin_speaker, 440, 128);
+    delay(1000);
+    PWMSine_tone(pin_speaker, 440, 255);
+    delay(1000);
+    PWMSine_noTone(pin_speaker);
+    delay(2000);
+}
+\end{lstlisting}
+Generované signály jsou sinusoida o frekvenci \SI{440}{\hertz} s poloviční
+amplitudou po dobu $\SI{1000}{\milli\second} = \SI{1}{\second}$, sinusoida
+o frekvenci \SI{440}{\hertz} s plnou amplitudou po dobu \SI{1}{\second} a ticho
+po dobu \SI{2}{\second}. Poté se smyčka opakuje.
+
+
+\paragraph{Plná verze}
+Implementace ve firmware budíku je mírně odlišná. Knihovna \filename{PWMSine.h}
+definuje \texttt{C++} třídu \texttt{PWMSine} a její vnitřní kód je v porovnání
+s testovací verzí složitější. API knihovny je dokumentováno standardně
+technologií \shellcmd{doxygen}.
+
+Oproti testovací verzi přibyla metoda
+\lstinline[language=C++]!void PWMSine::silence(uint8_t pin)!, která slouží ke
+generování ticha. Kdyby byla místo této metody využita metoda \texttt{noTone},
+došlo by k úplnému vypnutí PWM výstupu a výstupní pin by přešel do úrovně
+logické~0. To by v reproduktoru způsobilo slyšitelné cvaknutí, protože do té
+doby zpracovávaný sinusový signál měl stejnosměrnou složku \SI{2,5}{\volt} a na
+tuto hodnotu byl nabit i vazební kondenzátor. Náhlá změna stejnosměrné složky
+signálu na \SI{0}{\volt} při vypnutí zvukového výstupu ve firmware se tak na
+vstupu lineárního zesilovače (za vazebním kondenzátorem) projeví jako impuls se
+špičkou \SI{-2,5}{\volt} -- viz obrázek \vref{fig:zvuk silence sim}. (Poznámka:
+ve skutečném obvodu s lineárním zesilovačem je před vazebním kondenzátorem
+zařazen atenuátor, takže špička dosahuje pouze zlomku amplitudy
+\SI{-2,5}{\volt}. Pro účely vysvětlení tohoto problému ale postačí atenuátor
+ignorovat.)
+
+\begin{figure}[htb]
+    \centering
+    \begin{circuitikz}
+        \draw
+            (0,3) to [sqV, l=$\SI{1,25}{\volt}$] (0,1.5)
+            to [V=$\SI{1,25}{\volt}$] (0,0)
+            (0,3) to [short] (2,3)
+            to [C=$C_\mathrm{v}$,a=$\SI{100}{\nano\farad}$] (5,3)
+            to [R,a=$\SI{1}{\kilo\ohm}$,v^=$u_2$] (5,0)
+            to [short] (0,0)
+            (2,3) to [open, v^=$u_1$] (2,0)
+            ;
+    \end{circuitikz}
+    \input{sim/graf-zvuk-silence.tex}
+    \caption{%
+        Schéma zapojení a výsledek počítačové simulace obvodu demonstrujícího
+        problémy se cvakáním zvukového výstupu při použití metody
+        \texttt{noTone}
+    }
+    \label{fig:zvuk silence sim}
+\end{figure}
+
+Úplné vypnutí zvukového výstupu metodou \texttt{noTone} je sice žádoucí při
+ukončení buzení, například během přerušovaného pískání ale působí rušivě.
+Objekt \texttt{BuzzerManager} proto v takových případech využívá právě metodu
+\texttt{silence}, která na výstupním pinu generuje PWM signál o konstantní
+střídě \SI{50}{\percent}.
+
+
+\subparagraph{Příkazy v \texttt{AlarmClockCLI}}
+TODO
+
+
+\subparagraph{Melodie}
+TODO
