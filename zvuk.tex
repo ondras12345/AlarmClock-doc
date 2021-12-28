@@ -103,7 +103,7 @@ na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
     \label{fig:zvuk filtr linearni utlum}
 \end{figure}
 
-% TODO zapojeni zesilovace s TDA2030
+% TODO zapojeni zesilovace s TDA2030 -- asi v priloze
 
 Nevýhodou takového řešení je nízká účinnost zesilovače a poměrná složitost
 obvodového řešení, kdy musíme signál vyfiltrovat, upravit na vhodnou amplitudu
@@ -456,8 +456,125 @@ střídě \SI{50}{\percent}.
 
 
 \subparagraph{Příkazy v \texttt{AlarmClockCLI}}
-TODO
+V příkazovém řádku (CLI) budíku byly implementovány příkazy umožňující
+jednoduché testování zvukového výstupu. V nápovědě jsou zdokumentovány
+následovně:
+\begin{lstlisting}
+Help:
+  ...
+  Sound (testing only):
+    tone{f/10};{a}
+    silence
+    notone
+  ...
+\end{lstlisting}
+
+Implementace těchto příkazů je velmi jednoduchá. Pokud je firmware zkompilován
+s definicí \verb|acite_buzzer|, pouze vrátí chybu \verb|Unsupported|. Pokud je
+firmware zkompilován bez této definice, volají příslušné funkce
+z~\verb|PWMSine|. Frekvence předávaná příkazu \verb|tone| musí být vydělena 10,
+protože v opačném případě by délka tohoto příkazu mohla přesáhnout délku paměti
+pro CLI příkazy. Upravit délku paměti by bylo triviální, ale protože jde
+o příkaz určený pouze pro testování, bylo zvoleno zkrácení příkazu.
+
+CLI příkazy pro ovládání zvukového výstupu jsou určené pouze pro testování,
+protože je s jejich pomocí možné uvést zvukový výstup do stavu, který nelze
+s použitím standardních ovládacích prvků opustit.
+
 
 
 \subparagraph{Melodie}
-TODO
+V průběhu vývoje vyvstal požadavek na možnost změnit frekvenci periodu
+a hlasitost přerušovaného pískání při buzení. Vzhledem k jednoduchosti
+implementace bylo zvoleno flexibilnější řešení, které umožňuje vytváření
+jednoduchých melodií a přiřazování těchto melodií jednotlivým budicím časům.
+
+Melodii můžeme pro účely tohoto projektu definovat jako seznam tónů, které se
+postupně přehrávají. Každý tón je charakterizován svou frekvencí, amplitudou
+a délkou trvání. Není potřeba definovat speciální případ pro pomlky (období
+ticha), protože pro tyto účely můžeme využít tón o libovolné frekvenci
+s amplitudou rovnou nule.
+
+Melodie musí být v mikrokontroléru ukládány tak, aby nedošlo k jejich ztrátě
+při ztrátě napájení. To vylučuje jejich ukládání v paměti SRAM. Bylo by možné
+využít programovou paměť Flash, to by ale vylučovalo jednoduché přepisování
+uložených dat za normálního běhu programu (firmware). Proto byla zvolena
+interní paměť EEPROM.
+
+Pro ukládání melodií v paměti EEPROM byl vytvořen následující binární formát:
+Každá melodie má 3bytovou hlavičku. Hlavička první melodie začíná v EEPROM na
+adrese \texttt{0x0010} (definováno konstantou
+\verb|EEPROM_melodies_header_start|), následují hlavičky ostatních melodií.
+Celkový počet melodií je 16. Hlavička melodie je reprezentována binárními daty
+dle následujících pravidel:
+\begin{itemize}[nosep]
+    \item První byte obsahuje informace o melodii. Jeho nejméně významný bit
+        (LSB, bit 0) vždy nabývá hodnoty logické 1. Následující bit nabývá
+        hodnoty 1, pokud je melodie aktivovaná. Zbývající bity 2 až 7 jsou
+        nevyužité a na jejich hodnotě nezáleží.
+    \item Druhý a třetí byte udávají adresu paměti EEPROM, na které začínají
+        data dané melodie. Adresa je ukládána jako 16bitové slovo v pořadí bytů
+        little-endian.
+\end{itemize}
+
+Data melodie začínají 3 byty o hodnotách \texttt{0xFD}; \texttt{0x55};
+\texttt{0xAA}. Následuje libovolný počet 3bytových tónů. Data jsou zakončena 3
+byty o hodnotě \texttt{0x00}. Validní tón má nenulovou délku trvání, proto se
+tato sekvence nemůže vyskytnout uvnitř dat, které ji předchází. Následuje byte
+o hodnotě \texttt{0xFF} a 1bytové slovo, jehož LSB je nastaven na 1, pokud se
+má po prvním přehrání melodie opakovat. Ostatní bity tohoto slova jsou
+nevyužité. Další 3 jednobytová čísla bez znaménka jsou přičtena k amplitudě
+všech tónů při 2., 3. a 4. opakování melodie. Třetí číslo je využito i pro 5.
+a další opakování. Pokud je amplituda tónu v melodii 0, není toto číslo
+přičteno. Pokud je amplituda tónu po přičtení čísla z patičky větší než
+\num{255}, je použita hodnota \num{255}, aby se při aritmetické operaci
+zabránilo nechtěnému přetečení.
+
+Pokud není patička melodie validní nebo pokud je v hlavičce zapsáno, že melodie
+není aktivována, přepne se budík do režimu standardního přerušovaného pípání.
+To zajišťuje, že nemůže dojít k tichému přehrávání nevalidních dat.
+
+Každý tón je reprezentován 3 jednobytová čísla bez znaménka:
+\begin{itemize}[nosep]
+    \item frekvence $f$ -- $\frac{f - \SI{32}{\hertz}}{\SI{32}{\hertz}}$,
+    \item amplituda -- \num{0} je ticho, \num{255} je plná hlasitost,
+    \item délka trvání $t > 0$ -- $\frac{t}{\SI{25}{\milli\second}}$.
+\end{itemize}
+
+Vzorce pro výpočet hodnot uložených v paměti z požadovaných parametrů tónu
+vychází z omezení ukládaných čísel na rozsah \numrange{0}{255}.
+Vzorec pro přepočet frekvence umožňuje vytváření tónů o frekvencích od
+\SI{32}{\hertz} do \SI{8,192}{\kilo\hertz} s rozlišením \SI{32}{\hertz}.
+Volba vzorce pro délku trvání vychází z původního zamýšleného využití
+melodií~-- definice vlastního přerušovaného pískání. Je tedy důležité, aby bylo
+možné definovat dlouho trvající tóny. Rozsah je \SI{25}{\milli\second} až
+\SI{6,375}{\second} s rozlišením \SI{25}{\milli\second}. Podmínka, že délka
+trvání tónu nesmí být nulová, umožňuje využít 3 po sobě jdoucí byty s hodnotou
+\texttt{0x00} pro zakončení dat v paměti.
+
+Pro testování melodií byly též vytvořeny nové příkazy v CLI:
+\begin{lstlisting}
+% TODO prikazy melodie, eew, eer
+\end{lstlisting}
+
+Příkaz \verb|melody| slouží k zahájení přehrávání vybrané melodie
+(\numrange{0}{15}), při použití bez parametru přehrávání ukončuje.
+Pro manipulaci s daty v paměti EEPROM byl implementován příkaz
+\verb|eer| sloužící ke čtení jednoho bytu z určené adresy a \verb|eew|
+provádějící zápis jednoho bytu dat na určitou adresu.
+Pro zjednodušení použití těchto příkazů byl vytvořen program
+\shellcmd{EEPROM-tool.py} (umístěný ve složce \repopath{examples/} v repozitáři
+\gitrepo{PyAlarmClock}).
+% TODO eew, eer, EEPROM-tool.py
+
+Manuální úpravy binárního souboru přečteného z EEPROM jsou zdlouhavé, protože
+je nutné neustále nahlížet do dokumentace a dekódovat význam jednotlivých bytů.
+Proto je výhodné využít editor binárních dat GNU \shellcmd{poke}. % TODO footnote
+Struktura dat je popsána souborem zvaným \texttt{pickle}. Po načtení tohoto
+\texttt{pickle} do interaktivního příkazového řádku programu \shellcmd{poke}
+provádíme mapování dané struktury na konkrétní data v binárním souboru a dále
+s nimi pracujeme jako s objekty.
+% TODO GNU poke
+
+
+% TODO
