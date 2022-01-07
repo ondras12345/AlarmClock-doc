@@ -1,0 +1,25 @@
+\subsection{Displej}
+Aby byl budík uživatelsky přívětivý, je nutné umožnit jeho nastavování bez
+nutnosti připojení jiného zařízení (počítače, mobilního telefonu apod.).
+Pro zobrazování dat se v dnešní době využívá široká škála různých technologií
+displejů. Vzhledem k textovému charakteru zobrazovaných dat jsou pro toto
+zařízení vhodné znakové či grafické displeje, segmentové displeje by neumožnily
+zobrazení většího množství údajů na jednom místě. Protože není potřeba
+zobrazovat složitou grafiku, zvolil jsem znakový LCD displej (16 znaků na
+řádek, 2 řádky) s řadičem HD44780. Ten je asi nejlevnější alternativou, je
+snadno dostupný a díky možnosti nadefinovat několik vlastních znaků lze
+zobrazovat i jednoduchou grafiku.
+
+Řadič HD44780 využívá pro komunikaci 8bitovou sběrnici ($\mathrm{DB0}$ až
+$\mathrm{DB7}$) a tři řídicí piny: $\mathrm{R}/\overline{\mathrm{W}}$,
+$\mathrm{E}$ a $\mathrm{RS}$. Pin $\mathrm{R}/\overline{\mathrm{W}}$ určuje,
+jestli požaduje mikrokontrolér čtení dat z řadiče (logická 1) či zápis (logická
+0). V obou případech se data přenášejí po sběrnici. Pin $\mathrm{E}$ zahajuje
+operaci čtení či zápisu. $\mathrm{RS}$ určuje, jestli jsou data na sběrnici
+daty pro zápis do paměti řadiče ($\mathrm{RS} = 1$, obvykle zápis ASCII hodnoty
+požadovaného znaku) nebo instrukce, kterou má řadič provést ($\mathrm{RS} =
+0$). Podporované instrukce zahrnují smazání displeje, zapnutí blikání kurzoru
+apod. Řadič umožňuje i provoz ve 4bitovém režimu, v takovém případě se ze
+sběrnice využijí pouze piny $\mathrm{DB4}$ až $\mathrm{DB7}$.
+% TODO citovat datasheet HD44780
+

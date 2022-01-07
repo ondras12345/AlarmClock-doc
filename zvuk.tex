@@ -159,7 +159,7 @@ ISR.
 
 \paragraph{Testovací verze}
 Pro prvotní ověření konceptu byl vytvořen jednoduchý firmware implementující
-pouze zvukový výstup. V repozitáři \gitrepo{AlarmClock} je umístěn v adresáři
+pouze zvukový výstup. V repositáři \gitrepo{AlarmClock} je umístěn v adresáři
 \repopath{src/development/audio}.  % POZOR tuhle cestu mozna zmenim, pokud nasadim platformio
 
 Aby se testovací implementace přiblížila kódu, který by bylo možné zahrnout do
@@ -536,15 +536,16 @@ To zajišťuje, že nemůže dojít k tichému přehrávání nevalidních dat.
 
 Každý tón je reprezentován 3 jednobytová čísla bez znaménka:
 \begin{itemize}[nosep]
-    \item frekvence $f$ -- $\frac{f - \SI{32}{\hertz}}{\SI{32}{\hertz}}$,
-    \item amplituda -- \num{0} je ticho, \num{255} je plná hlasitost,
-    \item délka trvání $t > 0$ -- $\frac{t}{\SI{25}{\milli\second}}$.
+    \item frekvence: $\frac{f - \SI{32}{\hertz}}{\SI{32}{\hertz}}$,
+    \item amplituda: \num{0} je ticho, \num{255} je plná hlasitost,
+    \item délka trvání: $\frac{t}{\SI{25}{\milli\second}}; t > 0$.
 \end{itemize}
 
 Vzorce pro výpočet hodnot uložených v paměti z požadovaných parametrů tónu
 vychází z omezení ukládaných čísel na rozsah \numrange{0}{255}.
 Vzorec pro přepočet frekvence umožňuje vytváření tónů o frekvencích od
 \SI{32}{\hertz} do \SI{8,192}{\kilo\hertz} s rozlišením \SI{32}{\hertz}.
+Volba minimální frekvence vychází z původní implementace pomocí funkce \verb|tone| 
 Volba vzorce pro délku trvání vychází z původního zamýšleného využití
 melodií~-- definice vlastního přerušovaného pískání. Je tedy důležité, aby bylo
 možné definovat dlouho trvající tóny. Rozsah je \SI{25}{\milli\second} až
@@ -554,27 +555,150 @@ trvání tónu nesmí být nulová, umožňuje využít 3 po sobě jdoucí byty 
 
 Pro testování melodií byly též vytvořeny nové příkazy v CLI:
 \begin{lstlisting}
-% TODO prikazy melodie, eew, eer
+Help:
+  ...
+  Melodies:
+    melody{i} - play melody 0-15
+  EEPROM:
+    eer{aaaa} - read data from address
+    eew{aaaa};{ddd} - write data to address
+  ...
 \end{lstlisting}
 
 Příkaz \verb|melody| slouží k zahájení přehrávání vybrané melodie
 (\numrange{0}{15}), při použití bez parametru přehrávání ukončuje.
 Pro manipulaci s daty v paměti EEPROM byl implementován příkaz
 \verb|eer| sloužící ke čtení jednoho bytu z určené adresy a \verb|eew|
-provádějící zápis jednoho bytu dat na určitou adresu.
+provádějící zápis jednoho bytu dat na určitou adresu. Příklad použití nových
+příkazů pro práci s daty v EEPROM:
+\begin{lstlisting}
+> eer 1023
+---
+EEPROM:
+  1023: 255
+...
+
+err 0x0: OK
+
+> eew 1023;10
+
+err 0x0: OK
+
+> eer 1023
+---
+EEPROM:
+  1023: 10
+...
+
+err 0x0: OK
+
+> eer 1024
+
+Processing
+
+err 0x1: Invalid args
+
+>
+\end{lstlisting}
+
 Pro zjednodušení použití těchto příkazů byl vytvořen program
-\shellcmd{EEPROM-tool.py} (umístěný ve složce \repopath{examples/} v repozitáři
-\gitrepo{PyAlarmClock}).
-% TODO eew, eer, EEPROM-tool.py
+\shellcmd{EEPROM-tool.py} (umístěný ve složce \repopath{examples/} v repositáři
+\gitrepo{PyAlarmClock}). Ten umožňuje přečtení souvislého bloku dat z EEPROM a
+zápis do binárního souboru, nebo naopak zápis dat z binárního souboru do
+EEPROM. Například přečtení hlaviček všech melodií do souboru
+\texttt{hlavicky.bin} provádíme následovně:
+\begin{lstlisting}[columns=fixed]
+$ EEPROM-tool.py /dev/ttyUSB0 read 0x0010 48 hlavicky.bin
+INFO:PyAlarmClock:Initializing serial port
+100%|###################| 48/48 [00:03<00:00, 12.56it/s]
+$ ls -l hlavicky.bin
+-rw-r--r-- 1 ondra ondra 48 2022-01-07 08:18 hlavicky.bin
+$ xxd hlavicky.bin
+00000000: 0178 0101 fe05 3700 1e02 03ff 0101 fe05  .x....7.........
+00000010: 0a00 2002 03ff 0101 fe08 1e00 c002 03ff  .. .............
+00000020: 0101 fe04 3200 1002 03ff 0101 fe07 1e00  ....2...........
+$
+\end{lstlisting}
 
 Manuální úpravy binárního souboru přečteného z EEPROM jsou zdlouhavé, protože
 je nutné neustále nahlížet do dokumentace a dekódovat význam jednotlivých bytů.
-Proto je výhodné využít editor binárních dat GNU \shellcmd{poke}. % TODO footnote
+Proto je výhodné využít editor binárních dat GNU
+\shellcmd{poke}\footnote{http://www.jemarch.net/poke}.
 Struktura dat je popsána souborem zvaným \texttt{pickle}. Po načtení tohoto
 \texttt{pickle} do interaktivního příkazového řádku programu \shellcmd{poke}
 provádíme mapování dané struktury na konkrétní data v binárním souboru a dále
-s nimi pracujeme jako s objekty.
-% TODO GNU poke
+s nimi pracujeme jako s objekty. Celý pickle je uložen v souboru
+\repopath{tools/AlarmClockEEPROM.pk} v repositáři \gitrepo{AlarmClock}, pro
+demonstraci konceptu ale použijeme pouze jeho část:
+\begin{lstlisting}
+/*
+ * Melodies
+ */
+
+set_endian(ENDIAN_LITTLE);
+
+type EEPROM_melody_header = struct {
+    uint<6>;
+    uint<1> enabled;
+    uint<1> valid = 1;
+    uint<16> data_address;
+    method _print = void:
+    {
+        print "#<\n";
+        printf "  enabled: %s\n", enabled ? "yes" : "no";
+        printf "  address: 0x%u16x\n", data_address;
+        print ">";
+    }
+};
+\end{lstlisting}
+
+Spustíme \shellcmd{poke} a jako parametr mu předáme název binárního souboru --
+\texttt{hlavicky.bin}. Přepínač \texttt{-l} slouží k načtení pickle při
+spuštění. Vytvoříme novou proměnnou \verb|melody_headers| jako pole struktur
+\verb|EEPROM_melody_header| začínající na začátku souboru (\verb|@ 0#B|). Počet
+prvků v poli je určen dynamicky -- prvky se přidávají, dokud se nenarazí na
+konec souboru nebo dokud nejde k porušení omezení (\texttt{constraint}).
+Protože v našem souboru \texttt{hlavicky.bin} nejsou všechny hlavičky melodií
+validní, má pole pouze 3 prvky.
+\begin{lstlisting}[columns=fixed]
+$ poke -l ~/source/repos/AlarmClock/tools/AlarmClockEEPROM.pk hlavicky.bin
+     _____
+ ---'   __\_______
+            ______)  GNU poke 1.0
+            __)
+           __)
+ ---._______)
+
+Copyright (C) 2019-2021 The poke authors.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Powered by Jitter 0.9.258.
+Perpetrated by Jose E. Marchesi.
+
+For help, type ".help".
+Type ".exit" to leave the program.
++ (poke) var melody_headers = EEPROM_melody_header[] @ 0#B
++ (poke) melody_headers
+[EEPROM_melody_header {(uint<6>) 0,enabled=(uint<1>) 0,valid=(uint<1>) 1,data_address=376UH},EEPROM_melody_header {(uint<6>) 0,enabled=(uint<1>) 0,valid=(uint<1>) 1,data_address=1534UH},EEPROM_melody_header {(uint<6>) 13,enabled=(uint<1>) 1,valid=(uint<1>) 1,data_address=7680UH}]
++ (poke) .set pretty-print yes
++ (poke) melody_headers
+[#<
+  enabled: no
+  address: 0x0178
+>,#<
+  enabled: no
+  address: 0x05fe
+>,#<
+  enabled: yes
+  address: 0x1e00
+>]
++ (poke)
+\end{lstlisting}
+Příkaz \verb|.set pretty-print yes| zapnul uživatelsky přívětivé vypisování
+struktur, které volá metody \verb|_print| daných struktur.
+% TODO headers.bin obsahuje odpad, protoze jsem ho precetl z produkcniho budiku misto testovaciho
 
 
 % TODO
