@@ -20,7 +20,21 @@ daty pro zápis do paměti řadiče ($\mathrm{RS} = 1$, obvykle zápis ASCII hod
 požadovaného znaku) nebo instrukce, kterou má řadič provést ($\mathrm{RS} =
 0$). Podporované instrukce zahrnují smazání displeje, zapnutí blikání kurzoru
 apod. Řadič umožňuje i provoz ve 4bitovém režimu, v takovém případě se ze
-sběrnice využijí pouze piny $\mathrm{DB4}$ až $\mathrm{DB7}$.
-% TODO citovat datasheet HD44780
+sběrnice využijí pouze piny $\mathrm{DB4}$ až $\mathrm{DB7}$.~\cite{dshHD44780}
 
-% TODO
+Pro nedostatek I/O portů použitého MCU je displej připojen přes
+8bitový I\textsuperscript{2}C I/O expandér PCF8574. Komunikace s řadičem
+HD44780 probíhá vzhledem k malému počtu dostupných pinů ve 4bitovém režimu.
+Expandér PCF8574 má 8 pinů, které lze nezávisle nastavit jako vstup či výstup.
+Výstupní pin $\overline{\mathrm{INT}}$ může být využit pro spuštění
+hardwarového přerušení (interrupt) na straně MCU při změně stavu vstupních
+pinů, MCU tedy nemusí pravidelně kontrolovat jejich stav.~\cite{dshPCF8574}
+% TODO blokove schema, knihovna, ...
+
+
+Expandér ovládá také podsvícení displeje. To je zajištěno elektroluminiscenční
+diodou (LED) svítící z boku do plexiskla pod open cell. V běžně prodávaných
+znakových LCD je osazována LED modré barvy. Pro použití v podmínkách s nízkou
+intenzitou osvětlení ale považuji za vhodnější podsvícení červenou barvou.
+% TODO modifikace LCD
+% TODO open cell - cesky termin nebo obrazek
