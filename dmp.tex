@@ -1,13 +1,20 @@
 \documentclass[12pt,a4paper]{article}
 % TODO radkovani 1,5; ne u literatury
-% TODO okraje
 \usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
 \usepackage[T1]{fontenc}
 
-\usepackage[a4paper]{geometry}
-% mensi okraje
-%\usepackage[a4paper,includefoot,bottom=20mm]{geometry}
+%\usepackage[a4paper]{geometry}
+% TODO predepsane okraje
+\usepackage[
+    a4paper,
+    twoside,
+    inner=15mm,
+    outer=40mm,
+    top=25mm,
+    bottom=30mm
+    % includefoot ??
+]{geometry}
 \usepackage{array}
 %\usepackage{multirow}
 \usepackage{siunitx}
