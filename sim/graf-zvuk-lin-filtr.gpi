@@ -11,11 +11,10 @@ set ytics 2
 
 set key bottom left
 
+set arrow nohead from 50e3,-20 to 50e3,-44 ls 3
+set label front right at 50e3,-21 offset -0.5,0 '\hl{$f_\mathrm{PWM} = \SI{50}{\kilo\hertz}$}'
+
 plot \
     "<sed 's/^Step Information: /\\n\\n# /;s/(//;s/)//;s/dB//;s/\\xb0//;s/,/\\t/' zvuk-lin-filtr.txt" \
        i 1 u 1:2 with lines ls 2 title '$C_2 = 0$', \
-    "" i 2 u 1:2 with lines ls 1 title '$C_2 = \SI{10}{\nano\farad}$', \
-    "-" with lines ls 3 title '\hl{$f_\mathrm{PWM} = \SI{50}{\kilo\hertz}$}'
-50e3    -20
-50e3    -44
-e
+    "" i 2 u 1:2 with lines ls 1 title '$C_2 = \SI{10}{\nano\farad}$'
