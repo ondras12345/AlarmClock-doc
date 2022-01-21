@@ -1,0 +1,57 @@
+\subsection{Arduino a PlatformIO}
+% TODO kecy o Arduino
+
+PlatformIO\footnote{\url{https://platformio.org/}} je multiplatformní, na
+architektuře nezávislý nástroj s otevřeným zdrojovým kódem pro vývoj embedded
+systémů. Podporuje mnoho SDK (včetně Arduino) a nezávisí na konkrétním
+vývojovém prostředí (IDE). Oproti Arduino IDE nabízí možnost pracovat
+s příkazovým řádkem namísto grafického rozhraní a díky tomu umožňuje
+jednoduchou automatizaci různých procesů ve vývoji. Konfigurační soubor
+\filename{platformio.ini} také umožňuje nastavit všechny parametry kompilace,
+včetně přímého předávání přepínačů kompilátoru \shellcmd{gcc}. Je možné
+vytvořit projekt, který je kompatibilní s Arduino IDE i s PlatformIO, ale to
+pouze ztěžuje využívání pokročilých funkcí PlatformIO a nepřináší žádné výhody.
+
+Nespornou výhodou PlatformIO je také správa závislostí -- knihoven, bez kterých
+není možné firmware zkompilovat. Tím, že v konfiguračním souboru
+\filename{platformio.ini} zaznamenává jejich přesné verze, odstraňuje potřebu
+vytvářet tuto dokumentaci ručně. Znalost verzí knihoven, se kterými byl
+firmware testován, je kritická pro budoucí kompilování. Může se totiž stát, že
+v knihovně dojde v novější verzi ke změně API či zanesení chyby. Přístup
+Arduino IDE (knihovny sdílené mezi projekty, notifikace doporučující
+aktualizaci kdykoli je dostupná novější verze) není pro složitější projekty
+závisející na mnoha knihovnách vhodný.
+
+Ukázka obsahu konfiguračního souboru \filename{platformio.ini}:
+\begin{lstlisting}
+; PlatformIO Project Configuration File
+;
+;   Build options: build flags, source filter
+;   Upload options: custom upload port, speed and extra flags
+;   Library options: dependencies, extra library storages
+;   Advanced options: extra scripting
+;
+; Please visit documentation for the other options and examples
+; https://docs.platformio.org/page/projectconf.html
+
+[platformio]
+src_dir = src/AlarmClock
+
+[env:uno]
+platform = atmelavr
+board = uno
+framework = arduino
+lib_deps = 
+	adafruit/RTClib@^2.0.2
+	thomasfredericks/Bounce2@^2.70.0
+	paulstoffregen/Encoder@^1.4.1
+	marcoschwartz/LiquidCrystal_I2C@^1.1.4
+	paulstoffregen/TimerOne@^1.1.0
+\end{lstlisting}
+
+
+\subsubsection{Automatické testy}
+PlatformIO podporuje testování jednotlivých jednotek zdrojového kódu (unit
+testing), a to jak na cílové platformě (embedded MCU), tak i na počítači
+použitém pro vývoj (native).
+% TODO platformio testy

@@ -34,7 +34,21 @@ pinů, MCU tedy nemusí pravidelně kontrolovat jejich stav.~\cite{dshPCF8574}
 
 Expandér ovládá také podsvícení displeje. To je zajištěno elektroluminiscenční
 diodou (LED) svítící z boku do plexiskla pod open cell. V běžně prodávaných
-znakových LCD je osazována LED modré barvy. Pro použití v podmínkách s nízkou
-intenzitou osvětlení ale považuji za vhodnější podsvícení červenou barvou.
-% TODO modifikace LCD
+znakových LCD je osazovány bílé LED, přičemž vlastní open cell je modrý. Pro
+použití v podmínkách s nízkou intenzitou osvětlení ale považuji za vhodnější
+podsvícení červenou barvou. Když pro podsvícení použijeme červenou LED, blokuje
+open cell většinu světla a ven z panelu vychází červené světlo pouze v místech,
+kde jsou otevřené pixely.
+% TODO ozdrojovat modre svetlo v noci
 % TODO open cell - cesky termin nebo obrazek
+
+% TODO modifikace LCD
+Modifikace barvy podsvícení není triviální, protože se na trhu vyskytuje mnoho
+displejů se stejnými rozměry, komunikačním rozhraním apod., ale s rozdílným
+provedením podsvětlení (BLU). U všech autorem zakoupených displejů je
+podsvícení řešenou jednou LED zapuštěnou do plexiskla na pravé straně displeje.
+LED je na desce plošných spojů připájena do prokovených děr, které jsou na
+hraně PCB a přesně v polovině odfrézovány. Důvod pro toto řešení je
+pravděpodobně zjednodušení montáže při výrobě. Jednotlivé displeje se ale liší
+tvarem plexiskla a montáží LED do tohoto plexiskla.
+% obrazek dve varianty zasazeni LED do plexiskla
