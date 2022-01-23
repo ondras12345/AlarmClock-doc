@@ -15,7 +15,7 @@ ext:        ## Make everything pdflatex needs, except for ods2csv.
 ext: graphssim
 
 help:       ## Show this help.
-	@fgrep -h "##" $(MAKEFILE_LIST) | sed -e '/unique_BhwaDzu7C/d;s/\\$$//;s/##//'
+	@grep -F -h "##" $(MAKEFILE_LIST) | sed -e '/unique_BhwaDzu7C/d;s/\\$$//;s/##//'
 
 test:       ## Run tests.
 	./tests
