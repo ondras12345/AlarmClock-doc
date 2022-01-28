@@ -21,8 +21,8 @@
     right=15mm,
     top=25mm,
     bottom=30mm,
-    %showframe,
     % includefoot ??
+    %showframe,
 ]{geometry}
 \usepackage{array}
 %\usepackage{multirow}
@@ -56,6 +56,7 @@
 \usepackage{enumitem}
 \usepackage{listings}
 \usepackage[htt]{hyphenat}  % hyphenate \texttt
+\usepackage{titlesec}
 
 %\usepackage{arydshln} % dashed lines in tabular; should be one of the last packages (http://texdoc.net/texmf-dist/doc/latex/arydshln/arydshln-man.pdf)
 
@@ -142,7 +143,7 @@
   %literate={█}{{\#}}1
 
 % headers and footers
-\setlength{\headheight}{14pt} % prevents a warning most likely caused by diacritics
+\setlength{\headheight}{15pt} % prevents a warning most likely caused by diacritics
 \pagestyle{fancy}
 %\renewcommand{\headrulewidth}{0pt}
 \fancyhf{} % clears header and footer, otherwise "plain" will appear
@@ -150,6 +151,8 @@
 \lhead{\theauthor}
 \rhead{\thepage}
 \fancyhfoffset{0pt} % fixes width after \newgeometry
+
+\newcommand{\sectionbreak}{\clearpage}
 
 % Roztrhana matika
 \allowdisplaybreaks
@@ -160,17 +163,13 @@
 
 \tableofcontents
 
-% TODO \section should start on \clearpage
-
 \input{uvod}
-\clearpage
 \section{Hardware a firmware} % TODO
 \input{MCU}
 \input{platformio}
 %\input{TODO ambient}
 \input{GUI}
 \input{zvuk}  % TODO POZOR, obsahuje i firmware
-\clearpage
 \section{Software}  % TODO
 \input{MQTTping}
 
