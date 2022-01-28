@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+shopt -s nullglob
+search_files=(
+    Makefile
+    ./*.tex
+    sim/*.gpi
+)
+
+t_bold='\033[1m'
+t_bold_red='\033[1;31m'
+t_red='\033[0;31m'
+t_normal='\033[0m'
+
+bold_msg() {
+    echo -e "$t_bold$1$t_normal"
+}
+
+err_msg() {
+    echo -e "$t_bold_red$1$t_normal"
+}
+
+exit_status=0
+
+
+bold_msg "\nKontrola TODO poznamek..."
+grep --color=auto "TODO" "${search_files[@]}"
+prev_exit="$?"
+if [ $prev_exit -eq 0 ] ; then
+    err_msg "V elabu jsou TODO poznamky."
+    exit_status=1
+
+elif [ $prev_exit -eq 1 ] ; then
+    bold_msg "TODO poznamky ok."
+
+else
+    err_msg "grep vratil chybu."
+    exit_status=2
+fi
+
+
+bold_msg "\nKontrola DOTAZu..."
+grep --color=auto "DOTAZ" "${search_files[@]}"
+prev_exit="$?"
+if [ $prev_exit -eq 0 ] ; then
+    err_msg "V elabu jsou DOTAZy."
+    exit_status=1
+
+elif [ $prev_exit -eq 1 ] ; then
+    bold_msg "DOTAZy poznamky ok."
+
+else
+    err_msg "grep vratil chybu."
+    exit_status=2
+fi
+
+
+bold_msg "\nZakladni kontrola pravopisu..."
+grep --color=auto "aby jsme" "${search_files[@]}"
+prev_exit="$?"
+if [ $prev_exit -eq 0 ] ; then
+    err_msg "s/aby jsme/abychom"
+    exit_status=1
+
+elif [ $prev_exit -eq 1 ] ; then
+    bold_msg "Zaklani kontrola pravopisu ok."
+
+else
+    err_msg "grep vratil chybu."
+    exit_status=2
+fi
+
+exit $exit_status
