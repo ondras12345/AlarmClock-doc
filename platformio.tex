@@ -48,10 +48,236 @@ lib_deps =
 	marcoschwartz/LiquidCrystal_I2C@^1.1.4
 	paulstoffregen/TimerOne@^1.1.0
 \end{lstlisting}
+Skutečný konfigurační soubor je složitější, protože obsahuje i nastavení
+jednotkových testů a různé další úpravy.
 
+Práce s nástrojem pro příkazový řádek PlatformIO Core (CLI) je velmi
+jednoduchá. Zkompilování firmware se provádí příkazem
+\shellcmd{pio run --environment uno}. Přepínač \texttt{--environment} určuje,
+pro jakou platformu se má firmware zkompilovat. Lze použít jeho krátkou verzi
+\texttt{-e}. Výsledný soubor ve formátu Intel HEX se poté nachází v umístění
+\repopath{.pio/build/uno/firmware.hex}. Smazání všech zkompilovaných souborů
+(užitečné pro vynucení úplného překompilování) se provádí příkazem
+\shellcmd{pio run -e uno -t clean}, kde \texttt{-t} je krátká verze přepínače
+\texttt{--target}. Nahrání firmware do mikrokontroléru provádíme příkazem
+\shellcmd{pio run -e uno -t upload}.
+
+Pro další zjednodušení a automatizaci práce s tímto nástrojem byl vytvořen
+\filename{Makefile}, tedy soubor s pravidly programu GNU \shellcmd{make}.
+Tento soubor obsahuje i mechanismus pro generování nápovědy, dostupné příkazy
+lze díky zjistit příkazem \shellcmd{make help}.
 
 \subsubsection{Automatické testy}
-PlatformIO podporuje testování jednotlivých jednotek zdrojového kódu (unit
-testing), a to jak na cílové platformě (embedded MCU), tak i na počítači
-použitém pro vývoj (native).
-% TODO platformio testy
+Jednou z hlavních motivací pro nasazení technologie PlatformIO byla podpora
+automatických testů. PlatformIO podporuje testování jednotlivých jednotek
+zdrojového kódu (unit testing), a to jak na cílové platformě (embedded MCU),
+tak i na počítači použitém pro vývoj (native). Testy jsou umístěny
+v samostatných podsložkách v adresáři \repopath{test/}.
+
+Pro demonstraci využití jednotkových testů je vhodná velmi jednoduchá jednotka
+zajišťující ukládání boolean hodnoty (jednoho bitu -- pravda či nepravda) pro
+každý den v týdnu -- třída \texttt{DaysOfWeek}. Celý stav tohoto objektu je
+reprezentován jedním osmibitovým číslem. Protože je toto číslo přenášeno
+rozhraním UART z mikrokontroléru k připojenému počítači, je potřeba zajistit,
+že obě strany ukládají hodnoty stejným způsobem. Manuální testování není
+vhodné, protože potřebujeme zabránit možnosti náhodného neúmyslného poškození
+funkcionality při pozdějších úpravách kódu. Spouštění automatických testů při
+každé změně zdrojového kódu totiž zabírá několikanásobně méně času než manuální
+testování. Jednotkové testy navíc odstraňují možnost lidské chyby.
+
+Pro pochopení konceptu jednotkových testů nepotřebujeme znát vnitřní
+implementaci třídy \texttt{DaysOfWeek} a postačí nám pouhé deklarace
+metod z hlavičkového souboru:
+\begin{lstlisting}[language=C++]
+#include <stdint.h>
+
+class DaysOfWeek
+{
+public:
+    uint8_t days_of_week = 0x00;
+    bool getDayOfWeek(uint8_t num) const;
+    bool setDayOfWeek(uint8_t num, bool status);
+};
+\end{lstlisting}
+
+Zdrojový kód testu umístíme do souboru
+\repopath{test/test_DaysOfWeek/test_DaysOfWeek.cpp}. Připravíme si několik
+případů, pro které chceme chování jednotky testovat. Není nezbytně nutné
+otestovat všechny možné stavy a často to ani není prakticky možné. Obvykle
+postačí několik běžných stavů a případy, které jsou nějakým způsobem speciální
+a je u nich proto větší riziko chyby.
+\begin{lstlisting}[language=C++,numbers=left,breakatwhitespace=true]
+#include <unity.h>  // unit testing framework
+#include <stdint.h>
+#include <DaysOfWeek.h>  // testovaná jednotka
+
+
+struct DowTestCase
+{
+    uint8_t code;
+    bool days[7];
+};
+
+// Pole testovaných případů:
+DowTestCase Cases[] = {
+    {0x00, {false,  false,  false,  false,  false,  false,  false}},
+    {0x01, {false,  false,  false,  false,  false,  false,  false}},
+    {0x02, {true,   false,  false,  false,  false,  false,  false}},
+    // ...
+    {0xFE, {true,   true,   true,   true,   true,   true,   true}}
+};
+
+
+// Test dekódování 8bitového čísla na jednotlivé dny v týdnu:
+void test_decode()
+{
+    // Pro každý testovaný případ...
+    for (size_t i = 0; i < sizeof(Cases)/sizeof(Cases[0]); i++)
+    {
+        // ...vytvoříme nový objekt DaysOfWeek...
+        DaysOfWeek dow;
+        // ...a přiřadíme mu dané 8bitové číslo.
+        dow.days_of_week = Cases[i].code;
+        // V rámci daného případu iterujeme přes všechny dny v týdnu...
+        for (size_t j = 0; j < sizeof(Cases[i].days)/sizeof(Cases[i].days[0]); j++)
+        {
+            // ...a porovnáváme správnou hodnotu daného dne
+            // s hodnotou získanou z objektu dow.
+            if (Cases[i].days[j])
+            {
+                TEST_ASSERT_TRUE(dow.getDayOfWeek(j+1));
+            }
+            else
+            {
+                TEST_ASSERT_FALSE(dow.getDayOfWeek(j+1));
+            }
+        }
+    }
+}
+
+
+// Test kódování jednotlivých dnů v týdnu do 8bitového čísla:
+void test_encode()
+{
+    // Pro každý testovaný případ...
+    for (size_t i = 0; i < sizeof(Cases)/sizeof(Cases[0]); i++)
+    {
+        // Ošetříme zvláštní případ, který souvisí s faktem,
+        // že nejméně významný bit (LSB) je nepoužitý a vždy nulový.
+        uint8_t code = Cases[i].code;
+        if (code == 0x01) code = 0x00;
+        // ...vytvoříme nový objekt DaysOfWeek...
+        DaysOfWeek dow;
+        // ...a natavíme mu hodnoty jednotlivých dnů v týdnu.
+        for (size_t j = 0; j < sizeof(Cases[i].days)/sizeof(Cases[i].days[0]); j++)
+        {
+            dow.setDayOfWeek(j+1, Cases[i].days[j]);
+        }
+        // Zkontrojume, zda se 8bitové číslo specifikované testovaným případem
+        // shoduje s číslem vytvořeným naším objektem.
+        TEST_ASSERT_EQUAL_INT(code, dow.days_of_week);
+    }
+}
+
+
+int main(int argc, char **argv)
+{
+    UNITY_BEGIN();
+    // Spustíme výše definované testy.
+    RUN_TEST(test_decode);
+    RUN_TEST(test_encode);
+    UNITY_END();
+
+    return 0;
+}
+\end{lstlisting}
+
+Spuštění testů provádíme příkazem \shellcmd{pio test}. PlatformIO testovací
+program automaticky zkompiluje, nahraje do mikrokontroléru a přes UART přečte
+výsledky testů.
+% -f test_DaysOfWeek, aby nespoustel ostatni testy
+% fixed columns, aby byly zarovnane vysledky
+% delka #### progress baru upravena, aby vysly na jeden radek
+\begin{lstlisting}[basicstyle=\ttfamily\singlespacing,basewidth={0.5em,0.5em},columns=fixed]
+$ pio test -e uno
+Verbose mode can be enabled via `-v, --verbose` option
+Collected 2 items
+
+Processing test_DaysOfWeek in uno environment
+-------------------------------------------------------------------
+Building...
+Uploading...
+
+Warning! Please install `99-platformio-udev.rules`. 
+More details: https://docs.platformio.org/page/faq.html#platformio-udev-rules
+
+
+avrdude: AVR device initialized and ready to accept instructions
+
+Reading | ############################################ | 100% 0.00s
+
+avrdude: Device signature = 0x1e950f (probably m328p)
+avrdude: reading input file ".pio/build/uno/firmware.hex"
+avrdude: writing flash (3600 bytes):
+
+Writing | ############################################ | 100% 0.60s
+
+avrdude: 3600 bytes of flash written
+avrdude: verifying flash memory against .pio/build/uno/firmware.hex:
+avrdude: load data flash data from input file .pio/build/uno/firmware.hex:
+avrdude: input file .pio/build/uno/firmware.hex contains 3600 bytes
+avrdude: reading on-chip flash data:
+
+Reading | ############################################ | 100% 0.47s
+
+avrdude: verifying ...
+avrdude: 3600 bytes of flash verified
+
+avrdude: safemode: Fuses OK (E:00, H:00, L:00)
+
+avrdude done.  Thank you.
+
+Testing...
+If you don't see any output for the first 10 secs, please reset board (press reset button)
+
+test/test_DaysOfWeek/test_DaysOfWeek.cpp:70:test_decode	[PASSED]
+test/test_DaysOfWeek/test_DaysOfWeek.cpp:71:test_encode	[PASSED]
+-----------------------
+2 Tests 0 Failures 0 Ignored
+=================== [PASSED] Took 6.00 seconds ===================
+
+Test             Environment    Status    Duration
+---------------  -------------  --------  ------------
+test_DaysOfWeek  uno            PASSED    00:00:06.002
+=================== 1 succeeded in 00:00:06.002 ===================
+\end{lstlisting}
+
+Protože jednotka \texttt{DaysOfWeek} nezávisí na funkcích specifických pro
+mikrokontrolér, lze tento test spouštět i v prostředí \texttt{native}, tedy
+přímo na PC, na kterém se používá PlatformIO:
+\begin{lstlisting}[basicstyle=\ttfamily,basewidth={0.5em,0.5em},columns=fixed]
+$ pio test -e native
+Verbose mode can be enabled via `-v, --verbose` option
+Collected 2 items
+
+Processing test_DaysOfWeek in native environment
+----------------------------------------------------------------
+Building...
+Testing...
+test/test_DaysOfWeek/test_DaysOfWeek.cpp:70:test_decode	[PASSED]
+test/test_DaysOfWeek/test_DaysOfWeek.cpp:71:test_encode	[PASSED]
+
+-----------------------
+2 Tests 0 Failures 0 Ignored
+OK
+================== [PASSED] Took 0.42 seconds ==================
+
+Test             Environment    Status    Duration
+---------------  -------------  --------  ------------
+test_DaysOfWeek  native         PASSED    00:00:00.419
+================= 1 succeeded in 00:00:00.419 =================
+\end{lstlisting}
+
+Na druhé straně komunikačního rozhraní UART jsou využitý podobné testy,
+tentokrát v programovacím jazyce Python, které kontrolují stejné případy
+v tamní implementaci objektu.
