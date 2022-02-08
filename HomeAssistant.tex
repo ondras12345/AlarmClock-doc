@@ -1,0 +1,99 @@
+\subsection{Home Assistant}
+% TODO info o HA
+
+% https://www.home-assistant.io/docs/glossary/
+
+% jinja2 templates
+
+% TODO verze HA, se kterou pracuji
+
+MQTT adaptér \shellcmd{mqtt_bridge.py} popisovaný v předchozím textu
+umožňuje snadnou integraci s tímto systémem. Platforma \texttt{mqtt} nabízí
+v prostředí Home Assistant možnost vytvářet entity z celé řady domén~--
+například \HAdomain{sensor}, \HAdomain{binary_sensor}, \HAdomain{light},
+\HAdomain{switch} a další.
+
+Příkladem funkce budíku, kterou lze do tohoto systému snadno integrovat, je
+ovládání světla \uv{lamp}. To je určeno primárně pro buzení, není ale důvod,
+proč by nemohlo být využíváno i pro jiné účely. Protože jde o osvětlení,
+využijeme typ entity
+\href{https://www.home-assistant.io/integrations/light.mqtt}{MQTT Light}.
+Vlastní konfigurace je triviální:
+\begin{lstlisting}
+light:
+  - platform: mqtt
+    name: AlarmClock lamp
+    state_topic: alarmclock/stat/lamp
+    command_topic: alarmclock/cmnd/lamp
+    availability_topic: alarmclock/stat/available
+\end{lstlisting}
+Využíváme totiž výchozích hodnot -- například \lstinline!payload_off: OFF!
+a~\lstinline!payload_on: ON!. Ty se shodují se zprávami odesílanými programem
+\shellcmd{mqtt_bridge.py}. \yamlkey{availability_topic} složí k detekci
+nefunkčního spojení s budíkem. V takovém případě přejde entita
+\HAentity{light.alarmclock_lamp} do stavu \HAstate{unavailable}.
+
+% TODO screenshot lamp entity z HA
+
+Platforma MQTT Light umožňuje i ovládání jasu světla, čehož využíváme
+u stmívatelného LED pásku \uv{ambient}. Konfigurace je o něco složitější.
+\begin{lstlisting}
+light:
+  - platform: mqtt
+    schema: template
+    name: AlarmClock ambient
+    availability_topic: alarmclock/stat/available
+    command_topic: alarmclock/cmnd/ambient
+    state_topic: alarmclock/stat/ambient
+    state_template: "{{ 'off' if value == '0' else 'on' }}"
+    brightness_template: "{{ value }}"
+    command_off_template: 0
+    command_on_template: >
+      {%- if brightness is defined -%}
+      {{ brightness }}
+      {%- else -%}
+      255
+      {%- endif -%}
+\end{lstlisting}
+Protože je LED pásek řízen pouze jasem, kde hodnota \num{255} představuje plný
+jas a \num{0} představuje zhasnuté světlo, je stav entity (zapnuto / vypnuto)
+z tohoto čísla. To je úlohou šablony \yamlkey{state_template}. Protože proměnná
+\texttt{value} představuje textový řetězec přijatý na \yamlkey{state_topic},
+porovnáváme ji s textovým řetězcem \lstinline[language=Python]!'0'!. Druhou
+možností by bylo převést \texttt{value} na celočíselný datový typ filtrem
+\texttt{int} a porovnávat čísla.
+
+\yamlkey{brightness_template} určuje, jak z přijaté MQTT zprávy odvodit jas
+světla jako číslo v rozsahu \numrange{0}{255}.
+
+\yamlkey{command_off_template} určuje zprávu, která se má poslat na
+\yamlkey{command_topic}, když je požadováno vypnutí světla. Protože vypnutí
+provádíme nastavením jasu na \num{0}, není ani potřeba využít šablonu.
+
+\yamlkey{command_on_template} je složitější, protože musí správně reagovat
+v různých situacích.
+\begin{enumerate}
+    \item Je požadováno zapnutí světla, ale není specifikován jas. V takovém
+        případě není proměnná \texttt{brightness} definována a do
+        \yamlkey{command_topic} se pošle hodnota \num{255}.
+    \item Je požadované zapnutí světla s určitou hodnotou jasu. V takovém
+        případě se v MQTT zprávě pošle hodnota proměnné \texttt{brightness}.
+\end{enumerate}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.3\textwidth]{homeassistant-lovelace-light}
+    \caption{%
+        Karta \href{https://www.home-assistant.io/lovelace/light/}{Light}
+        reprezentující entitu \HAentity{light.alarmclock_ambient} v prostředí
+        Lovelace systému Home Assistant
+    }
+    \label{fig:homeassistant lovelace light}
+\end{figure}
+
+
+% TODO repozitar s HA konfiguraci
+
+% TODO lstlisting yaml style (remove long minus sign)
+
+\input{MQTTping}

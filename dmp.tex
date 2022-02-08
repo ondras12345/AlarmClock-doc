@@ -60,7 +60,7 @@
 
 %\usepackage{arydshln} % dashed lines in tabular; should be one of the last packages (http://texdoc.net/texmf-dist/doc/latex/arydshln/arydshln-man.pdf)
 
-\graphicspath{{sim/}} % gnuplot EPS stuff
+\graphicspath{{figures/}{sim/}} % figures and gnuplot EPS stuff
 
 
 % TODO patching babel failed
@@ -73,17 +73,19 @@
 % http://www.gnuplotting.org/labels-with-white-background-in-latex-terminals/
 \newcommand{\hl}[1]{\setlength{\fboxsep}{0.75pt}\colorbox{white}{#1}}
 
-\newcommand{\shellcmd}{\texttt}
 \newcommand{\HAentity}[1]{\texttt{\detokenize{#1}}}  % detokenize makes underscores printable
+\newcommand{\HAdomain}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\shellcmd}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\HAstate}{\texttt}
 \newcommand{\topic}{\texttt}
 \newcommand{\gitrepo}{\texttt}
 \newcommand{\repopath}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\filename}{\texttt}
+\newcommand{\yamlkey}[1]{\texttt{\detokenize{#1}}}
 
 \title{Chytrý budík}
 \author{Ondřej Sluka}
-\date{2021}  % DOPLN
+\date{2022}  % TODO
 
 \frenchspacing
 \sisetup{
@@ -169,9 +171,10 @@
 \input{platformio}
 %\input{TODO ambient}
 \input{GUI}
-\input{zvuk}  % TODO POZOR, obsahuje i firmware
+\input{zvuk}
 \section{Software}  % TODO
-\input{MQTTping}
+\input{PyAlarmClock}
+\input{HomeAssistant}
 
 % Reference a odkazy
 \printbibliography[title={Odkazy a~literatura}]  % TODO poznamky a odkazy ??

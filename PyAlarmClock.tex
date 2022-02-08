@@ -1,0 +1,47 @@
+\subsection{PyAlarmClock}
+Pro usnadnění manipulace s budíkem připojeným přes rozhraní UART z počítače
+byla vytvořena knihovna \texttt{PyAlarmClock}. Je to modul jazyka Python
+obsahující abstrakce pro práci s budíkem. Programátor vytvářející počítačový
+program díky tomu nemusí ani znát konkrétní příkazy prostředí
+\texttt{AlarmClockCLI}. Například nastavení data času modulu RTC se provádí
+přiřazením objektu \texttt{datetime.datetime} vlastnosti \verb|RTC_time|
+objektu \texttt{AlarmClock} bez nutnosti znát vnitřní implementaci, která
+využívá příkazu \texttt{st} pro nastavení času a \texttt{sd} pro nastavení
+data.
+
+Pro ilustraci konceptu poslouží jeden z ukázkových programů~--
+\repopath{examples/set_time.py}. V následující ukázce je navíc odstraněna část
+zapínající podrobné protokolování všech událostí.
+\begin{lstlisting}[language=Python,numbers=left]
+#!/usr/bin/env python3
+
+import PyAlarmClock
+from datetime import datetime
+import time
+
+with PyAlarmClock.SerialAlarmClock('/dev/ttyUSB0') as ac:
+    ac.RTC_time = datetime.now()
+    time.sleep(1.65)  # RTC is polled every 0.8 seconds
+    print(ac.RTC_time)
+\end{lstlisting}
+Program naváže spojení s budíkem, nastaví čas uložený v RTC na aktuální čas,
+počká \SI{1,65}{\second} (aby stihl firmware budíku přečíst novou hodnotu
+z RTC) a vypíše do konzole čas přečtený z budíku.
+\begin{lstlisting}[basicstyle=\ttfamily\singlespacing]
+$ ./test_dmp.py
+2022-02-08 19:21:48
+$
+\end{lstlisting}
+
+
+\subsubsection{MQTT adaptér}
+Jedním z programů využívajících knihovnu \texttt{PyAlarmClock} je
+\repopath{examples/mqtt_bridge.py}. Tento program umožňuje vzdálené ovládání
+budíku zprávami přenášenými protokolem MQTT. Tímto způsobem lze zajistit
+ovládání budíku několika programy současně bez nutnosti sdílet sériový port
+mezi více procesy. Komunikace může probíhat nejen mezi více zařízeními ve
+stejné počítačové síti, ale i v rámci jednoho serveru (\texttt{localhost}).
+
+% TODO mqtt_bridge
+
+% TODO availability / LWT
