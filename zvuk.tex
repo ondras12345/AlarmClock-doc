@@ -168,7 +168,7 @@ Arduino projektu \filename{audio.ino}, který knihovnu využívá.
 
 Hlavičkový soubor \filename{PWMSine.h} definuje API knihovny a je naprosto
 triviální:
-\begin{lstlisting}[language=C++,numbers=left]
+\begin{lstlisting}[language=C++,style=numbers]
 #ifndef PWMSINE_H
 #define PWMSINE_H
 
@@ -194,7 +194,7 @@ amplituda je určena 8bitovým číslem \texttt{amplitude}.
 tónu na výstupním pinu \texttt{pin}.
 
 Vlastní definice funkcí se nachází v souboru \filename{PWMSine.cpp}:
-\begin{lstlisting}[language=C++,numbers=left]
+\begin{lstlisting}[language=C++,style=numbers]
 // https://github.com/PaulStoffregen/TimerOne
 // version 1.1.0 (git tag 1.1)
 #include <TimerOne.h>
@@ -309,7 +309,7 @@ hodnoty funkce $\sin$ jako 8bitové číslo se znaménkem pro 256 hodnot argumen
 od $0$ do $2\pi$. Tato LUT je generována jednoduchým programem napsaným
 v jazyce \texttt{Python}~-- \filename{sinlut.py}~-- spouštěným na standardním
 počítači před kompilací firmware:
-\begin{lstlisting}[language=Python,numbers=left]
+\begin{lstlisting}[language=Python,style=numbers]
 #!/usr/bin/env python3
 """Generate sinlut.h"""
 
@@ -344,7 +344,7 @@ if __name__ == '__main__':
 \end{lstlisting}
 
 Výstupem je soubor \filename{sinlut.h}:
-\begin{lstlisting}[language=C++,numbers=left]
+\begin{lstlisting}[language=C++,style=numbers]
 /*!
     @file
     @brief Lookup table for sin.
@@ -378,7 +378,7 @@ ignorována.
 
 Arduino projekt \filename{audio.ino} je velmi primitivní a pouze využívá funkce
 výše popsané knihovny ke generování testovacích signálů:
-\begin{lstlisting}[language=C++,numbers=left]
+\begin{lstlisting}[language=C++,style=numbers]
 #include "PWMSine.h"
 
 #define pin_speaker 9  // needs to be supported by TimerOne
@@ -459,7 +459,7 @@ střídě \SI{50}{\percent}.
 V příkazovém řádku (CLI) budíku byly implementovány příkazy umožňující
 jednoduché testování zvukového výstupu. V nápovědě jsou zdokumentovány
 následovně:
-\begin{lstlisting}[basicstyle=\ttfamily]
+\begin{lstlisting}[style=terminal]
 Help:
   ...
   Sound (testing only):
@@ -554,7 +554,7 @@ trvání tónu nesmí být nulová, umožňuje využít 3 po sobě jdoucí byty 
 \texttt{0x00} pro zakončení dat v paměti.
 
 Pro testování melodií byly též vytvořeny nové příkazy v CLI:
-\begin{lstlisting}[basicstyle=\ttfamily]
+\begin{lstlisting}[style=terminal]
 Help:
   ...
   Melodies:
@@ -571,7 +571,7 @@ Pro manipulaci s daty v paměti EEPROM byl implementován příkaz
 \verb|eer| sloužící ke čtení jednoho bytu z určené adresy a \verb|eew|
 provádějící zápis jednoho bytu dat na určitou adresu. Příklad použití nových
 příkazů pro práci s daty v EEPROM:
-\begin{lstlisting}[basicstyle=\ttfamily\singlespacing]
+\begin{lstlisting}[style=terminal]
 > eer 1023
 ---
 EEPROM:
@@ -607,7 +607,7 @@ Pro zjednodušení použití těchto příkazů byl vytvořen program
 zápis do binárního souboru, nebo naopak zápis dat z binárního souboru do
 EEPROM. Například přečtení hlaviček všech melodií do souboru
 \texttt{hlavicky.bin} provádíme následovně:
-\begin{lstlisting}[basicstyle=\ttfamily]
+\begin{lstlisting}[style=terminal]
 $ EEPROM-tool.py /dev/ttyUSB0 read 0x0010 48 hlavicky.bin
 INFO:PyAlarmClock:Initializing serial port
 100%|#####################| 48/48 [00:03<00:00, 13.09it/s]
@@ -630,7 +630,9 @@ provádíme mapování dané struktury na konkrétní data v binárním souboru 
 s nimi pracujeme jako s objekty. Celý pickle je uložen v souboru
 \repopath{tools/AlarmClockEEPROM.pk} v repositáři \gitrepo{AlarmClock}, pro
 demonstraci konceptu ale použijeme pouze jeho část:
-\begin{lstlisting}
+% TODO program poke, jazyk Poke
+% http://jemarch.net/pokology-01102019.html
+\begin{lstlisting}[language=Poke]
 /*
  * Melodies
  */
@@ -660,7 +662,7 @@ prvků v poli je určen dynamicky -- prvky se přidávají, dokud se nenarazí n
 konec souboru nebo dokud nejde k porušení omezení (\texttt{constraint}).
 Protože v našem souboru \texttt{hlavicky.bin} nejsou všechny hlavičky melodií
 validní, má pole pouze 2 prvky.
-\begin{lstlisting}[basicstyle=\ttfamily\singlespacing]
+\begin{lstlisting}[style=terminal]
 $ poke -l ~/source/repos/AlarmClock/tools/AlarmClockEEPROM.pk hlavicky.bin
      _____
  ---'   __\_______

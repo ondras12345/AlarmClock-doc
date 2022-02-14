@@ -106,10 +106,6 @@
   frame=single,
   breaklines=true,
   postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
-  %numbers=left,
-  % kvuli cislum radku, viz showframe geometry
-  xleftmargin=2em,
-  %framexleftmargin=1.5em,  % cisla radku uvnitr ramecku, vypada hnusne
   literate=%
     {á}{{\'a}}1
     {í}{{\'i}}1
@@ -143,6 +139,117 @@
     {Ů}{{\r{U}}}1
 }
   %literate={█}{{\#}}1
+
+\lstdefinestyle{numbers}
+    { numbers=left, xleftmargin=2em, %
+      %framexleftmargin=1.5em,  % cisla radku uvnitr ramecku, vypada hnusne
+    }
+
+\lstdefinestyle{terminal}
+    {basicstyle=\ttfamily\singlespacing,basewidth={0.5em,0.5em}}
+
+
+\lstdefinelanguage{Ini}
+{
+    basicstyle=\ttfamily,
+    morecomment=[s][\rmfamily\bfseries]{[}{]},
+    morecomment=[l]{\#},
+    morecomment=[l]{;},
+    commentstyle=\rmfamily\itshape,
+    morekeywords={},
+}
+
+\lstdefinelanguage{yaml}
+{
+    columns=[l]flexible,
+    %
+    morekeywords={%
+        true,false,null,
+        !secret,!include,!include_dir_list,!include_dir_named,
+        !include_dir_merge_list,!include_dir_merge_named
+    },
+    alsoletter={!},
+    sensitive=false,
+    %
+    comment=[l]{\#},
+    commentstyle=\mdseries\rmfamily\itshape,
+    %
+    morestring=[d]',
+    morestring=[b]",
+    %stringstyle=\mdseries\ttfamily\itshape,  % only for testing
+    showstringspaces = false,
+    % multiline strings >- -- looks too hard to implement
+    %
+    %moredelim=[l][\color{orange}]{\&},
+    %moredelim=[l][\color{magenta}]{*},
+    %
+    % TODO YAML syntax highlighting - \bfseries keys not compatible with multiline strings
+    %basicstyle=\bfseries,
+    %moredelim=**[il][\mdseries{:}]{:}, % switch to value style at :
+    %moredelim=[l][\mdseries]{:}, % switch to value style at :
+    %
+    % alsolanguage jinja2 -- too complicated
+    %
+    literate =  {---}{{\llap{\mdseries-{-}-}}}3
+                {>}{{\textgreater}}1
+                {>-}{{\textgreater-}}2
+                {|}{{\textbar}}1
+                {|-}{{\textbar-}}2
+                {-\ }{{\mdseries-\ }}2,
+}
+
+\lstdefinelanguage{Poke}
+{
+    sensitive=true,
+    % see poke.vim in poke 2.1
+    morekeywords={%
+        % statement
+        assert,break,continue,return,
+        type,unit,fun,method,
+        var,
+        % operators
+        in,sizeof,as,isa,unmap,
+        % conditionals
+        if,else,where,
+        %
+        struct,union,pinned,
+        % loops
+        while,for,
+        % imports
+        load,
+        try,catch,until,raise,
+        % exceptions - skipped
+        % types
+        string,void,int,uint,bit,nibble,
+        byte,char,ushort,short,ulong,long,
+        uint8,uint16,uint32,uint64,
+        off64,uoff64,offset,
+        Comparator,POSIX_Time32,POSIX_Time64,
+        big,little,any,
+        % constants
+        ENDIAN_LITTLE,ENDIAN_BIG,
+        IOS_F_READ,IOS_F_WRITE,IOS_F_CREATE,
+        IOS_M_RDONLY,IOS_M_WRONLY,IOS_M_RDWR,
+        load_path,NULL,OFFSET,
+        % Poke std lib
+        print,printf,catos,stoca,atoi,ltos,reverse,
+        ltrim,rtrim,strchr,qsort,crc32,alignto,
+        open,close,flush,get_ios,set_ios,iosize,
+        rand,get_endian,set_endian,strace,exit,
+        getenv,
+        % integer literals - skipped
+        % Units
+        b,M,B,
+        Kb,KB,Mb,MB,Gb,GB,
+        Kib,KiB,Mib,MiB,Gib,GiB,
+        % offsets - skipped
+    },
+    morecomment=[s]{/*}{*/},
+    morecomment=[l]//,
+    morestring=[b]",
+    moredelim=[s][keywordstyle]{<}{>}  % uint<x>
+}
+
 
 % headers and footers
 \setlength{\headheight}{15pt} % prevents a warning most likely caused by diacritics

@@ -12,7 +12,7 @@ data.
 Pro ilustraci konceptu poslouží jeden z ukázkových programů~--
 \repopath{examples/set_time.py}. V následující ukázce je navíc odstraněna část
 zapínající podrobné protokolování všech událostí.
-\begin{lstlisting}[language=Python,numbers=left]
+\begin{lstlisting}[language=Python,style=numbers]
 #!/usr/bin/env python3
 
 import PyAlarmClock
@@ -27,8 +27,8 @@ with PyAlarmClock.SerialAlarmClock('/dev/ttyUSB0') as ac:
 Program naváže spojení s budíkem, nastaví čas uložený v RTC na aktuální čas,
 počká \SI{1,65}{\second} (aby stihl firmware budíku přečíst novou hodnotu
 z RTC) a vypíše do konzole čas přečtený z budíku.
-\begin{lstlisting}[basicstyle=\ttfamily\singlespacing]
-$ ./test_dmp.py
+\begin{lstlisting}[style=terminal]
+$ ./set_time.py
 2022-02-08 19:21:48
 $
 \end{lstlisting}

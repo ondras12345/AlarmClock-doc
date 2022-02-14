@@ -23,7 +23,7 @@ aktualizaci kdykoli je dostupná novější verze) není pro složitější proj
 závisející na mnoha knihovnách vhodný.
 
 Ukázka obsahu konfiguračního souboru \filename{platformio.ini}:
-\begin{lstlisting}
+\begin{lstlisting}[language=Ini]
 ; PlatformIO Project Configuration File
 ;
 ;   Build options: build flags, source filter
@@ -106,7 +106,7 @@ případů, pro které chceme chování jednotky testovat. Není nezbytně nutn�
 otestovat všechny možné stavy a často to ani není prakticky možné. Obvykle
 postačí několik běžných stavů a případy, které jsou nějakým způsobem speciální
 a je u nich proto větší riziko chyby.
-\begin{lstlisting}[language=C++,numbers=left,breakatwhitespace=true]
+\begin{lstlisting}[language=C++,style=numbers,breakatwhitespace=true]
 #include <unity.h>  // unit testing framework
 #include <stdint.h>
 #include <DaysOfWeek.h>  // testovaná jednotka
@@ -198,7 +198,7 @@ výsledky testů.
 % -f test_DaysOfWeek, aby nespoustel ostatni testy
 % fixed columns, aby byly zarovnane vysledky
 % delka #### progress baru upravena, aby vysly na jeden radek
-\begin{lstlisting}[basicstyle=\ttfamily\singlespacing,basewidth={0.5em,0.5em},columns=fixed]
+\begin{lstlisting}[style=terminal,columns=fixed]
 $ pio test -e uno
 Verbose mode can be enabled via `-v, --verbose` option
 Collected 2 items
@@ -255,7 +255,7 @@ test_DaysOfWeek  uno            PASSED    00:00:06.002
 Protože jednotka \texttt{DaysOfWeek} nezávisí na funkcích specifických pro
 mikrokontrolér, lze tento test spouštět i v prostředí \texttt{native}, tedy
 přímo na PC, na kterém se používá PlatformIO:
-\begin{lstlisting}[basicstyle=\ttfamily,basewidth={0.5em,0.5em},columns=fixed]
+\begin{lstlisting}[style=terminal,columns=fixed]
 $ pio test -e native
 Verbose mode can be enabled via `-v, --verbose` option
 Collected 2 items

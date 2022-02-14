@@ -19,7 +19,7 @@ proč by nemohlo být využíváno i pro jiné účely. Protože jde o osvětlen
 využijeme typ entity
 \href{https://www.home-assistant.io/integrations/light.mqtt}{MQTT Light}.
 Vlastní konfigurace je triviální:
-\begin{lstlisting}
+\begin{lstlisting}[language=yaml]
 light:
   - platform: mqtt
     name: AlarmClock lamp
@@ -33,11 +33,9 @@ a~\lstinline!payload_on: ON!. Ty se shodují se zprávami odesílanými programe
 nefunkčního spojení s budíkem. V takovém případě přejde entita
 \HAentity{light.alarmclock_lamp} do stavu \HAstate{unavailable}.
 
-% TODO screenshot lamp entity z HA
-
 Platforma MQTT Light umožňuje i ovládání jasu světla, čehož využíváme
 u stmívatelného LED pásku \uv{ambient}. Konfigurace je o něco složitější.
-\begin{lstlisting}
+\begin{lstlisting}[language=yaml]
 light:
   - platform: mqtt
     schema: template
@@ -93,7 +91,5 @@ v různých situacích.
 
 
 % TODO repozitar s HA konfiguraci
-
-% TODO lstlisting yaml style (remove long minus sign)
 
 \input{MQTTping}
