@@ -72,39 +72,41 @@ Vlastní automatizace:
   alias: MQTT ping
   description: Periodically send test message to the MQTT broker.
   trigger:
-  - platform: time_pattern
-    minutes: /10
-  - platform: homeassistant
-    event: start
-  - platform: state
-    entity_id: sensor.last_mqtt_ping
-    to: unknown
+    - platform: time_pattern
+      minutes: /10
+    - platform: homeassistant
+      event: start
+    - platform: state
+      entity_id: sensor.last_mqtt_ping
+      to: unknown
   condition: []
   action:
-  - service: mqtt.publish
-    data:
-      topic: mqttping
-      payload_template: '{{now()}}'
+    - service: mqtt.publish
+      data:
+        topic: mqttping
+        payload_template: '{{now()}}'
   mode: single
 
 - id: '1629722456228'
   alias: MQTT broken
   description: Notify if the MQTT broker is broken.
   trigger:
-  - platform: state
-    entity_id: binary_sensor.mqtt_broker
-    to: 'off'
-    for: 00:00:10
+    - platform: state
+      entity_id: binary_sensor.mqtt_broker
+      to: 'off'
+      for:
+        hours: 0
+        minutes: 1
+        seconds: 5
   condition: []
   action:
-  - service: notify.mqtt_ping_failed
-    data:
-      title: MQTT broker is broken
-      message: 'MQTT pings are failing.
-
-        Time: {{now()}}
-
-        states("sensor.last_mqtt_ping"): {{states("sensor.last_mqtt_ping")}}'
+    - service: notify.mqtt_ping_failed
+      data:
+        title: MQTT broker is broken
+        message: |-
+          MQTT pings are failing.
+          Time: {{now()}}
+          states("sensor.last_mqtt_ping"): {{states("sensor.last_mqtt_ping")}}
   mode: single
 \end{lstlisting}
 
