@@ -4,6 +4,7 @@ shopt -s nullglob
 search_files=(
     Makefile
     ./*.tex
+    reference.bib
     sim/*.gpi
 )
 
