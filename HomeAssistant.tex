@@ -69,13 +69,13 @@ světla jako číslo v rozsahu \numrange{0}{255}.
 provádíme nastavením jasu na \num{0}, není ani potřeba využít šablonu.
 
 \yamlkey{command_on_template} je složitější, protože musí správně reagovat
-v různých situacích.
-\begin{enumerate}
+v různých situacích:
+\begin{enumerate}[nosep]
     \item Je požadováno zapnutí světla, ale není specifikován jas. V takovém
         případě není proměnná \texttt{brightness} definována a do
         \yamlkey{command_topic} se pošle hodnota \num{255}.
     \item Je požadované zapnutí světla s určitou hodnotou jasu. V takovém
-        případě se v MQTT zprávě pošle hodnota proměnné \texttt{brightness}.
+        případě se v~MQTT zprávě pošle hodnota proměnné \texttt{brightness}.
 \end{enumerate}
 
 \begin{figure}[htb]

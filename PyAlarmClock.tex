@@ -42,6 +42,71 @@ ovládání budíku několika programy současně bez nutnosti sdílet sériový
 mezi více procesy. Komunikace může probíhat nejen mezi více zařízeními ve
 stejné počítačové síti, ale i v rámci jednoho serveru (\texttt{localhost}).
 
-% TODO mqtt_bridge
+Použití adaptéru je velmi jednoduché. Příkazem \shellcmd{mqtt_bridge.py --help}
+lze vypsat seznam argumentů, které lze programu předávat.
+% nechci sem davat cely usage, protoze bych ho pak treba musel aktualizovat...
+Následuje jednoduchý příklad -- program se připojí k MQTT brokeru na
+\texttt{localhost} na výchozím portu 1883 jako uživatel \texttt{DEBUG} s heslem
+zadaným interaktivně za běhu programu:
+\begin{lstlisting}[style=terminal]
+$ ./examples/mqtt_bridge.py /dev/ttyUSB0 -u DEBUG
+Password:
+2022-02-08 19:22:39,360 INFO err topic: alarmclock/err
+2022-02-08 19:22:39,360 INFO state topic: alarmclock/stat
+2022-02-08 19:22:39,360 INFO command topic: alarmclock/cmnd
+2022-02-08 19:22:39,361 INFO Connecting to MQTT on localhost:1883
+2022-02-08 19:22:42,139 INFO MQTT connected with result code 0
 
-% TODO availability / LWT
+\end{lstlisting}
+
+Pomocí nástrojů ze softwarového balíčku \texttt{mosquitto-clients}
+% https://packages.ubuntu.com/focal/mosquitto-clients
+můžeme pozorovat, že program při spuštění odešle několik zpráv:
+\begin{lstlisting}[style=terminal]
+$ mosquitto_sub -v -t alarmclock/#
+alarmclock/stat/available online
+alarmclock/stat/number_of_alarms 6
+\end{lstlisting}
+Číslo posílané v topic \topic{alarmclock/stat/number_of_alarms} udává počet
+konfigurovatelných časů buzení, které firmware připojeného budíku podporuje
+(interně zjišťováno příkazem \texttt{ver}). Zpráva je adaptérem zasílána
+s příznakem \texttt{retain}, proto je automaticky zaslána nově příchozímu
+subscriberovi.
+
+Zpráva v topic \topic{alarmclock/stat/available} určuje, zda je adaptér
+aktivní. Při jeho ukončení či náhodném odpojení je MQTT brokerem do tohoto
+topic automaticky zaslána zpráva \texttt{offline}. K tomu je využívána funkce
+MQTT Last Will and Testament -- LWT.
+
+Požadujeme-li, aby budík provedl nějakou akci, pošleme zprávu do příslušného
+\texttt{command topic} -- \topic{alarmclock/cmnd/nazev_prikazu}.
+V následujícím příkladu je demonstrované rozsvícení připojeného světla
+\texttt{lamp}. Vzdáleným MQTT příkazem a následné zhasnutí pomocí rozhraní na
+displeji budíku. Pro přehlednost byly přidány prázdné řádky. První zpráva
+v druhém bloku je příkaz pro rozsvícení lampy. V odpověď na ni přichází zpráva
+v topic \topic{alarmclock/stat/lamp} značící, že byla lampa rozsvícena. Protože
+firmware budíku podporuje funkci přidanou z vývojové větve
+\texttt{feature/CLI-BEL}, posílá při každé změně stavu hardware na sériový port
+netisknutelný ASCII znak BEL (\texttt{0x07}). V reakci na to si adaptér vyžádá
+stav všech hardwarových výstupů a odešle příslušné MQTT zprávy. Zpráva o stavu
+lampy je proto duplikována, je ale zajištěna zpětná kompatibilita s firmware
+bez podpory funkce asynchronní detekce změn stavu hardware.
+Díky této funkci je detekováno i vypnutí lampy přímo ovládacími prvky budíku,
+které vede k odeslání třetího bloku zpráv.
+\begin{lstlisting}[style=terminal]
+$ mosquitto_sub -v -t alarmclock/#
+alarmclock/stat/available online
+alarmclock/stat/number_of_alarms 6
+
+alarmclock/cmnd/lamp ON
+alarmclock/stat/lamp ON
+alarmclock/stat/lamp ON
+alarmclock/stat/inhibit OFF
+alarmclock/stat/ambient 0
+
+alarmclock/stat/lamp OFF
+alarmclock/stat/inhibit OFF
+alarmclock/stat/ambient 0
+\end{lstlisting}
+
+% TODO mqtt_bridge
