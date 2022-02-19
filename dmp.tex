@@ -10,8 +10,7 @@
 %\renewcommand{\baselinestretch}{1.3}
 % To by bylo i v caption apod.
 % https://texfaq.org/FAQ-linespace
-\usepackage{setspace}
-\onehalfspacing
+\usepackage[onehalfspacing]{setspace}
 
 %\usepackage[a4paper]{geometry}
 % TODO predepsane okraje
@@ -101,8 +100,14 @@
     exponent-product=\ensuremath{\cdot}
 }
 
+% https://tex.stackexchange.com/questions/55802/latex-lstinline
+\newcommand{\mysinglespacing}{%
+  \setstretch{1}% no correction afterwards
+}
+
 % https://tex.stackexchange.com/questions/30512/how-to-insert-code-with-accents-with-listings
 \lstset{
+  basicstyle=\mysinglespacing,
   columns=flexible,
   frame=single,
   breaklines=true,
@@ -147,12 +152,12 @@
     }
 
 \lstdefinestyle{terminal}
-    {basicstyle=\ttfamily\singlespacing,basewidth={0.5em,0.5em}}
+    {basicstyle=\ttfamily\mysinglespacing,basewidth={0.5em,0.5em}}
 
 
 \lstdefinelanguage{Ini}
 {
-    basicstyle=\ttfamily,
+    basicstyle=\ttfamily\mysinglespacing,
     morecomment=[s][\rmfamily\bfseries]{[}{]},
     morecomment=[l]{\#},
     morecomment=[l]{;},
@@ -185,7 +190,7 @@
     %moredelim=[l][\color{magenta}]{*},
     %
     % TODO YAML syntax highlighting - \bfseries keys not compatible with multiline strings
-    %basicstyle=\bfseries,
+    %basicstyle=\bfseries\mysinglespacing,
     %moredelim=**[il][\mdseries{:}]{:}, % switch to value style at :
     %moredelim=[l][\mdseries]{:}, % switch to value style at :
     %
