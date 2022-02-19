@@ -56,6 +56,7 @@
 \usepackage{listings}
 \usepackage[htt]{hyphenat}  % hyphenate \texttt
 \usepackage{titlesec}
+\usepackage{acronym}
 
 %\usepackage{arydshln} % dashed lines in tabular; should be one of the last packages (http://texdoc.net/texmf-dist/doc/latex/arydshln/arydshln-man.pdf)
 
@@ -295,20 +296,21 @@
 
 
 \section*{Seznam zkratek}
-\begin{itemize}
-    \item LED -- light-emitting diode -- elektroluminiscenční dioda
-    \item MCU -- microcontroller unit -- jednočipový počítač, mikrokontrolér
-    \item LUT -- lookup table -- vyhledávací tabulka
-    \item ISR -- interrupt service routine -- obsluha přerušení
-    \item CLI -- command line interface -- příkazový řádek
-    \item SRAM -- static random access memory -- statická polovodičová pamět
-          s~přímým přístupem
-    \item EEPROM -- electrically erasable programmable read-only memory~--
-          elektricky vymazatelná paměť pouze pro čtení
-    \item LSB -- least significant bit -- nejméně významný bit
-    \item MSB -- most significant bit -- nejvýznamnější bit
-    \item SDK -- software development kit
-    \item IDE -- integrated development environment -- vývojové prostředí
-\end{itemize}
+% POZOR podle abecedy to musim radit rucne...
+% vim select in visual mode & :sort
+\begin{acronym}[EEPROM] % nejdelsi zkratka kvuli zarovnani
+    \acro{CLI}{příkazový řádek\acroextra{ (command line interface)}}
+    \acro{EEPROM}{elektricky vymazatelná paměť pouze pro čtení\acroextra{ (electrically erasable programmable read-only memory)}}
+    \acro{IDE}{vývojové prostředí\acroextra{ (integrated development environment)}}
+    \acro{ISR}{obsluha přerušení\acroextra{ (interrupt service routine)}}
+    \acro{LED}{elektroluminiscenční dioda\acroextra{ (light-emitting diode)}}
+    \acro{LSB}{nejméně významný bit\acroextra{ (least significant bit)}}
+    \acro{LUT}{vyhledávací tabulka\acroextra{ (lookup table)}}
+    \acro{MCU}{mikrokontrolér\acroextra{ (jednočipový počítač; microcontroller unit)}}
+    \acro{MSB}{nejvýznamnější bit\acroextra{ (most significant bit)}}
+    \acro{SDK}{software development kit}
+    \acro{SMD}{součástka pro povrchovou montáž\acroextra{ (surface mount device)}}
+    \acro{SRAM}{statická polovodičová pamět s~přímým přístupem\acroextra{ (static random access memory)}}
+\end{acronym}
 
 \end{document}
