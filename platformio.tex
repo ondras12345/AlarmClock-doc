@@ -1,4 +1,4 @@
-\subsection{PlatformIO}
+\section{PlatformIO}
 PlatformIO\footnote{\url{https://platformio.org/}} je multiplatformní, na
 architektuře nezávislý nástroj s otevřeným zdrojovým kódem pro vývoj embedded
 systémů. Podporuje mnoho SDK (včetně Arduino) a nezávisí na konkrétním
@@ -65,7 +65,7 @@ Pro další zjednodušení a automatizaci práce s tímto nástrojem byl vytvoř
 Tento soubor obsahuje i mechanismus pro generování nápovědy, dostupné příkazy
 lze zjistit příkazem \shellcmd{make help}.
 
-\subsubsection{Automatické testy}
+\subsection{Automatické testy}
 Jednou z hlavních motivací pro nasazení technologie PlatformIO byla podpora
 automatických testů. PlatformIO podporuje testování jednotlivých jednotek
 zdrojového kódu (unit testing), a to jak na cílové platformě (embedded MCU),
@@ -281,7 +281,7 @@ tentokrát v programovacím jazyce Python, které kontrolují stejné případy
 v tamní implementaci objektu.
 
 
-\paragraph{Pomocné objekty -- mock objects}
+\subsubsection{Pomocné objekty -- mock objects}
 Abychom mohli testovat i složitější jednotky odděleně od ostatních, využíváme
 pomocné objekty. Při testování firmware je například velmi výhodné takto
 nahradit kód komunikující s hardware, protože tím je umožněno spouštění testů
@@ -294,7 +294,7 @@ Arduino -- například \texttt{Serial}.
 % TODO mocking
 
 
-\subsubsection{Statická analýza kódu}
+\subsection{Statická analýza kódu}
 Statická analýza kódu umožňuje automaticky detekovat potenciální chyby bez
 spuštění programu. Program provádějící statickou analýzu čte zdrojové kódy
 a odhaluje chyby jako indexování pole mimo jeho hranice, dereference nulového

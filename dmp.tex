@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
 \usepackage[T1]{fontenc}
@@ -32,7 +32,9 @@
 %\usepackage{refcount} % calculations with references (Lastpage in desky-predni)
 %\usepackage{makecell} % for multiline cells in desky-predni
 %\usepackage{lastpage}
-\usepackage{fancyhdr}
+
+%\usepackage{fancyhdr}
+
 \usepackage{titling}
 %\usepackage{tabularx}
 %\usepackage{colortbl}
@@ -57,6 +59,7 @@
 \usepackage[htt]{hyphenat}  % hyphenate \texttt
 \usepackage{titlesec}
 \usepackage{acronym}
+\usepackage[titles]{tocloft}
 
 %\usepackage{arydshln} % dashed lines in tabular; should be one of the last packages (http://texdoc.net/texmf-dist/doc/latex/arydshln/arydshln-man.pdf)
 
@@ -258,20 +261,41 @@
 }
 
 
+% fancyhdr does not seem to work well with documentclass report
 % headers and footers
-\setlength{\headheight}{15pt} % prevents a warning most likely caused by diacritics
-\pagestyle{fancy}
-%\renewcommand{\headrulewidth}{0pt}
-\fancyhf{} % clears header and footer, otherwise "plain" will appear
-%\fancyhead{} % only clears the header
-\lhead{\theauthor}
-\rhead{\thepage}
-\fancyhfoffset{0pt} % fixes width after \newgeometry
-
-\newcommand{\sectionbreak}{\clearpage}
+%\setlength{\headheight}{15pt} % prevents a warning most likely caused by diacritics
+%\pagestyle{fancy}
+%%\renewcommand{\headrulewidth}{0pt}
+%\fancyhf{} % clears header and footer, otherwise "plain" will appear
+%%\fancyhead{} % only clears the header
+%\lhead{\theauthor}
+%\rhead{\thepage}
+%\fancyhfoffset{0pt} % fixes width after \newgeometry
 
 % Roztrhana matika
 \allowdisplaybreaks
+
+% kapitola bez cisla
+\newcommand{\nonuchapter}[1]
+{%
+    \chapter*{#1}%
+    \addcontentsline{toc}{chapter}{#1}% v toc, ale bez cisla
+    \phantomsection%
+}
+
+% seznam priloh
+% https://tex.stackexchange.com/questions/26732/how-to-get-a-list-of-appendices
+\newcommand{\listappendicesname}{Seznam příloh}
+\newlistof{appendices}{apc}{\listappendicesname}
+\renewcommand{\theappendices}{\Alph{appendices}}
+\newcommand{\newappendix}[1]{%
+    \refstepcounter{appendices}
+    \section*{Příloha \theappendices: #1}
+    \phantomsection
+    \addcontentsline{apc}{appendices}{\protect\numberline{\theappendices}#1}
+}
+
+
 
 \begin{document}
 
@@ -280,24 +304,26 @@
 \tableofcontents
 
 \input{uvod}
-\section{Hardware a firmware} % TODO
+\chapter{Hardware a firmware}
 \input{MCU}
 \input{platformio}
 %\input{TODO ambient}
 \input{GUI}
 \input{zvuk}
-\section{Software}  % TODO
+\chapter{Software}  % TODO uvod - cemu rikam software a cemu firmware
 \input{PyAlarmClock}
 \input{HomeAssistant}
 
 % Reference a odkazy
 {\singlespacing%
 \printbibliography[title={Odkazy a~literatura}]  % TODO poznamky a odkazy ??
+\phantomsection
+\addcontentsline{toc}{chapter}{Odkazy a~literatura}  % v toc, ale bez cisla
 % TODO abecedni razeni seznamu literatury
 }
 
 
-\section*{Seznam zkratek}
+\nonuchapter{Seznam zkratek}
 % POZOR podle abecedy to musim radit rucne...
 % vim select in visual mode & :sort
 \begin{acronym}[EEPROM] % nejdelsi zkratka kvuli zarovnani
@@ -314,5 +340,11 @@
     \acro{SMD}{součástka pro povrchovou montáž\acroextra{ (surface mount device)}}
     \acro{SRAM}{statická polovodičová pamět s~přímým přístupem\acroextra{ (static random access memory)}}
 \end{acronym}
+
+
+\listofappendices
+\addcontentsline{toc}{chapter}{\listappendicesname}
+
+\include{prilohy}
 
 \end{document}

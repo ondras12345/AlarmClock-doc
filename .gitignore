@@ -2,6 +2,7 @@ sim/*.raw
 sim/graf-*.eps
 sim/graf-*.tex
 
+
 ## LaTeX
 dmp.pdf
 ## Core latex/pdflatex auxiliary files:
@@ -17,6 +18,9 @@ dmp.pdf
 *.cb
 *.cb2
 .*.lb
+
+# seznam priloh
+*.apc
 
 ## Intermediate documents:
 *.dvi

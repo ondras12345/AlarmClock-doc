@@ -1,4 +1,4 @@
-\subsection{Zvukový výstup}
+\section{Zvukový výstup}
 Aby mohl budík plnit svou funkci, musí mít možnost vytvářet akustické signály.
 To je možné řešit mnoha jednoduchými způsoby, například piezoelektrickým
 bzučákem. Aby bylo akustické buzení pro uživatele přijatelnější, je vhodné
@@ -40,7 +40,7 @@ straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
 
 % TODO obrazek PWM signal kodujici sinusoidu
 
-\subsubsection{Zesilovač}
+\subsection{Zesilovač}
 Z hlediska zesilování výstupního signálu máme dvě možnosti -- můžeme zesilovat
 vyfiltrovaný sinusový signál pomocí lineárního zesilovače (zesilovače
 pracujícího v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM signál
@@ -63,7 +63,7 @@ pracujícího v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM 
     \label{fig:zvuk blok linearni}
 \end{figure}
 
-\paragraph{Lineární zesilovač}
+\subsubsection{Lineární zesilovač}
 Při prvotním vývoji zvukového výstupu byl z důvodu jednoduchosti využit
 lineární zesilovač založený na integrovaném obvodu TDA2030. Pro přizpůsobení
 signálu na úroveň vhodnou pro zpracování zesilovačem byl použit obvod zobrazený
@@ -128,7 +128,7 @@ požadavek na nesymetrické napájení napětím \SI{5}{\volt} (ale tento probl�
     \label{fig:zvuk blok spinany}
 \end{figure}
 
-\paragraph{Spínaný zesilovač}
+\subsubsection{Spínaný zesilovač}
 Účinnějším (a z hlediska počtu součástek jednodušším) řešením je zesilování PWM
 signálu spínacími tranzistory. Filtrace je řešena na výstupu zesilovače.
 
@@ -141,7 +141,7 @@ odstraňující stejnosměrnou složku.
 
 
 \FloatBarrier  % TODO global ??
-\subsubsection{Implementace zvukového výstupu ve firmware}
+\subsection{Implementace zvukového výstupu ve firmware}
 Generování obdélníkového signálu s určenou periodou je na MCU nejjednodušeji
 proveditelné s využitím hardwarové periferie čítače/časovače. V této práci
 využitý MCU má těchto periferií několik, pro účely implementace zvukového
@@ -157,7 +157,7 @@ z časovačů. Vhodnou volbou délky běhu časovače Timer1 můžeme dosáhnout
 tento časovač bude vhodný jak pro generování PWM signálu, tak i pro spouštění
 ISR.
 
-\paragraph{Testovací verze}
+\subsubsection{Testovací verze}
 Pro prvotní ověření konceptu byl vytvořen jednoduchý firmware implementující
 pouze zvukový výstup. V repositáři \gitrepo{AlarmClock} je umístěn v adresáři
 \repopath{development/audio}.  % POZOR tuhle cestu mozna zmenim (platformio)
@@ -405,7 +405,7 @@ o frekvenci \SI{440}{\hertz} s plnou amplitudou po dobu \SI{1}{\second} a ticho
 po dobu \SI{2}{\second}. Poté se smyčka opakuje.
 
 
-\paragraph{Plná verze}
+\subsubsection{Plná verze}
 Implementace ve firmware budíku je mírně odlišná. Knihovna \filename{PWMSine.h}
 definuje \texttt{C++} třídu \texttt{PWMSine} a její vnitřní kód je v porovnání
 s testovací verzí složitější. API knihovny je dokumentováno standardně
@@ -455,7 +455,7 @@ Objekt \texttt{BuzzerManager} proto v takových případech využívá právě m
 střídě \SI{50}{\percent}.
 
 
-\subparagraph{Příkazy v \texttt{AlarmClockCLI}}
+\paragraph{Příkazy v \texttt{AlarmClockCLI}}
 V příkazovém řádku (CLI) budíku byly implementovány příkazy umožňující
 jednoduché testování zvukového výstupu. V nápovědě jsou zdokumentovány
 následovně:
@@ -483,7 +483,7 @@ s použitím standardních ovládacích prvků opustit.
 
 
 
-\subparagraph{Melodie}
+\paragraph{Melodie}
 V průběhu vývoje vyvstal požadavek na možnost změnit frekvenci periodu
 a hlasitost přerušovaného pískání při buzení. Vzhledem k jednoduchosti
 implementace bylo zvoleno flexibilnější řešení, které umožňuje vytváření
