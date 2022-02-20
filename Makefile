@@ -12,7 +12,7 @@ clean:      ## Clean up the working directory.
 
 .PHONY: ext
 ext:        ## Make everything pdflatex needs, except for ods2csv.
-ext: graphssim
+ext: graphssim svgfigures
 
 .PHONY: help
 help:       ## Show this help.
@@ -28,3 +28,9 @@ sim/graf-%.tex: sim/graf-%.gpi sim/graf-common.gpi sim/%.txt
 
 .PHONY: graphssim
 graphssim: $(addsuffix .tex, $(basename $(filter-out sim/graf-common.gpi, $(wildcard sim/graf-*.gpi))))
+
+
+.PHONY: svgfigures
+%.pdf: %.svg
+	inkscape -D -z --file=$< --export-pdf=$@
+svgfigures: $(addsuffix .pdf, $(basename $(wildcard figures/*.svg)))
