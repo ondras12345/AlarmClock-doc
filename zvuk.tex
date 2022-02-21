@@ -249,8 +249,9 @@ Pro generování PWM signálu je využit 16bitový časovač použitého MCU -- 
 Knihovna \texttt{TimerOne} zprostředkovává jednodušší ovládání této periferie.
 Odkaz na její zdrojový kód a specifikace použité verze jsou uvedeny jako
 komentář na začátku souboru \filename{PWMSine.cpp}. Jde o svobodnou knihovnu
-dostupnou pod podmínkami licence Creative Commons Attribution 3.0 United States
-License~\cite{TimerOnerepo}.
+dostupnou pod podmínkami licence
+\foreignlanguage{english}{Creative Commons Attribution 3.0 United States
+License}~\cite{TimerOnerepo}.
 
 Funkce \verb|PWMSine_setup| provádí inicializaci časovače a nastavuje periodu
 čítání na hodnotu \verb|timer1_us|, tedy \SI{20}{\micro\second}. Poté
@@ -267,9 +268,9 @@ výstupním pinu \verb|tone_pin| a zahajuje běh časovače Timer1.
 
 Funkce \verb|PWMSine_noTone| sice přijímá jako parametr výstupní pin,
 v současné implementaci ale tuto hodnotu nevyužívá. Aby se zamezilo varování
-kompilátoru \shellcmd{gcc} \uv{unused parameter}, je využita konstrukce jazyka
-\texttt{C}, která varování při kompilaci potlačí, ale neprojeví se na
-generovaném strojovém kódu:
+kompilátoru \shellcmd{gcc} \uv{\foreignlanguage{english}{unused parameter}},
+je využita konstrukce jazyka \texttt{C}, která varování při kompilaci potlačí,
+ale neprojeví se na generovaném strojovém kódu:
 \begin{lstlisting}[language=C]
 (void)pin;
 \end{lstlisting}
@@ -603,8 +604,8 @@ err 0x1: Invalid args
 
 Pro zjednodušení použití těchto příkazů byl vytvořen program
 \shellcmd{EEPROM-tool.py} (umístěný ve složce \repopath{examples/} v repositáři
-\gitrepo{PyAlarmClock}). Ten umožňuje přečtení souvislého bloku dat z EEPROM a
-zápis do binárního souboru, nebo naopak zápis dat z binárního souboru do
+\gitrepo{PyAlarmClock}). Ten umožňuje přečtení souvislého bloku dat z EEPROM
+a zápis do binárního souboru, nebo naopak zápis dat z binárního souboru do
 EEPROM. Například přečtení hlaviček všech melodií do souboru
 \texttt{hlavicky.bin} provádíme následovně:
 \begin{lstlisting}[style=terminal]

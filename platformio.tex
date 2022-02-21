@@ -68,9 +68,10 @@ lze zjistit příkazem \shellcmd{make help}.
 \subsection{Automatické testy}
 Jednou z hlavních motivací pro nasazení technologie PlatformIO byla podpora
 automatických testů. PlatformIO podporuje testování jednotlivých jednotek
-zdrojového kódu (unit testing), a to jak na cílové platformě (embedded MCU),
-tak i na počítači použitém pro vývoj (native). Testy jsou umístěny
-v samostatných podsložkách v adresáři \repopath{test/}.
+zdrojového kódu (\foreignlanguage{english}{unit testing}),
+a to jak na cílové platformě (embedded MCU), tak i na počítači použitém pro
+vývoj (native). Testy jsou umístěny v samostatných podsložkách v adresáři
+\repopath{test/}.
 
 Pro demonstraci využití jednotkových testů je vhodná velmi jednoduchá jednotka
 zajišťující ukládání boolean hodnoty (jednoho bitu -- pravda či nepravda) pro
@@ -332,7 +333,8 @@ Nástroj není neomylný a v některých případech dojde k falešné detekci. 
 \texttt{--inline-suppr} umožňuje potlačení varování pomocí speciálně
 formátovaných komentářů přímo v analyzovaném zdrojovém kódu. Bližší informace
 o formátu těchto speciálních komentářů lze nalézt v manuálu nástroje
-\shellcmd{cppcheck} v sekci Inline suppressions.~\cite{cppcheckmanual}
+\shellcmd{cppcheck}
+v~sekci \foreignlanguage{english}{Inline suppressions}.~\cite{cppcheckmanual}
 Příklad jejich využití ale lze nalézt přímo ve firmware budíku.
 V souboru \repopath{lib/SerialCLI/SerialCLI.h} je definováno pole
 \lstinline[language=C]!char Serial_buffer_[kSerial_buffer_length_ + 1];!,

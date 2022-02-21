@@ -76,7 +76,7 @@ subscriberovi.
 Zpráva v topic \topic{alarmclock/stat/available} určuje, zda je adaptér
 aktivní. Při jeho ukončení či náhodném odpojení je MQTT brokerem do tohoto
 topic automaticky zaslána zpráva \texttt{offline}. K tomu je využívána funkce
-MQTT Last Will and Testament -- LWT.
+MQTT \ac{LWT}.
 
 Požadujeme-li, aby budík provedl nějakou akci, pošleme zprávu do příslušného
 \texttt{command topic} -- \topic{alarmclock/cmnd/nazev_prikazu}.
