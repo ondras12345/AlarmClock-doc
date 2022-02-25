@@ -76,16 +76,17 @@
 % http://www.gnuplotting.org/labels-with-white-background-in-latex-terminals/
 \newcommand{\hl}[1]{\setlength{\fboxsep}{0.75pt}\colorbox{white}{#1}}
 
-\newcommand{\HAentity}[1]{\texttt{\detokenize{#1}}}  % detokenize makes underscores printable
-\newcommand{\HAdomain}[1]{\texttt{\detokenize{#1}}}
-\newcommand{\shellcmd}[1]{\texttt{\detokenize{#1}}}
+% robust command because of \listoffigures
+\DeclareRobustCommand{\HAentity}[1]{\texttt{\detokenize{#1}}}  % detokenize makes underscores printable
+\DeclareRobustCommand{\HAdomain}[1]{\texttt{\detokenize{#1}}}
+\DeclareRobustCommand{\shellcmd}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\HAstate}{\texttt}
-\newcommand{\topic}[1]{\texttt{\detokenize{#1}}}
+\DeclareRobustCommand{\topic}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\gitrepo}{\texttt}
-\newcommand{\repopath}[1]{\texttt{\detokenize{#1}}}
+\DeclareRobustCommand{\repopath}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\filename}{\texttt}
-\newcommand{\yamlkey}[1]{\texttt{\detokenize{#1}}}
-\newcommand{\inikey}[1]{\texttt{\detokenize{#1}}}
+\DeclareRobustCommand{\yamlkey}[1]{\texttt{\detokenize{#1}}}
+\DeclareRobustCommand{\inikey}[1]{\texttt{\detokenize{#1}}}
 
 \title{Chytrý budík}
 \author{Ondřej Sluka}
@@ -321,6 +322,14 @@
 \addcontentsline{toc}{chapter}{Odkazy a~literatura}  % v toc, ale bez cisla
 % TODO abecedni razeni seznamu literatury
 }
+
+\listoffigures
+\phantomsection
+\addcontentsline{toc}{chapter}{\listfigurename}  % v toc, ale bez cisla
+
+%\listoftables
+%\phantomsection
+%\addcontentsline{toc}{chapter}{\listtablename}  % v toc, ale bez cisla
 
 
 \nonuchapter{Seznam zkratek}
