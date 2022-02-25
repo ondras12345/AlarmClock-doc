@@ -1,0 +1,17 @@
+set output "graf-ambient-linear.tex"
+load "graf-common.gpi"
+
+set xlabel '$U_\mathrm{PWM}\,[\si{\volt}]$'
+set ylabel '$I_\mathrm{LED}\,[\si{\milli\ampere}]$'
+
+set xrange [0:5]
+set yrange [0:90]
+set xtics 1
+set mxtics 5
+set ytics 10
+set mytics 5
+
+unset key
+
+plot \
+    "ambient-linear.txt" u 1:($2*1000) with lines ls 1

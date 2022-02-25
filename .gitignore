@@ -1,6 +1,7 @@
 sim/*.raw
 sim/graf-*.eps
 sim/graf-*.tex
+figures/cropped_*.pdf
 
 
 ## LaTeX

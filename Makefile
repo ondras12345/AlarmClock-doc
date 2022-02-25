@@ -12,7 +12,7 @@ clean:      ## Clean up the working directory.
 
 .PHONY: ext
 ext:        ## Make everything pdflatex needs, except for ods2csv.
-ext: graphssim svgfigures
+ext: graphssim svgfigures croppedfigures
 
 .PHONY: help
 help:       ## Show this help.
@@ -34,3 +34,9 @@ graphssim: $(addsuffix .tex, $(basename $(filter-out sim/graf-common.gpi, $(wild
 %.pdf: %.svg
 	inkscape -D -z --file=$< --export-pdf=$@
 svgfigures: $(addsuffix .pdf, $(basename $(wildcard figures/*.svg)))
+
+
+.PHONY: croppedfigures
+figures/cropped_%.pdf: figures/cropme_%.pdf
+	pdfcrop --pdfversion 1.5 $< $@
+croppedfigures: $(patsubst figures/cropme_%.pdf,figures/cropped_%.pdf,$(wildcard figures/cropme_*.pdf))
