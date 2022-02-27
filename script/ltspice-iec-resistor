@@ -1,0 +1,16 @@
+#!/bin/sh
+usage()
+{
+    USAGE="usage: $0 file_to_convert
+Conversion is done in-place.
+"
+    echo "$USAGE" >&2
+}
+
+if [ $# -lt 1 ]; then
+    printf "file_to_convert unspecified\n\n" >&2
+    usage
+    exit 255
+fi
+
+sed -i 's/^SYMBOL res/SYMBOL Misc\\EuropeanResistor/' "$1"

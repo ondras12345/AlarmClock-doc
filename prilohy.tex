@@ -4,9 +4,10 @@
 \newappendix{Získávání snímků obrazovky z~digitálního osciloskopu Agilent~54621A}
 Autorův digitální osciloskop Agilent~54621A má poškozenou disketovou mechaniku,
 proto není možné využít standardní metody získávání snímků obrazovky
-a~textových dat. Pro účely tvorby dokumentace pro tuto práci byl vyvinut
-jednoduchý počítačový program umožňující čtení obrázků ve formátu BMP přes
-sériový port RS-232.
+a~textových dat. Přenos dat přes disketu funguje, ale je velmi nespolehlivý
+a~často vede k jejich ztrátě. Pro účely tvorby dokumentace pro tuto práci byl
+vyvinut jednoduchý počítačový program umožňující čtení obrázků ve formátu BMP
+přes sériový port RS-232.
 
 Je potřeba použít RS-232 kabel zapojený podle diagramu v dokumentaci
 osciloskopu.
@@ -24,6 +25,9 @@ osciloskopu.
 Program napsaný v jazyce Python je uložen v souboru \filename{scrot}:
 \lstinputlisting[language=Python,style=numbers]{prilohy/scrot}
 
+Po získání nekomprimovaného obrázku ve formátu BMP je vhodné provést
+bezztrátovou konverzi do formátu PNG příkazem \shellcmd{convert} z balíčku
+\texttt{imagemagick}.
 Příklad použití v prostředí operačního systému GNU/Linux:
 \begin{lstlisting}[style=terminal]
 $ ./scrot -h
@@ -38,6 +42,7 @@ optional arguments:
 
 $ ./scrot /dev/ttyUSB1 nazev-souboru
 Screen image written to nazev-souboru.bmp
+$ convert nazev-souboru.bmp nazev-souboru.png
 $
 \end{lstlisting}
 

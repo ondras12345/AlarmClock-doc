@@ -1,7 +1,7 @@
-set output "graf-ambient-linear.tex"
+set output "graf-ambient-linear-testing.tex"
 load "graf-common.gpi"
 
-set xlabel '$U_\mathrm{PWM}\,[\si{\volt}]$'
+set xlabel '$U_{C_1}\,[\si{\volt}]$'
 set ylabel '$I_\mathrm{LED}\,[\si{\milli\ampere}]$'
 
 set xrange [0:5]
@@ -14,4 +14,4 @@ set mytics 5
 unset key
 
 plot \
-    "ambient-linear.txt" u 1:($2*1000) with lines ls 1
+    "ambient-linear-testing.txt" u 1:($2*1000) with lines ls 1
