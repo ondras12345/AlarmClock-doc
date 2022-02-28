@@ -21,6 +21,8 @@
     top=25mm,
     bottom=30mm,
     % includefoot ??
+    marginparwidth=35mm,
+    marginparsep=3mm,
     %showframe,
 ]{geometry}
 \usepackage{array}
@@ -60,6 +62,12 @@
 \usepackage{titlesec}
 \usepackage{acronym}
 \usepackage[titles]{tocloft}
+\usepackage[
+    %disable
+    % todonotes can do weird stuff with circuitikz/tikz node[above], even when
+    % disabled
+]{todonotes}
+\reversemarginpar
 
 %\usepackage{arydshln} % dashed lines in tabular; should be one of the last packages (http://texdoc.net/texmf-dist/doc/latex/arydshln/arydshln-man.pdf)
 
@@ -302,8 +310,8 @@
 
 \begin{document}
 \input{titlepage}
-% TODO zadani
-% TODO anotace + prohlaseni
+\todo[inline]{zadani}
+\todo[inline]{anotace + prohlaseni}
 
 \tableofcontents
 
@@ -314,16 +322,18 @@
 \input{GUI}
 \input{zvuk}
 \input{ambient}
-\chapter{Software}  % TODO uvod - cemu rikam software a cemu firmware
+\chapter{Software}
+\todo[inline]{Uvod - cemu rikam software a cemu firmware}
 \input{PyAlarmClock}
 \input{HomeAssistant}
 
 % Reference a odkazy
 {\singlespacing%
-\printbibliography[title={Odkazy a~literatura}]  % TODO poznamky a odkazy ??
+\printbibliography[title={Odkazy a~literatura}]
+\todo[inline]{poznamky a odkazy ??}
 \phantomsection
 \addcontentsline{toc}{chapter}{Odkazy a~literatura}  % v toc, ale bez cisla
-% TODO abecedni razeni seznamu literatury
+\todo{abecedni razeni seznamu literatury}
 }
 
 \listoffigures
@@ -359,6 +369,9 @@
     % TODO \acro{CC}{} ?? constant current
     % TODO \acro{CV}{} ?? constant voltage
 \end{acronym}
+
+
+\listoftodos
 
 
 \listofappendices

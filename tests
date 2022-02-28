@@ -25,7 +25,7 @@ exit_status=0
 
 
 bold_msg "\nKontrola TODO poznamek..."
-grep --color=auto "TODO" "${search_files[@]}"
+grep --color=auto 'TODO\|\\todo\|\\missingfigure' "${search_files[@]}"
 prev_exit="$?"
 if [ $prev_exit -eq 0 ] ; then
     err_msg "V elabu jsou TODO poznamky."

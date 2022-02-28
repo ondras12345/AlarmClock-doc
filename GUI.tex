@@ -29,20 +29,21 @@ Expandér PCF8574 má 8 pinů, které lze nezávisle nastavit jako vstup či vý
 Výstupní pin $\overline{\mathrm{INT}}$ může být využit pro spuštění
 hardwarového přerušení (interrupt) na straně MCU při změně stavu vstupních
 pinů, MCU tedy nemusí pravidelně kontrolovat jejich stav.~\cite{dshPCF8574}
-% TODO blokove schema, knihovna, ...
+
+\todo[inline]{blokove schema, knihovna, ...}
 
 
 Expandér ovládá také podsvícení displeje. To je zajištěno elektroluminiscenční
 diodou (LED) svítící z boku do plexiskla pod open cell. V běžně prodávaných
 znakových LCD je osazovány bílé LED, přičemž vlastní open cell je modrý. Pro
 použití v podmínkách s nízkou intenzitou osvětlení ale považuji za vhodnější
-podsvícení červenou barvou. Když pro podsvícení použijeme červenou LED, blokuje
-open cell většinu světla a ven z panelu vychází červené světlo pouze v místech,
-kde jsou otevřené pixely.
-% TODO ozdrojovat modre svetlo v noci
-% TODO open cell - cesky termin nebo obrazek
+podsvícení červenou barvou. \todo{ozdrojovat modre svetlo v noci}
+Když pro podsvícení použijeme červenou LED, blokuje
+open cell \todo{open cell - cesky termin nebo obrazek}
+většinu světla a ven z panelu vychází červené světlo pouze v místech, kde jsou
+otevřené pixely.
 
-% TODO modifikace LCD
+\todo[inline]{modifikace LCD - dopsat}
 Modifikace barvy podsvícení není triviální, protože se na trhu vyskytuje mnoho
 displejů se stejnými rozměry, komunikačním rozhraním apod., ale s rozdílným
 provedením podsvětlení (BLU). U všech autorem zakoupených displejů je

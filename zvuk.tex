@@ -38,7 +38,7 @@ potřebná strmost její útlumové frekvenční charakteristiky není tak velk�
 Příliš vysoká frekvence PWM signálu zase přináší problémy s implementací na
 straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
 
-% TODO obrazek PWM signal kodujici sinusoidu
+\missingfigure{PWM signal kodujici sinusoidu}
 
 \subsection{Zesilovač}
 Z hlediska zesilování výstupního signálu máme dvě možnosti -- můžeme zesilovat
@@ -52,9 +52,9 @@ pracujícího v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM 
     \begin{circuitikz}
         \draw
             (6,0) node [loudspeakershape, rotate=270] (speaker) {}
-                  node [above=3em,left=0em,anchor=center,align=left] {reproduktor}
+                  node [above=2em,align=left] {reproduktor}
             (0,0) node [vsourcesquareshape, rotate=90] (MCU) {}
-                  node [above=3em,left=0em,anchor=center,align=left] {PWM výstup\\ z~MCU}
+                  node [above=1.5em,align=left] {PWM výstup\\ z~MCU}
             (MCU.south) to [lowpass,l=dolní propust] (3,0)
             to [amp, box, l=zesilovač] (speaker.south)
             ;
@@ -65,9 +65,10 @@ pracujícího v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM 
 
 \subsubsection{Lineární zesilovač}
 Při prvotním vývoji zvukového výstupu byl z důvodu jednoduchosti využit
-lineární zesilovač založený na integrovaném obvodu TDA2030. Pro přizpůsobení
-signálu na úroveň vhodnou pro zpracování zesilovačem byl použit obvod zobrazený
-na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
+lineární zesilovač založený na integrovaném obvodu TDA2030.
+\todo{zapojeni zesilovace s TDA2030 -- asi v priloze}
+Pro přizpůsobení signálu na úroveň vhodnou pro zpracování zesilovačem byl
+použit obvod zobrazený na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
 
 \begin{figure}[htb]
     \centering
@@ -98,12 +99,9 @@ na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
     \caption{%
         Útlumová frekvenční charakteristika filtru zobrazeného na
         obrázku~\vref{fig:zvuk filtr linearni} podle simulace v LTspice
-        % TODO zdrojak LTspice simulace do priloh
     }
     \label{fig:zvuk filtr linearni utlum}
 \end{figure}
-
-% TODO zapojeni zesilovace s TDA2030 -- asi v priloze
 
 Nevýhodou takového řešení je nízká účinnost zesilovače a poměrná složitost
 obvodového řešení, kdy musíme signál vyfiltrovat, upravit na vhodnou amplitudu
@@ -117,9 +115,9 @@ požadavek na nesymetrické napájení napětím \SI{5}{\volt} (ale tento probl�
     \begin{circuitikz}
         \draw
             (6,0) node [loudspeakershape, rotate=270] (speaker) {}
-                  node [above=3em,left=0em,anchor=center,align=left] {reproduktor}
+                  node [above=2em,align=left] {reproduktor}
             (0,0) node [vsourcesquareshape, rotate=90] (MCU) {}
-                  node [above=3em,left=0em,anchor=center,align=left] {PWM výstup\\ z~MCU}
+                  node [above=1.5em,align=left] {PWM výstup\\ z~MCU}
             (MCU.south) to [amp, box, l=zesilovač] (3,0)
             to [lowpass,l=dolní propust] (speaker.south)
             ;
@@ -135,7 +133,7 @@ signálu spínacími tranzistory. Filtrace je řešena na výstupu zesilovače.
 Protože máme k dispozici pouze nesymetrické napájení \SI{5}{\volt}, musíme
 výstup spínacích prvků připojit na filtr a reproduktor přes sériový kondenzátor
 odstraňující stejnosměrnou složku.
-% TODO
+\todo[inline]{dopsat spinany zesilovac}
 
 
 
@@ -627,12 +625,14 @@ Proto je výhodné využít editor binárních dat GNU
 \shellcmd{poke}\footnote{\url{http://www.jemarch.net/poke}}.
 Struktura dat je popsána souborem zvaným \texttt{pickle}. Po načtení tohoto
 \texttt{pickle} do interaktivního příkazového řádku programu \shellcmd{poke}
+\todo{%
+    program poke, jazyk Poke
+    % http://jemarch.net/pokology-01102019.html
+}
 provádíme mapování dané struktury na konkrétní data v binárním souboru a dále
 s nimi pracujeme jako s objekty. Celý pickle je uložen v souboru
 \repopath{tools/AlarmClockEEPROM.pk} v repositáři \gitrepo{AlarmClock}, pro
 demonstraci konceptu ale použijeme pouze jeho část:
-% TODO program poke, jazyk Poke
-% http://jemarch.net/pokology-01102019.html
 \begin{lstlisting}[language=Poke]
 /*
  * Melodies
@@ -704,4 +704,4 @@ první hlavičce (\verb|melody_headers[0].address = 0x0123|) a s pomocí
 \shellcmd{EEPROM-tool.py} binární soubor zapsat zpět do paměti EEPROM.
 
 
-% TODO
+\todo[inline]{dopsat zvuk}
