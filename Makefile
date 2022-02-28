@@ -7,6 +7,7 @@ pdf: ext
 .PHONY: clean
 clean:      ## Clean up the working directory.
 	latexmk -c
+	-rm figures/cropped_*.pdf sim/cropped_*.pdf
 	#-rm schemata/c_*.pdf
 
 
