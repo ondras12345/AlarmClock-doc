@@ -14,3 +14,43 @@ amatérsky vyrobeném plošném spoji složitější, obzvlášť pokud jde o pl
 jednostranný.
 
 \nocite{dshATmega328} % TODO info o MCU
+
+I/O piny jsou děleny do třech portů (Port B, Port C, Port D). Podle toho jsou
+piny číslovány~-- například \texttt{PB0}. Ve firmware jsou ale používána čísla
+pinů frameworku Arduino. K vzájemnému převodu těchto dvou způsobů značení
+slouží tabulka~\vref{tab:MCU pins}.
+
+\begin{table}[htb]
+    \centering
+    \caption{%
+        Číslování pinů MCU ATmega328P dle frameworku Arduino%
+        %\footnote{\url{https://www.arduino.cc/en/uploads/Main/Arduino_Uno_Rev3-schematic.pdf}}
+    }
+    \label{tab:MCU pins}
+    % https://www.abclinuxu.cz/tex/poradna/show/325037
+    \catcode`\-=12
+    \begin{tabular}{*{3}{ll}}
+        \toprule
+        \multicolumn{2}{c}{PORTD}
+        & \multicolumn{2}{c}{PORTB}
+        & \multicolumn{2}{c}{PORTC}
+        \\
+        \cmidrule(lr){1-2}
+        \cmidrule(lr){3-4}
+        \cmidrule(lr){5-6}
+        Arduino pin     & MCU pin
+        & Arduino pin     & MCU pin
+        & Arduino pin     & MCU pin
+        \\
+        \midrule
+        0   & PD0   & 8   & PB0   & A0  & PC0 \\
+        1   & PD1   & 9   & PB1   & A1  & PC1 \\
+        2   & PD2   & 10  & PB2   & A2  & PC2 \\
+        3   & PD3   & 11  & PB3   & A3  & PC3 \\
+        4   & PD4   & 12  & PB4   & A4  & PC4 \\
+        5   & PD5   & 13  & PB5   & A5  & PC5 \\
+        6   & PD6 \\
+        7   & PD7 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
