@@ -13,7 +13,7 @@ clean:      ## Clean up the working directory.
 
 .PHONY: ext
 ext:        ## Make everything pdflatex needs, except for ods2csv.
-ext: graphssim svgfigures croppedfigures croppedsim
+ext: graphssim svgfigures croppedfigures gnuplotfigures croppedsim
 
 .PHONY: help
 help:       ## Show this help.
@@ -41,6 +41,11 @@ svgfigures: $(addsuffix .pdf, $(basename $(wildcard figures/*.svg)))
 figures/cropped_%.pdf: figures/cropme_%.pdf
 	pdfcrop --pdfversion 1.5 $< $@
 croppedfigures: $(patsubst figures/cropme_%.pdf,figures/cropped_%.pdf,$(wildcard figures/cropme_*.pdf))
+
+.PHONY: gnuplotfigures
+figures/graf-%.tex: figures/graf-%.gpi figures/graf-common.gpi
+	cd figures && gnuplot $(patsubst figures/%, %, $<)
+gnuplotfigures: $(addsuffix .tex, $(basename $(filter-out figures/graf-common.gpi, $(wildcard figures/graf-*.gpi))))
 
 
 .PHONY: croppedsim

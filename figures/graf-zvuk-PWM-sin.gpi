@@ -1,0 +1,28 @@
+set output "graf-zvuk-PWM-sin.tex"
+load "graf-common.gpi"
+
+set xlabel '$t\,[\si{\second}]$'
+set ylabel '$U\,[\si{\volt}]$'
+
+fpwm = 30e3
+Tpwm = 1.0/fpwm
+
+fsin = 1e3
+Tsin = 1.0/fsin
+
+set xrange [0:Tsin]
+unset xtics
+set yrange [-0.1:1.1]
+set ytics (0)
+
+unset key
+
+
+Upwm(t,d) = (t<0) ? Upwm(t+Tpwm, d) : (t>Tpwm) ? Upwm(t-Tpwm, d) : (t <= d*Tpwm) ? 1 : 0
+Usin(t) = 0.5*sin(2*pi*fsin*t) + 0.5
+
+set samples 10000
+plot \
+    Upwm(x, Usin(x)) ls 1, \
+    Upwm(x, Usin(x)) with filledcurves y1=0 fs transparent pattern 6 ls 1 lc rgb "gray50", \
+    Usin(x) ls 2

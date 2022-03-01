@@ -3,6 +3,8 @@ sim/graf-*.eps
 sim/graf-*.tex
 sim/cropped_*.pdf
 figures/cropped_*.pdf
+figures/graf-*.eps
+figures/graf-*.tex
 
 
 ## LaTeX

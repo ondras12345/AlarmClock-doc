@@ -38,7 +38,12 @@ potřebná strmost její útlumové frekvenční charakteristiky není tak velk�
 Příliš vysoká frekvence PWM signálu zase přináší problémy s implementací na
 straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
 
-\missingfigure{PWM signal kodujici sinusoidu}
+\begin{figure}[htb]
+    \centering
+    \input{figures/graf-zvuk-PWM-sin.tex}
+    \caption{PWM signál kódující sinusoidu}
+    \label{fig:zvuk PWM sin}
+\end{figure}
 
 \subsection{Zesilovač}
 Z hlediska zesilování výstupního signálu máme dvě možnosti -- můžeme zesilovat
