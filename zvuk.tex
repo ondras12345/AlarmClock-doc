@@ -70,8 +70,8 @@ pracujícího v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM 
 
 \subsubsection{Lineární zesilovač}
 Při prvotním vývoji zvukového výstupu byl z důvodu jednoduchosti využit
-lineární zesilovač založený na integrovaném obvodu TDA2030.
-\todo{zapojeni zesilovace s TDA2030 -- asi v priloze}
+lineární zesilovač založený na integrovaném obvodu TDA2030, jehož dokumentace
+je otištěna v příloze~\ref{app:TDA2030}.
 Pro přizpůsobení signálu na úroveň vhodnou pro zpracování zesilovačem byl
 použit obvod zobrazený na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
 
@@ -188,7 +188,7 @@ Pro návrh filtru byl využit zdarma dostupný webový nástroj
 filtru (dolní propust 4. řádu typu Butterworth, mezní frekvence
 \SI{10}{\kilo\hertz}, vstupní impedance \SI{0}{\ohm}, výstupní impedance
 \SI{8}{\ohm}) vypočítá požadované hodnoty jeho součástek (viz
-obrázke~\vref{fig:zvuk D butterworth}).
+obrázek~\vref{fig:zvuk D butterworth}).
 Výsledné hodnoty součástek byly upraveny, protože byly již při předchozích
 experimentech nakoupeny cívky s indukčností \SI{100}{\micro\henry} a kvůli
 špatné dostupnosti keramických kondenzátorů o kapacitě \SI{820}{\nano\farad}
