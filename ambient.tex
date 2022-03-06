@@ -19,7 +19,7 @@ tranzistorový obvod, který slouží k napájení jedné LED o jmenovitém výk
 \SI{1}{\watt} ze zdroje o napětí \SI{12}{\volt}. Obvod je určen pouze pro
 testování a při jeho návrhu proto nebylo věnováno příliš pozornosti tomu, aby
 byla závislost proudu protékajícího LED na střídě PWM signálu lineární (viz
-graf na obrázku~\vref{fig:ambient linear testing napeti}).
+graf na obrázku~\vref{fig:ambient linear testing sim napeti}).
 Z tohoto důvodu není obvod vhodný pro použití ve finálním výrobku. Dalšími
 nevýhodami jsou nízká účinnost, potřeba chladit výkonový tranzistor a z toho
 vyplývající velké fyzické rozměry součástek. Obvod ale lze velmi snadno
@@ -50,11 +50,23 @@ vhodnější aplikovat teplo ze spodní strany.
     \label{fig:ambient linear testing sch}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{sim/cropped_ambient-linear-testing}
+    \subcaptionbox{%
+        Schéma zapojení a nastavení simulace%
+        \label{fig:ambient linear testing sim sch}
+    }{%
+        \includegraphics[width=0.9\textwidth]{sim/cropped_ambient-linear-testing}
+    }
+    \subcaptionbox{%
+        Závislost proudu protékajícího LED na napětí zdroje V1 reprezentujícího
+        kondenzátor $C_1$ z~obrázku~\vref{fig:ambient linear testing sch}%
+        \label{fig:ambient linear testing sim napeti}
+    }{%
+        \input{sim/graf-ambient-linear-testing.tex}
+    }
     \caption{Simulace testovacího lineárního stmívače v programu LTspice}
-    \label{fig:ambient linear testing sim sch}
+    \label{fig:ambient linear testing sim}
 \end{figure}
 
 Vstupní PWM signál je převáděn na analogové napětí dolní propustí (integračním
@@ -70,17 +82,6 @@ konstantní úbytek napětí ($U_\mathrm{CE} \cong \SI{700}{\milli\volt}$).
 Konstantní proud je tedy $I = \frac{U_\mathrm{CE}}{R_4} =
 \frac{\SI{700}{\milli\volt}}{\SI{6,8}{\ohm}} \doteq \SI{103}{\milli\ampere}$.
 Regulace probíhá přivíráním Q3.
-
-\begin{figure}[htb]
-    \centering
-    \input{sim/graf-ambient-linear-testing.tex}
-    \caption{%
-        Závislost proudu protékajícího LED na napětí získaném filtrací
-        PWM signálu na vstupu testovacího lineárního stmívače
-        podle simulace v LTspice
-    }
-    \label{fig:ambient linear testing napeti}
-\end{figure}
 
 \FloatBarrier
 \subsection{Konečná verze}
@@ -111,19 +112,20 @@ kritická, dokonale postačí běžná hodnota \SI{100}{\nano\farad}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\textwidth]{sim/cropped_ambient-linear-prod}
-    \caption{Simulace konečné verze lineárního stmívače v programu LTspice}
-    \label{fig:ambient linear prod sim sch}
-\end{figure}
-
-\begin{figure}[htb]
-    \centering
-    \input{sim/graf-ambient-linear-prod.tex}
-    \caption{%
-        Závislost proudu protékajícího LED na napětí zdroje V1 dle simulace
-        z~obrázku~\vref{fig:ambient linear prod sim sch}
+    \subcaptionbox{%
+        Schéma zapojení a nastavení simulace%
+        \label{fig:ambient linear prod sim sch}
+    }{%
+        \includegraphics[width=0.9\textwidth]{sim/cropped_ambient-linear-prod}
     }
-    \label{fig:ambient linear prod napeti}
+    \subcaptionbox{%
+        Závislost proudu protékajícího LED na napětí zdroje V1%
+        \label{fig:ambient linear prod sim napeti}
+    }{%
+        \input{sim/graf-ambient-linear-prod.tex}
+    }
+    \caption{Simulace konečné verze lineárního stmívače v programu LTspice}
+    \label{fig:ambient linear prod sim}
 \end{figure}
 
 \subsubsection{Měření závislosti proudu protékajícího LED na střídě}

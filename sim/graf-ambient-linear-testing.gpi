@@ -1,7 +1,7 @@
 set output "graf-ambient-linear-testing.tex"
 load "graf-common.gpi"
 
-set xlabel '$U_{C_1}\,[\si{\volt}]$'
+set xlabel '$U_{1}\,[\si{\volt}]$'
 set ylabel '$I_\mathrm{LED}\,[\si{\milli\ampere}]$'
 
 set xrange [0:5]

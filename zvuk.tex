@@ -249,19 +249,20 @@ kondenzátorech filtru (viz obrázek~\vref{fig:zvuk D filtr sim graf}).
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.80\textwidth]{sim/cropped_zvuk-D-filtr.pdf}
-    \caption{Simulace filtru pro spínaný zesilovač v programu LTspice}
-    \label{fig:zvuk D filtr sim sch}
-\end{figure}
-
-\begin{figure}[htb]
-    \centering
-    \input{sim/graf-zvuk-D-filtr.tex}
-    \caption{%
-        Útlumová frekvenční charakteristika filtru dle simulace
-        z~obrázku~\vref{fig:zvuk D filtr sim sch}
+    \subcaptionbox{%
+        Schéma zapojení a nastavení simulace%
+        \label{fig:zvuk D filtr sim sch}
+    }{%
+        \includegraphics[width=0.80\textwidth]{sim/cropped_zvuk-D-filtr.pdf}
     }
-    \label{fig:zvuk D filtr sim graf}
+    \subcaptionbox{%
+        Útlumová frekvenční charakteristika%
+        \label{fig:zvuk D filtr sim graf}
+    }{%
+        \input{sim/graf-zvuk-D-filtr.tex}
+    }
+    \caption{Simulace filtru pro spínaný zesilovač v programu LTspice}
+    \label{fig:zvuk D filtr sim}
 \end{figure}
 
 \todo[inline]{dopsat spinany zesilovac}
