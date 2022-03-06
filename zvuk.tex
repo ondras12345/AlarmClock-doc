@@ -13,7 +13,7 @@ Požadavky na blok zvukového výstupu jsou tedy
     \item nastavitelná amplituda (s rozlišením 8 bitů, tedy ve 256 krocích),
     \item práce s nesymetrickým napájením \SI{5}{\volt},
     \item dokonalé ticho ve stavu softwarového vypnutí zvukového výstupu,
-    \item vysoká účinnost,
+    %\item vysoká účinnost,
     \item míra zkreslení dostatečné nízká na to, aby na uživatele nepůsobila
         příliš rušivě (obdélníkový signál není přijatelný).
 \end{itemize}
@@ -112,7 +112,9 @@ Nevýhodou takového řešení je nízká účinnost zesilovače a poměrná slo
 obvodového řešení, kdy musíme signál vyfiltrovat, upravit na vhodnou amplitudu
 a správně navrženým analogovým zesilovačem zesílit. Obvod také nesplňuje
 požadavek na nesymetrické napájení napětím \SI{5}{\volt} (ale tento problém je
-řešitelný použitím jiného integrovaného obvodu, například LM386).
+řešitelný použitím jiného integrovaného obvodu, například LM386). Vypínání
+zesilovače pro dosažení dokonalého ticha by si vyžadovalo další zesložitění
+obvodového řešení.
 
 
 \begin{figure}[htb]
@@ -128,18 +130,202 @@ požadavek na nesymetrické napájení napětím \SI{5}{\volt} (ale tento probl�
             ;
     \end{circuitikz}
     \caption{Blokové schéma zvukového výstupu se spínaným zesilovačem}
-    \label{fig:zvuk blok spinany}
+    \label{fig:zvuk blok D}
 \end{figure}
 
 \subsubsection{Spínaný zesilovač}
 Účinnějším (a z hlediska počtu součástek jednodušším) řešením je zesilování PWM
 signálu spínacími tranzistory. Filtrace je řešena na výstupu zesilovače.
+MCU není schopen dodat do bází tranzistorů tvořících zesilovací stupeň
+push-pull (Q2, Q3 na obrázku~\vref{fig:zvuk D tranzistory}) dostatečný
+proud, proto je potřeba přidat další stupeň (Q1). Ten také zajistí, že se na
+bázi NPN tranzistoru Q2 zapojeného jako emitorový sledovač dostane plné napětí
+\SI{5}{\volt}, i když bude na výstupu MCU napětí nižší (při
+$U_\mathrm{CC} = \SI{5}{\volt}$ minimálně
+$U_\mathrm{OH} = \SI{4,1}{\volt}$~\cite{dshATmega328}). % dshATmega328 259
+Obvod je navržen tak, aby při stavu vypnutí (\SI{0}{\volt} na vstupu)
+neprotékal tranzistory žádný proud.
 
-Protože máme k dispozici pouze nesymetrické napájení \SI{5}{\volt}, musíme
-výstup spínacích prvků připojit na filtr a reproduktor přes sériový kondenzátor
-odstraňující stejnosměrnou složku.
+\begin{figure}[htb]
+    \centering
+    \begin{circuitikz}
+        \draw
+            % prvni stage
+            (3,2) node[npn] (Q1) {Q1}
+            (0,2) node[left] {PWM}
+            (0,2) to [R, l=$R_1$, a=$\SI{1}{\kilo\ohm}$, o-] (Q1.B)
+            (Q1.E) to (3,0) node[ground] (GND1) {}
+            (Q1.C) to [short] (3,3)
+            to [R, l=$R_2$, a=$\SI{330}{\ohm}$] (3,5) node [vcc] {\SI{+5}{\volt}}
+            % push-pull
+            (6,4) node[npn] (Q2) {Q2}
+            (6,2) node[pnp] (Q3) {Q3}
+            (3,3) to [short, *-] (Q2.B |- 0,3)
+            to [short] (Q2.B)
+            (Q2.B |- 0,3) to [short, *-] (Q3.B)
+            (Q3.C) to (6,0) node[ground] (GND2) {}
+            (Q2.C) to [short] (6,5) node [vcc] {\SI{+5}{\volt}}
+            % vystup
+            (Q2.E) to [short] (Q3.E)
+            (6,3) to [short, *-] (7,3)
+            to [D, l_=$D_1$] (7,4.75)
+            to [short, -*] (6,4.75)
+            (6,1) to [short, *-] (7,1)
+            to [D, l_=$D_2$, -*] (7,3)
+            to [short, -o] (8,3)
+            node[right] {filtr}
+            ;
+    \end{circuitikz}
+    \caption{%
+        Schéma zapojení tranzistorového zesilovacího stupně spínaného
+        zesilovače
+    }
+    \label{fig:zvuk D tranzistory}
+\end{figure}
+
+Pro návrh filtru byl využit zdarma dostupný webový nástroj
+\url{https://rf-tools.com/lc-filter/}. Ten po zadání požadovaných vlastností
+filtru (dolní propust 4. řádu typu Butterworth, mezní frekvence
+\SI{10}{\kilo\hertz}, vstupní impedance \SI{0}{\ohm}, výstupní impedance
+\SI{8}{\ohm}) vypočítá požadované hodnoty jeho součástek (viz
+obrázke~\vref{fig:zvuk D butterworth}).
+Výsledné hodnoty součástek byly upraveny, protože byly již při předchozích
+experimentech nakoupeny cívky s indukčností \SI{100}{\micro\henry} a kvůli
+špatné dostupnosti keramických kondenzátorů o kapacitě \SI{820}{\nano\farad}
+v pouzdře pro povrchovou montáž 1206. Simulací v programu LTspice byl průběžně
+kontrolován průběh útlumové charakteristiky, aby nedošlo k přílišnému zhoršení
+vlastností filtru.
+
+\begin{figure}[hptb]
+    \centering
+    \includegraphics[width=\textwidth]{zvuk-D-butterworth}
+    \caption{%
+        Návrh filtru pro spínaný zesilovač ve webovém nástroji
+        \url{https://rf-tools.com/lc-filter/}
+    }
+    \label{fig:zvuk D butterworth}
+\end{figure}
+
+\begin{figure}[hptb]
+    \centering
+    \begin{circuitikz}
+        \draw
+            (0,3) to [L, l=$L_1$, a=$\SI{220}{\micro\henry}$, o-] (3,3)
+            to [C, l_=$C_1$, a^=$\SI{3,3}{\micro\farad}$] (3,0)
+            to [short, -o] (0,0)
+            (3,3) to [L, l=$L_2$, a=$\SI{100}{\micro\henry}$, *-] (6,3)
+            to [C, l_=$C_2$, a^=$\SI{1}{\micro\farad}$] (6,0)
+            to [short, -*] (3,0)
+            (6,3) to [C, l=$C_3$, a=$\SI{220}{\micro\farad}$, *-o] (9,3)
+            to [short] (10,3)
+            to [loudspeaker, a^=$\SI{8}{\ohm}$] (10,0)
+            to [short, -o] (9,0)
+            to [short, -*] (6,0)
+            (4.5,0) to [short, *-] ++(0,-0.1) node [ground] {}
+            ;
+    \end{circuitikz}
+    \caption{%
+        Schéma zapojení filtru pro spínaný zesilovač
+    }
+    \label{fig:zvuk D filtr sch}
+\end{figure}
+
+Umístění vazebního kondenzátoru $C_3$ odstraňujícího stejnosměrnou složku
+signálu až na výstup filtru umožňuje použít jako $C_1$ a $C_2$ elektrolytické
+kondenzátory, které mají při stejné kapacitě několikanásobně menší rozměry než
+například kondenzátory fóliové. Napětí na nich je totiž při normálním provozu
+vždy kladné. Vzhledem k malým potřebným kapacitám a provozním napětím ale
+postačí i vícevrstvé keramické kondenzátory (MLCC).
+
+Filtr tvořený dvěma cívkami a dvěma kondenzátory má dvě rezonanční frekvence,
+při kterých může dojít k nežádoucímu nárůstu napětí na jeho součástkách. Při
+připojené zátěži (reproduktor s impedancí \SI{8}{\ohm}) jsou kmity tlumené,
+s odpojenou zátěží ale může dojít k výraznému nárůstu napětí například na
+kondenzátorech filtru (viz obrázek~\vref{fig:zvuk D filtr sim graf}).
+%V praxi se ale neprojevily žádné problémy způsobené touto nedokonalostí.
+\todo{prakticky otestovat novy filtr}
+
+
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.80\textwidth]{sim/cropped_zvuk-D-filtr.pdf}
+    \caption{Simulace filtru pro spínaný zesilovač v programu LTspice}
+    \label{fig:zvuk D filtr sim sch}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+    \input{sim/graf-zvuk-D-filtr.tex}
+    \caption{%
+        Útlumová frekvenční charakteristika filtru dle simulace
+        z~obrázku~\vref{fig:zvuk D filtr sim sch}
+    }
+    \label{fig:zvuk D filtr sim graf}
+\end{figure}
+
 \todo[inline]{dopsat spinany zesilovac}
 
+\FloatBarrier
+\paragraph{Bipolární tranzistor jako Zenerova dioda}
+V souvislosti s problematikou vysokonapěťových špiček způsobených rezonancí ve
+filtru spínaného zesilovače ve stavu odpojené zátěže (reproduktoru) byly
+zkoumány metody jejich omezení. K tomuto účelu by byla vhodná Zenerova dioda,
+to by ale znamenalo přidání dalšího typu součástky, který je nutné pro osazení
+desky plošných spojů opatřit. Za účelem zachování co nejmenšího počtu různých
+typů součástek byly prováděny experimenty s použitím běžného bipolárního
+tranzistoru NPN, konkrétně jeho přechodu báze--emitor, jako Zenerovy diody.
+U křemíkových tranzistorů totiž v závěrném směru dochází k průrazu tohoto
+přechodu již od cca \SI{5}{\volt}. Pro účely omezení napěťových špiček
+nepotřebujeme, aby bylo toto napětí přesné.
+
+Pro ověření tohoto konceptu byl vytvořen jednoduchý testovací obvod sestávající
+z generátoru funkcí FY6900, který umožňuje dosažení napětí až \SI{25}{\volt},
+a~digitálního osciloskopu. Využíváme faktu, že výstupní impedance použitého
+generátoru je \SI{50}{\ohm}.
+
+\begin{figure}[htb]
+    \centering
+    \begin{circuitikz}
+        \draw
+            (4,3) node [npn] (npn) {BC546}
+            (0,3) to [sinusoidal voltage source] (0,0)
+            (0,3) to [R=$\SI{50}{\ohm}$] (2,3)
+            to [short] (npn.B)
+            (npn.E) to [short] (npn.E |- 0,0)
+            to [short] (0,0)
+            %
+            (3,3) to [oscope, *-*] (3,0)
+            ;
+        \draw[thick, dash dot] (-1,4) rectangle (2.25,-0.5)
+            (1,-0.5) node[below] {FY6900}
+            ;
+    \end{circuitikz}
+    \caption{%
+        Schéma zapojení obvodu pro testování možnosti využití NPN tranzistoru
+        jako Zenerovy diody
+    }
+    \label{fig:tranzistor zenerka sch testing}
+\end{figure}
+
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{scope-tranzistor-zenerka}
+    \caption{%
+        Sinusoida ze zdroje s výstupní impedancí \SI{50}{\ohm} oboustranně
+        amplitudově omezená přechodem báze--emitor bipolárního tranzistoru
+        BC546
+    }
+    \label{fig:tranzistor zenerka scope}
+\end{figure}
+
+Obvod pracuje dle očekávání, v závěrném směru dochází k nedestruktivnímu
+průrazu při napětí \SI{-11}{\volt}. V měřeném rozsahu frekvencí do
+\SI{50}{\kilo\hertz} nedochází k žádnému problematickému jevu. Pro výše popsaný
+účel by tranzistor postačoval. Zajímavostí je, že simulační program LTspice
+(a~programy SPICE obecně) používá model bipolárního tranzistoru, který průraz
+přechodu báze--emitor neuvažuje.
 
 
 
@@ -627,15 +813,13 @@ $
 Manuální úpravy binárního souboru přečteného z EEPROM jsou zdlouhavé, protože
 je nutné neustále nahlížet do dokumentace a dekódovat význam jednotlivých bytů.
 Proto je výhodné využít editor binárních dat GNU
-\shellcmd{poke}\footnote{\url{http://www.jemarch.net/poke}}.
+\shellcmd{poke}\footnote{\url{http://www.jemarch.net/poke}} implementující
+doménově specifický programovací jazyk
+Poke\footnote{\url{http://jemarch.net/pokology-01102019.html}}.
 Struktura dat je popsána souborem zvaným \texttt{pickle}. Po načtení tohoto
-\texttt{pickle} do interaktivního příkazového řádku programu \shellcmd{poke}
-\todo{%
-    program poke, jazyk Poke
-    % http://jemarch.net/pokology-01102019.html
-}
-provádíme mapování dané struktury na konkrétní data v binárním souboru a dále
-s nimi pracujeme jako s objekty. Celý pickle je uložen v souboru
+\texttt{pickle} do interaktivního příkazového řádku \shellcmd{poke} provádíme
+mapování dané struktury na konkrétní data v binárním souboru a dále s nimi
+pracujeme jako s objekty. Celý pickle je uložen v souboru
 \repopath{tools/AlarmClockEEPROM.pk} v repositáři \gitrepo{AlarmClock}, pro
 demonstraci konceptu ale použijeme pouze jeho část:
 \begin{lstlisting}[language=Poke]
@@ -660,7 +844,7 @@ type EEPROM_melody_header = struct {
 };
 \end{lstlisting}
 
-Spustíme \shellcmd{poke} a jako parametr mu předáme název binárního souboru --
+Spustíme \shellcmd{poke} a jako parametr mu předáme název binárního souboru~--
 \texttt{hlavicky.bin}. Přepínač \texttt{-l} slouží k načtení pickle při
 spuštění. Vytvoříme novou proměnnou \verb|melody_headers| jako pole struktur
 \verb|EEPROM_melody_header| začínající na začátku souboru (\verb|@ 0#B|). Počet
@@ -704,9 +888,11 @@ Type ".exit" to leave the program.
 Příkaz \verb|.set pretty-print yes| zapnul uživatelsky přívětivé vypisování,
 které volá metody \verb|_print| daných struktur.
 
-S pomocí \shellcmd{poke} bychom mohli například snadno upravit adresu dat v
-první hlavičce (\verb|melody_headers[0].address = 0x0123|) a s pomocí
-\shellcmd{EEPROM-tool.py} binární soubor zapsat zpět do paměti EEPROM.
+S pomocí \shellcmd{poke} bychom mohli například snadno upravit adresu dat
+v první hlavičce (\lstinline[language=Poke]|melody_headers[0].address = 0x0123|)
+a s pomocí \shellcmd{EEPROM-tool.py} binární soubor zapsat zpět do paměti
+EEPROM.
 
 
-\todo[inline]{dopsat zvuk}
+% Zajimave zdroje (nepouzito, necituji):
+% https://uu.diva-portal.org/smash/get/diva2:1219146/FULLTEXT01.pdf

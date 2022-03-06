@@ -1,0 +1,23 @@
+#!/bin/bash
+
+USAGE="usage: $0
+
+All files from ~/PDF (cups-pdf) that match the expected pattern
+are renamed (cropme_ is added) and moved to ./sim/.
+
+Run this script in the root of dmp/.
+"
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] ; then
+    echo "$USAGE"
+    exit 0
+fi
+
+shopt -s extglob
+
+for f in ~/PDF/*.pdf; do
+    basename="$(basename "$f")"
+    simname="${basename/job_+([[:digit:]])-/}"
+    simname="${simname/.asc*.pdf/}"
+    mv "$f" "sim/cropme_$simname.pdf"
+done

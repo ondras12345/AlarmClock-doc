@@ -1,0 +1,25 @@
+set output "graf-zvuk-D-filtr.tex"
+load "graf-common.gpi"
+
+set xlabel '$f\,[\si{\hertz}]$'
+set ylabel '$a_U\,[\si{\decibel}]$'
+
+set logscale x
+ymin = -60
+ymax = 22
+fpwm = 50.0e3
+set xrange [10:100e3]
+set yrange [ymin:ymax]
+set ytics 10
+set mytics 5
+
+set key bottom left
+
+set arrow nohead from fpwm,ymin to fpwm,ymax ls 4
+set label front right at fpwm,18 offset 2.0,0 sprintf('\hl{$f_\mathrm{PWM} = \SI{%g}{\kilo\hertz}$}', fpwm/1e3)
+
+plot \
+    "<sed 's/^Step Information: /\\n\\n# /;s/(//;s/)//;s/dB//;s/\\xb0//;s/,/\\t/' zvuk-D-filtr.txt" \
+       i 1 u 1:2 with lines ls 1 title '$R_1 = \SI{8}{\ohm}$', \
+    "" i 2 u 1:2 with lines ls 2 title '$R_1 = \SI{32}{\ohm}$', \
+    "" i 3 u 1:2 with lines ls 3 title '$R_1 = \SI{100}{\ohm}$'
