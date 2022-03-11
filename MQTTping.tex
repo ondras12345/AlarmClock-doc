@@ -1,8 +1,9 @@
 \subsection{MQTT ping}  % TODO
-Kvůli chybě ve firmwaru jiného zařízení nesouvisejícího s tímto projektem jsem
-zjistil, že když MQTT broker Mosquitto zahltím zprávami, mohu způsobit jeho
-selhání. Zaseknutý broker nenahlásí žádné chyby, neukončí se, takže ho
-\shellcmd{systemd} nemůže automaticky restartovat, nebrání klientům
+\todo[inline]{tohle uz je outdated, bylo to nespravnym nastavenim ACL}
+Kvůli chybě ve firmwaru jiného zařízení nesouvisejícího s tímto projektem
+bylo odhaleno, že když dojde k zahlcení MQTT brokeru Mosquitto zprávami, dojde
+k jeho selhání selhání. Zaseknutý broker nenahlásí žádné chyby, neukončí se,
+takže ho \shellcmd{systemd} nemůže automaticky restartovat, nebrání klientům
 v připojení, ale přestane doručovat zprávy.
 
 Řešením problému byla oprava chyby ve firmware zmíněného zařízení. Abych

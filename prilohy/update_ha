@@ -1,0 +1,82 @@
+#!/bin/sh
+
+confirm_prune=true
+wait_before_stop=false
+wait_before_start=false
+
+while [ $# -gt 0 ]; do
+    key="$1"
+    case $key in
+        --prune)
+            confirm_prune=false
+            shift
+            ;;
+        --wait-before-stop)
+            wait_before_stop=true
+            shift
+            ;;
+        --wait-before-start)
+            wait_before_start=true
+            shift
+            ;;
+        -h|--help)
+            echo "usage: $0 [--prune] [--wait-before-stop] [--wait-before-start]"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $key" >&2
+            exit 1
+            ;;
+    esac
+done
+
+set -e
+
+hau(){
+    sudo -u homeassistant "$@"
+}
+
+container_url="ghcr.io/home-assistant/home-assistant:stable"
+
+if [ "$confirm_prune" = true ] ; then
+    printf "remove unused docker images? [y/n] "
+    read -r REPLY
+    if [ "$REPLY" = "y" ] ; then
+        hau docker image prune
+    fi
+else
+    hau docker image prune
+fi
+
+echo "\npulling new image"
+hau docker pull "$container_url" | tee /dev/tty | grep -q "Image is up to date" && exit 1
+
+if [ "$wait_before_stop" = true ] ; then
+    printf "\n\nWaiting because of --wait-before-stop. Press return... "
+    read -r REPLY
+fi
+
+echo "\nstopping homeassistant"
+hau docker stop homeassistant
+
+echo "\nbacking up configuration and database"
+backup_filename="hassbak$(date "+%Y%m%d").tar.gz"
+echo "backup filename: $backup_filename"
+sudo tar -zcf "/home/homeassistant/$backup_filename" -C /home/homeassistant/ hass-config/
+sudo cp "/home/homeassistant/$backup_filename" /media/rpinas/backup/homeassistant/
+
+if [ "$wait_before_start" = true ] ; then
+    printf "\n\nWaiting because of --wait-before-start. Press return... "
+    read -r REPLY
+fi
+
+echo "\nreplacing homeassistant with new version"
+hau docker rm homeassistant
+hau docker run -d \
+    --name homeassistant \
+    --restart=unless-stopped \
+    -e TZ=Europe/Prague \
+    -v /home/homeassistant/hass-config:/config \
+    --network=host \
+    --privileged \
+    "$container_url"

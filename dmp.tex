@@ -89,7 +89,8 @@
 
 % robust command because of \listoffigures
 \DeclareRobustCommand{\HAentity}[1]{\texttt{\detokenize{#1}}}  % detokenize makes underscores printable
-\DeclareRobustCommand{\HAdomain}[1]{\texttt{\detokenize{#1}}}
+\DeclareRobustCommand{\HAdomain}[1]{\href{https://www.home-assistant.io/integrations/#1/}{\texttt{\detokenize{#1}}}}
+\DeclareRobustCommand{\HAintegration}[1]{\href{https://www.home-assistant.io/integrations/#1/}{\texttt{\detokenize{#1}}}}
 \DeclareRobustCommand{\shellcmd}[1]{\texttt{\detokenize{#1}}}  % POZOR na '--' ve flags
 \newcommand{\HAstate}{\texttt}
 \DeclareRobustCommand{\topic}[1]{\texttt{\detokenize{#1}}}
@@ -98,6 +99,7 @@
 \newcommand{\filename}{\texttt}
 \DeclareRobustCommand{\yamlkey}[1]{\texttt{\detokenize{#1}}}
 \DeclareRobustCommand{\inikey}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\port}[1]{\texttt{#1}}
 
 \title{Chytrý budík}
 \author{Ondřej Sluka}
@@ -272,6 +274,73 @@
     morecomment=[l]//,
     morestring=[b]",
     moredelim=[s][keywordstyle]{<}{>}  % uint<x>
+}
+
+% https://tex.stackexchange.com/questions/312/correctly-typesetting-a-tilde/160898#160898
+\makeatletter
+\newcommand\midtilde@raisedtilde[1][.5]{\raisebox{#1ex}{\texttildelow}}
+\def\midtilde@normaltilde{\texttildelow}
+
+\newcommand\midtilde%
+{%
+  \expandafter\in@\expandafter{\f@family}%
+    {cmr,cmss,cmtt,cmm,cmsy,cmx,%
+    lmr,lmss,lmtt,lmm,lmsy,lmx,%
+    pxr,pxss,pxm,pxsy,pxx,%
+    txr,txss,txm,txsy,txx}%
+  \ifin@%
+    \midtilde@raisedtilde%
+  \else%
+    \expandafter\in@\expandafter{\f@family}%
+    {pxtt,txtt}%
+    \ifin@%
+      \midtilde@raisedtilde[.35]%
+    \else%
+      \midtilde@normaltilde%
+    \fi%
+  \fi%
+}
+\makeatother
+\lstdefinelanguage{mybash}
+{
+    language = bash,
+    literate =%
+        % $# is not a comment...
+        {\$\#}{{{\$\#}}}2 {\$\# }{{{\$\# }}}2
+        % make dashes shorter
+        {-}{{-}}1
+        {~}{{\midtilde}}1
+        % komentare s diakritikou
+        {á}{{\'a}}1
+        {í}{{\'i}}1
+        {é}{{\'e}}1
+        {ý}{{\'y}}1
+        {ú}{{\'u}}1
+        {ó}{{\'o}}1
+        {ě}{{\v{e}}}1
+        {š}{{\v{s}}}1
+        {č}{{\v{c}}}1
+        {ř}{{\v{r}}}1
+        {ž}{{\v{z}}}1
+        {ď}{{\v{d}}}1
+        {ť}{{\v{t}}}1
+        {ň}{{\v{n}}}1
+        {ů}{{\r{u}}}1
+        {Á}{{\'A}}1
+        {Í}{{\'I}}1
+        {É}{{\'E}}1
+        {Ý}{{\'Y}}1
+        {Ú}{{\'U}}1
+        {Ó}{{\'O}}1
+        {Ě}{{\v{E}}}1
+        {Š}{{\v{S}}}1
+        {Č}{{\v{C}}}1
+        {Ř}{{\v{R}}}1
+        {Ž}{{\v{Z}}}1
+        {Ď}{{\v{D}}}1
+        {Ť}{{\v{T}}}1
+        {Ň}{{\v{N}}}1
+        {Ů}{{\r{U}}}1
 }
 
 
