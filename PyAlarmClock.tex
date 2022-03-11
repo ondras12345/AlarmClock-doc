@@ -86,9 +86,9 @@ jednotlivé komponenty budíku. \texttt{Entity} reprezentuje komponentu mající
 nějaký stav, který je možné na vyžádání přečíst
 (\foreignlanguage{english}{polling}). \texttt{Command} reprezentuje příkaz,
 který je možné spustit MQTT zprávou. Příkazy nemají žádný vlastní stav.
-Třídy jednotlivých komponent mohou dědit z obou těchto tříd zároveň~--
-například \texttt{Switch} je přepínač, který lze vzdáleně ovládat a jehož stav
-je možné i číst.
+Třídy jednotlivých komponent mohou dědit z obou těchto základních tříd
+zároveň~-- například \texttt{Switch} je přepínač, který lze vzdáleně ovládat
+a jehož stav je možné i číst.
 
 \begin{lstlisting}[language=Python]
 class AlarmClockMQTT:
@@ -124,6 +124,45 @@ class AlarmClockMQTT:
             the above rules.
             """
             raise NotImplementedError()
+
+    class Switch(Entity, Command):
+        """A switch that can either be OFF or ON.
+
+        e.g. lamp, inhibit
+        """
+
+        def __init__(self, name: str):
+            """Initialize a switch.
+
+            name must be a valid name of a AlarmClock attribute.
+            """
+            self.name = name
+
+        def do_command(self, ac: AlarmClock, msg: str):
+            messages = {
+                'ON': lambda ac: self.turn_on(ac),
+                'OFF': lambda ac: self.turn_off(ac),
+                '?': lambda ac: None,  # empty lambda - only stat
+                '': lambda ac: None,
+            }
+
+            msg = msg.upper()
+            if msg in messages:
+                messages[msg](ac)
+                return self.get_state(ac)
+            else:
+                raise AlarmClockMQTT.CommandError()
+
+        def turn_on(self, ac: AlarmClock):
+            setattr(ac, self.name, True)
+
+        def turn_off(self, ac: AlarmClock):
+            setattr(ac, self.name, False)
+
+        def get_state(self, ac: AlarmClock):
+            value = getattr(ac, self.name)
+            value = 'ON' if value else 'OFF'
+            return value
 \end{lstlisting}
 
 Instance \texttt{AlarmClockMQTT} má svá asociativní pole
