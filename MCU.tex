@@ -16,7 +16,7 @@ jednostranný.
 \nocite{dshATmega328} % TODO info o MCU
 
 I/O piny jsou děleny do třech portů (Port B, Port C, Port D). Podle toho jsou
-piny číslovány~-- například \texttt{PB0}. Ve firmware jsou ale používána čísla
+piny číslovány~-- například \MCUpin{PB0}. Ve firmware jsou ale používána čísla
 pinů frameworku Arduino. K vzájemnému převodu těchto dvou způsobů značení
 slouží tabulka~\vref{tab:MCU pins}.
 
@@ -29,18 +29,18 @@ slouží tabulka~\vref{tab:MCU pins}.
     \label{tab:MCU pins}
     % https://www.abclinuxu.cz/tex/poradna/show/325037
     \catcode`\-=12
-    \begin{tabular}{*{3}{ll}}
+    \begin{tabular}{*{3}{l>{\MCUpin\bgroup}l<{\egroup}}}
         \toprule
-        \multicolumn{2}{c}{PORTD}
-        & \multicolumn{2}{c}{PORTB}
-        & \multicolumn{2}{c}{PORTC}
+        \multicolumn{2}{c}{\texttt{PORTD}}
+        & \multicolumn{2}{c}{\texttt{PORTB}}
+        & \multicolumn{2}{c}{\texttt{PORTC}}
         \\
         \cmidrule(lr){1-2}
         \cmidrule(lr){3-4}
         \cmidrule(lr){5-6}
-        Arduino pin     & MCU pin
-        & Arduino pin     & MCU pin
-        & Arduino pin     & MCU pin
+        Arduino pin     & \multicolumn{1}{c}{MCU pin}
+        & Arduino pin     & \multicolumn{1}{c}{MCU pin}
+        & Arduino pin     & \multicolumn{1}{c}{MCU pin}
         \\
         \midrule
         0   & PD0   & 8   & PB0   & A0  & PC0 \\
@@ -58,7 +58,7 @@ slouží tabulka~\vref{tab:MCU pins}.
 Mikrokontrolér je provozován s externím krystalovým rezonátorem. Pro zachování
 kompatibility s platformou Arduino byla zvolena taktovací frekvence
 \SI{16}{\mega\hertz}. V souladu s pokyny uvedenými v datasheetu MCU je krystal
-připojen mezi piny \texttt{XTAL1} a \texttt{XTAL2}. Z každého z těchto pinů je
+připojen mezi piny \MCUpin{XTAL1} a \MCUpin{XTAL2}. Z každého z těchto pinů je
 také přidán keramický kondenzátor o kapacitě \SI{22}{\pico\farad} do země.
 Podle oficiálního schématu zapojení
 \footnote{\url{https://www.arduino.cc/en/uploads/Main/Arduino_Uno_Rev3-schematic.pdf}}
