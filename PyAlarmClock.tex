@@ -194,7 +194,7 @@ zaslanou do \texttt{topic} \topic{alarmclock/cmnd/nazev_entity}. Odpověď je
 zaslána do \topic{alarmclock/stat/nazev_entity}, \texttt{payload} zprávy je
 určen konkrétní implementací metody \verb|get_state| v objektu dané entity.
 Entity, které jsou zároveň příkazem (nebo čisté příkazy bez vlastního stavu),
-musí zprávy s \lstinline[language=Python]{payload = '?'} v případě potřeby
+musí zprávy s \lstinline[language=Python]!payload = '?'! v případě potřeby
 ošetřit ve vlastní implementaci metody \verb|do_command|. Do
 \topic{alarmclock/stat/nazev_entity} je poté zaslána hodnota vrácená touto
 metodou. Informace o případných chybách jsou zasílány do
