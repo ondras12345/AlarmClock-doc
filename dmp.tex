@@ -90,7 +90,7 @@
 % robust command because of \listoffigures
 \DeclareRobustCommand{\HAentity}[1]{\texttt{\detokenize{#1}}}  % detokenize makes underscores printable
 \DeclareRobustCommand{\HAdomain}[1]{\texttt{\detokenize{#1}}}
-\DeclareRobustCommand{\shellcmd}[1]{\texttt{\detokenize{#1}}}
+\DeclareRobustCommand{\shellcmd}[1]{\texttt{\detokenize{#1}}}  % POZOR na '--' ve flags
 \newcommand{\HAstate}{\texttt}
 \DeclareRobustCommand{\topic}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\gitrepo}{\texttt}

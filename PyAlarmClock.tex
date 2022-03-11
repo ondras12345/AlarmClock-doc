@@ -42,10 +42,10 @@ ovládání budíku několika programy současně bez nutnosti sdílet sériový
 mezi více procesy. Komunikace může probíhat nejen mezi více zařízeními ve
 stejné počítačové síti, ale i v rámci jednoho serveru (\texttt{localhost}).
 
-Použití adaptéru je velmi jednoduché. Příkazem \shellcmd{mqtt_bridge.py --help}
+Použití adaptéru je velmi jednoduché. Příkazem \verb|mqtt_bridge.py --help|
 lze vypsat seznam argumentů, které lze programu předávat.
 % nechci sem davat cely usage, protoze bych ho pak treba musel aktualizovat...
-Následuje jednoduchý příklad -- program se připojí k MQTT brokeru na
+Následuje jednoduchý příklad~-- program se připojí k MQTT brokeru na
 \texttt{localhost} na výchozím portu 1883 jako uživatel \texttt{DEBUG} s heslem
 zadaným interaktivně za běhu programu:
 \begin{lstlisting}[style=terminal]
@@ -80,8 +80,133 @@ MQTT \ac{LWT}.
 
 Požadujeme-li, aby budík provedl nějakou akci, pošleme zprávu do příslušného
 \texttt{command topic} -- \topic{alarmclock/cmnd/nazev_prikazu}.
+Toto je interně řešeno pomocí základních tříd \texttt{AlarmClockMQTT.Entity}
+a \texttt{AlarmClockMQTT.Command}, ze kterých dědí třídy reprezentující
+jednotlivé komponenty budíku. \texttt{Entity} reprezentuje komponentu mající
+nějaký stav, který je možné na vyžádání přečíst
+(\foreignlanguage{english}{polling}). \texttt{Command} reprezentuje příkaz,
+který je možné spustit MQTT zprávou. Příkazy nemají žádný vlastní stav.
+Třídy jednotlivých komponent mohou dědit z obou těchto tříd zároveň~--
+například \texttt{Switch} je přepínač, který lze vzdáleně ovládat a jehož stav
+je možné i číst.
+
+\begin{lstlisting}[language=Python]
+class AlarmClockMQTT:
+    """An MQTT adapter for AlarmClock."""
+
+    class Entity:
+        """Representation of an AlarmClock attribute with a pollable state."""
+
+        def get_state(self, ac: AlarmClock):
+            """Get state of the entity.
+
+            Returns a result that should be published in the entity's
+            state_topic.
+            """
+            raise NotImplementedError()
+
+    class CommandError(Exception):
+        """Error raised by a MQTT command handler."""
+
+    class Command:
+        """Representation of a MQTT command handler."""
+
+        def do_command(self, ac: AlarmClock, msg: str):
+            """Handle reception of msg.
+
+            The return value (if not None) of this function will be published
+            in the corresponding state_topic.
+
+            If a tuple is returned, the first value in the tuple is a topic
+            under state_topic where the second value should be published.
+
+            If a list is returned, each item will be handled according to
+            the above rules.
+            """
+            raise NotImplementedError()
+\end{lstlisting}
+
+Instance \texttt{AlarmClockMQTT} má svá asociativní pole
+\texttt{ENTITIES} a \texttt{COMMANDS}, ve kterých jsou uloženy jednotlivé
+instance entit a příkazů přiřazené ke svému \texttt{topic}.
+
+\begin{lstlisting}[language=Python]
+class AlarmClockMQTT:
+    # ...
+
+    def __init__(self, config: AlarmClockMQTTConfig):
+        # ...
+        ambient = self.DimmableLight('ambient')
+
+        self.COMMANDS: Dict[str, AlarmClockMQTT.Command] = {
+            'ambient': ambient,
+            # ...
+        }
+
+        self.ENTITIES: Dict[str, AlarmClockMQTT.Entity] = {
+            'ambient': ambient,
+            # ...
+        }
+\end{lstlisting}
+
+Pro všechny entity, které nejsou zároveň příkazem, je implementováno čtení na
+vyžádání, které se provádí MQTT zprávou se znakem \texttt{?} v \texttt{payload}
+zaslanou do \texttt{topic} \topic{alarmclock/cmnd/nazev_entity}. Odpověď je
+zaslána do \topic{alarmclock/stat/nazev_entity}, \texttt{payload} zprávy je
+určen konkrétní implementací metody \verb|get_state| v objektu dané entity.
+Entity, které jsou zároveň příkazem (nebo čisté příkazy bez vlastního stavu),
+musí zprávy s \lstinline[language=Python]{payload = '?'} v případě potřeby
+ošetřit ve vlastní implementaci metody \verb|do_command|. Do
+\topic{alarmclock/stat/nazev_entity} je poté zaslána hodnota vrácená touto
+metodou. Informace o případných chybách jsou zasílány do
+\topic{alarmclock/err}.
+
+\begin{lstlisting}[language=Python]
+class AlarmClockMQTT:
+    # ...
+
+    def _on_message(self, client, userdata, msg):
+        if self._config.command_topic in msg.topic:
+            command_id = remove_prefix(msg.topic,
+                                       f'{self._config.command_topic}/')
+            payload = msg.payload.decode('ascii')
+            if command_id in self.COMMANDS:
+                self._execute_command(client, command_id, payload)
+            elif command_id in self.ENTITIES and payload == '?':
+                entity_id = command_id
+                self._report_state(client, entity_id)
+            else:
+                text = f'Bad topic for command: {msg.topic}'
+                _LOGGER.error(text)
+                client.publish(self._config.err_topic, text)
+
+    def _report_state(self, client: mqtt.Client, entity_id: str):
+        client.publish(f'{self._config.state_topic}/{entity_id}',
+                       self.ENTITIES[entity_id].get_state(self.ac))
+
+    def _execute_command(self, client: mqtt.Client, command_name: str,
+                         msg: str):
+        try:
+            ret = self.COMMANDS[command_name].do_command(self.ac, msg)
+            if ret is not None:
+                if not isinstance(ret, list):
+                    ret = [ret]
+                for value in ret:
+                    if isinstance(value, tuple):
+                        topic, message = value
+                        client.publish(f'{self._config.state_topic}/{topic}',
+                                       message)
+                    else:
+                        client.publish(
+                                f'{self._config.state_topic}/{command_name}',
+                                value
+                                )
+        except self.CommandError as e:
+            # ...
+\end{lstlisting}
+
 V následujícím příkladu je demonstrované rozsvícení připojeného světla
-\texttt{lamp}. Vzdáleným MQTT příkazem a následné zhasnutí pomocí rozhraní na
+\texttt{lamp} vzdáleným MQTT příkazem a následné zhasnutí pomocí rozhraní na
 displeji budíku. Pro přehlednost byly přidány prázdné řádky. První zpráva
 v druhém bloku je příkaz pro rozsvícení lampy. V odpověď na ni přichází zpráva
 v topic \topic{alarmclock/stat/lamp} značící, že byla lampa rozsvícena. Protože
