@@ -74,10 +74,6 @@ $
 \end{lstlisting}
 
 
-\todo[inline]{%
-    dalsi prilohy
-}
-
 
 
 \clearpage
@@ -89,7 +85,76 @@ v roce 2016 v rámci soutěže v radiotechnice. Na následujícím obrázku je
 zobrazen osazovací plán jeho desky plošných spojů a seznam součástek. Schéma
 zapojení bohužel není dostupné.
 V souboru \filename{prilohy/TDA2030-dokumentace.pdf} je vše, co se zachovalo
-z dokumentace tohoto výrobku. Autorem návrhu je Petr Vild OK7PV.
+z dokumentace tohoto výrobku. Autorem návrhu je OK7PV Petr Vild.
 
 \noindent
 \includegraphics[page=2, clip, bb=20mm 89mm 175mm 270mm, width=1.0\textwidth]{prilohy/TDA2030-dokumentace.pdf}
+
+
+
+\clearpage
+\newappendix{Nastavení firmware Grbl CNC frézy}
+Po připojení na sériový port frézy pomocí terminálového software (zde program
+\shellcmd{minicom}) můžeme přečíst veškerou konfiguraci jejího firmware. Význam
+jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
+\begingroup
+\catcode`\-=12
+\lstinputlisting[style=terminal]{prilohy/grbl-config.txt}
+\endgroup
+
+\begin{table}[H]
+    \centering
+    \caption{%
+        Popis jednotlivých nastavení Grbl a výchozí hodnoty (převzato
+        z~\cite{Grblconf})
+    }
+    \label{tab:grbl config default}
+    \begin{otherlanguage*}{english}
+        \begin{tabular}{ll}
+            \toprule
+            Settings and sample values  & Description \\
+            \midrule
+            \verb|$0=10|                & Step pulse, \si{\micro\second} \\
+            \verb|$1=25|                & Step idle delay, \si{\milli\second} \\
+            \verb|$2=0|                 & Step port invert, mask \\
+            \verb|$3=0|                 & Direction port invert, mask \\
+            \verb|$4=0|                 & Step enable invert, boolean \\
+            \verb|$5=0|                 & Limit pins invert, boolean \\
+            \verb|$6=0|                 & Probe pin invert, boolean \\
+            \verb|$10=1|                & Status report, mask \\
+            \verb|$11=0.010|            & Junction deviation, \si{\milli\meter} \\
+            \verb|$12=0.002|            & Arc tolerance, \si{\milli\meter} \\
+            \verb|$13=0|                & Report inches, boolean \\
+            \verb|$20=0|                & Soft limits, boolean \\
+            \verb|$21=0|                & Hard limits, boolean \\
+            \verb|$22=1|                & Homing cycle, boolean \\
+            \verb|$23=0|                & Homing dir invert, mask \\
+            \verb|$24=25.000|           & Homing feed, \si{\milli\meter\per\minute} \\
+            \verb|$25=500.000|          & Homing seek, \si{\milli\meter\per\minute} \\
+            \verb|$26=250|              & Homing debounce, \si{\milli\second} \\
+            \verb|$27=1.000|            & Homing pull-off, \si{\milli\meter} \\
+            \verb|$30=1000.|            & Max spindle speed, RPM \\
+            \verb|$31=0.|               & Min spindle speed, RPM \\
+            \verb|$32=0|                & Laser mode, boolean \\
+            \verb|$100=250.000|         & X steps/mm \\
+            \verb|$101=250.000|         & Y steps/mm \\
+            \verb|$102=250.000|         & Z steps/mm \\
+            \verb|$110=500.000|         & X Max rate, \si{\milli\meter\per\minute} \\
+            \verb|$111=500.000|         & Y Max rate, \si{\milli\meter\per\minute} \\
+            \verb|$112=500.000|         & Z Max rate, \si{\milli\meter\per\minute} \\
+            \verb|$120=10.000|          & X Acceleration, \si{\milli\meter\per\second\squared} \\
+            \verb|$121=10.000|          & Y Acceleration, \si{\milli\meter\per\second\squared} \\
+            \verb|$122=10.000|          & Z Acceleration, \si{\milli\meter\per\second\squared} \\
+            \verb|$130=200.000|         & X Max travel, \si{\milli\meter} \\
+            \verb|$131=200.000|         & Y Max travel, \si{\milli\meter} \\
+            \verb|$132=200.000|         & Z Max travel, \si{\milli\meter} \\
+            \bottomrule
+        \end{tabular}
+    \end{otherlanguage*}
+\end{table}
+
+
+\todo[inline]{%
+    dalsi prilohy
+}
+\todo[inline]{cislovani obrazku a tabulek v prilohach}
