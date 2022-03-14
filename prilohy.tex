@@ -94,6 +94,7 @@ z dokumentace tohoto výrobku. Autorem návrhu je OK7PV Petr Vild.
 
 \clearpage
 \newappendix{Nastavení firmware Grbl CNC frézy}
+\label{app:grbl config}
 Po připojení na sériový port frézy pomocí terminálového software (zde program
 \shellcmd{minicom}) můžeme přečíst veškerou konfiguraci jejího firmware. Význam
 jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
@@ -133,8 +134,8 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
             \verb|$25=500.000|          & Homing seek, \si{\milli\meter\per\minute} \\
             \verb|$26=250|              & Homing debounce, \si{\milli\second} \\
             \verb|$27=1.000|            & Homing pull-off, \si{\milli\meter} \\
-            \verb|$30=1000.|            & Max spindle speed, RPM \\
-            \verb|$31=0.|               & Min spindle speed, RPM \\
+            \verb|$30=1000|             & Max spindle speed, RPM \\
+            \verb|$31=0|                & Min spindle speed, RPM \\
             \verb|$32=0|                & Laser mode, boolean \\
             \verb|$100=250.000|         & X steps/mm \\
             \verb|$101=250.000|         & Y steps/mm \\
