@@ -273,4 +273,43 @@ alarmclock/stat/inhibit OFF
 alarmclock/stat/ambient 0
 \end{lstlisting}
 
+Toto rozhraní funguje velmi dobře pro jednoduché entity, jako například výše
+zmíněné světlo. Například pro konfiguraci jednotlivých budicích časů by ale
+bylo vhodnější využít komunikační protokol, který navazuje přímé spojení mezi
+klientem a serverem a páruje odpovědi ke konkretním požadavkům. Takovým
+protokolem je například HTTP, ten je ale zase naprosto nevhodný pro entity,
+u nichž potřebujeme přijímat asynchronní informace o jejich stavu.
+
+MQTT API je v současné době používáno i pro nastavování budicích časů, ty jsou
+pro účely přenosu v textových zprávách serializovány do formátu JSON.
+Každému budicímu času odpovídá jeden MQTT topic. Aby klient používajíci API
+věděl, kolik budicích časů budík podporuje, je do topic
+\topic{alarmclock/stat/number_of_alarms} zasílána zpráva s příznakem
+\texttt{retain} obsahující jejich celkový počet.
+
+Přečtení prvního budicího času probíhá následujícím způsobem:
+\begin{lstlisting}[style=terminal]
+$ mosquitto_pub -t alarmclock/cmnd/alarm -m '0'
+\end{lstlisting}
+
+\begin{lstlisting}[style=terminal]
+$ mosquitto_sub -v -t alarmclock/#
+alarmclock/stat/available online
+alarmclock/stat/number_of_alarms 6
+
+alarmclock/cmnd/alarm 0
+alarmclock/stat/alarms/alarm0 {"enabled": "OFF", "days_of_week": ["Friday"], "time": {"hours": 12, "minutes": 34}, "snooze": {"time": 1, "count": 1}, "signalization": {"ambient": 120, "lamp": true, "buzzer": 1}}
+\end{lstlisting}
+
+Zápis se provádí zasláním JSON objektu do topic odpovídajícího příkazu
+\texttt{WriteAlarmCommand}. Číslo zapisovaného času buzení je určeno hodnotou
+přiřazenou klíči \texttt{index} v tomto objektu.
+\begin{lstlisting}[style=terminal]
+$ mosquitto_pub -t alarmclock/cmnd/alarm/write -m '{"index": 0, "enabled": "OFF", "days_of_week": ["Friday"], "time": {"hours": 12, "minutes": 0}, "snooze": {"time": 1, "count": 1}, "signalization": {"ambient": 0, "lamp": false, "buzzer": 0}}'
+\end{lstlisting}
+Zprávy o případných chybách (například nevalidní JSON objekt) jsou zasílány do
+topic \topic{alarmclock/err}.
+
 \todo[inline]{dopsat mqtt bridge}
+
+\todo[inline]{systemd sluzba}

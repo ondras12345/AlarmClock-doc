@@ -220,3 +220,13 @@
         {Ň}{{\v{N}}}1
         {Ů}{{\r{U}}}1
 }
+
+\lstdefinelanguage{Dockerfile}{
+  keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+  sensitive=false,
+  comment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]",
+    literate =%
+        {-}{{-}}1
+}
