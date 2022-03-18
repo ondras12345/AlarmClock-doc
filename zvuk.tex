@@ -349,7 +349,7 @@ ISR.
 
 \subsubsection{Testovací verze}
 Pro prvotní ověření konceptu byl vytvořen jednoduchý firmware implementující
-pouze zvukový výstup. V repositáři \gitrepo{AlarmClock} je umístěn v adresáři
+pouze zvukový výstup. V repozitáři \gitrepo{AlarmClock} je umístěn v adresáři
 \repopath{development/audio}.  % POZOR tuhle cestu mozna zmenim (platformio)
 
 Aby se testovací implementace přiblížila kódu, který by bylo možné zahrnout do
@@ -793,13 +793,12 @@ err 0x1: Invalid args
 \end{lstlisting}
 
 Pro zjednodušení použití těchto příkazů byl vytvořen program
-\shellcmd{EEPROM-tool.py} (umístěný ve složce \repopath{examples/} v repositáři
-\gitrepo{PyAlarmClock}). Ten umožňuje přečtení souvislého bloku dat z EEPROM
-a zápis do binárního souboru, nebo naopak zápis dat z binárního souboru do
-EEPROM. Například přečtení hlaviček všech melodií do souboru
-\texttt{hlavicky.bin} provádíme následovně:
+\shellcmd{acEEPROM} poskytovaný balíčkem \gitrepo{PyAlarmClock}. Ten umožňuje
+přečtení souvislého bloku dat z EEPROM a zápis do binárního souboru, nebo
+naopak zápis dat z binárního souboru do EEPROM. Například přečtení hlaviček
+všech melodií do souboru \texttt{hlavicky.bin} provádíme následovně:
 \begin{lstlisting}[style=terminal]
-$ EEPROM-tool.py /dev/ttyUSB0 read 0x0010 48 hlavicky.bin
+$ acEEPROM /dev/ttyUSB0 read 0x0010 48 hlavicky.bin
 INFO:PyAlarmClock:Initializing serial port
 100%|#####################| 48/48 [00:03<00:00, 13.09it/s]
 $ ls -l hlavicky.bin
@@ -821,7 +820,7 @@ Struktura dat je popsána souborem zvaným \texttt{pickle}. Po načtení tohoto
 \texttt{pickle} do interaktivního příkazového řádku \shellcmd{poke} provádíme
 mapování dané struktury na konkrétní data v binárním souboru a dále s nimi
 pracujeme jako s objekty. Celý pickle je uložen v souboru
-\repopath{tools/AlarmClockEEPROM.pk} v repositáři \gitrepo{AlarmClock}, pro
+\repopath{tools/AlarmClockEEPROM.pk} v repozitáři \gitrepo{AlarmClock}, pro
 demonstraci konceptu ale použijeme pouze jeho část:
 \begin{lstlisting}[language=Poke]
 /*
@@ -891,7 +890,7 @@ které volá metody \verb|_print| daných struktur.
 
 S pomocí \shellcmd{poke} bychom mohli například snadno upravit adresu dat
 v první hlavičce (\lstinline[language=Poke]|melody_headers[0].address = 0x0123|)
-a s pomocí \shellcmd{EEPROM-tool.py} binární soubor zapsat zpět do paměti
+a s pomocí \shellcmd{acEEPROM} binární soubor zapsat zpět do paměti
 EEPROM.
 
 

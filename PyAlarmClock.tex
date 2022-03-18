@@ -10,8 +10,8 @@ využívá příkazu \texttt{st} pro nastavení času a \texttt{sd} pro nastaven
 data.
 
 Pro ilustraci konceptu poslouží jeden z ukázkových programů~--
-\repopath{examples/set_time.py}. V následující ukázce je navíc odstraněna část
-zapínající podrobné protokolování všech událostí.
+\repopath{src/PyAlarmClock/examples/set_time.py}. V následující ukázce je navíc
+odstraněna část zapínající podrobné protokolování všech událostí.
 \begin{lstlisting}[language=Python,style=numbers]
 #!/usr/bin/env python3
 
@@ -36,20 +36,21 @@ $
 
 \subsection{MQTT adaptér}
 Jedním z programů využívajících knihovnu \texttt{PyAlarmClock} je
-\repopath{examples/mqtt_bridge.py}. Tento program umožňuje vzdálené ovládání
-budíku zprávami přenášenými protokolem MQTT. Tímto způsobem lze zajistit
-ovládání budíku několika programy současně bez nutnosti sdílet sériový port
-mezi více procesy. Komunikace může probíhat nejen mezi více zařízeními ve
-stejné počítačové síti, ale i v rámci jednoho serveru (\texttt{localhost}).
+\repopath{src/PyAlarmClock/cmds/mqtt_bridge.py} (po instalaci balíčku dostupný
+jako \shellcmd{ac2mqtt}). Tento program umožňuje vzdálené ovládání budíku
+zprávami přenášenými protokolem MQTT. Tímto způsobem lze zajistit ovládání
+budíku několika programy současně bez nutnosti sdílet sériový port mezi více
+procesy. Komunikace může probíhat nejen mezi více zařízeními ve stejné
+počítačové síti, ale i v rámci jednoho serveru (\texttt{localhost}).
 
-Použití adaptéru je velmi jednoduché. Příkazem \verb|mqtt_bridge.py --help|
+Použití adaptéru je velmi jednoduché. Příkazem \verb|ac2mqtt --help|
 lze vypsat seznam argumentů, které lze programu předávat.
 % nechci sem davat cely usage, protoze bych ho pak treba musel aktualizovat...
 Následuje jednoduchý příklad~-- program se připojí k MQTT brokeru na
 \texttt{localhost} na výchozím portu 1883 jako uživatel \texttt{DEBUG} s heslem
 zadaným interaktivně za běhu programu:
 \begin{lstlisting}[style=terminal]
-$ ./examples/mqtt_bridge.py /dev/ttyUSB0 -u DEBUG
+$ ac2mqtt /dev/ttyUSB0 -u DEBUG
 Password:
 2022-02-08 19:22:39,360 INFO err topic: alarmclock/err
 2022-02-08 19:22:39,360 INFO state topic: alarmclock/stat
@@ -310,6 +311,87 @@ $ mosquitto_pub -t alarmclock/cmnd/alarm/write -m '{"index": 0, "enabled": "OFF"
 Zprávy o případných chybách (například nevalidní JSON objekt) jsou zasílány do
 topic \topic{alarmclock/err}.
 
-\todo[inline]{dopsat mqtt bridge}
+\subsection{Instalace a automatické spouštění}
+Aby se MQTT adaptér spouštěl automaticky po startu serveru, je vhodné vytvořit
+\shellcmd{systemd} službu. Postup je obecně zdokumentován v souboru
+\repopath{README.md} repozitáře \gitrepo{PyAlarmClock}. Následuje průběžně
+vysvětlovaný popis instalace PyAlarmClock na linuxovém serveru.
+\begin{lstlisting}[language=mybash, style=numbers]
+# Naklonujeme si repozitář s PyAlarmClock.
+cd ~/source/repos
+git clone https://github.com/ondras12345/PyAlarmClock.git
+cd PyAlarmClock
 
-\todo[inline]{systemd sluzba}
+# Vytvoříme adresář /opt, do kterého software nainstalujeme.
+sudo mkdir /opt/PyAlarmClock
+sudo chown $USERNAME:$USERNAME /opt/PyAlarmClock
+# Provedeme instalaci do virtuálního prostředí venv.
+sh -c 'python3 -m venv /opt/PyAlarmClock
+. /opt/PyAlarmClock/bin/activate
+pip3 install --upgrade pip  # otherwise install will fail on Debian 10
+pip3 install .
+'
+
+# Vytvoříme konfigurační soubor v /etc/
+sudo tee /etc/ac2mqtt.conf << EOF
+[MQTT]
+username = user
+password = pass
+
+[serial]
+device = /dev/ttyUSB0
+EOF
+
+# Software poběží pod uživatelem homeassistant, proto upravíme přístupová
+# práva konfiguračního souboru.
+sudo chown homeassistant:homeassistant /etc/ac2mqtt.conf
+# Soubor obsahuje citlivé údaje (heslo), proto nesmí být čitelný
+# pro všechny uživatele systému.
+sudo chmod 660 /etc/ac2mqtt.conf
+
+# Uživatel homeassistant musí mít práva pro přístup k sériovému portu.
+sudo adduser homeassistant dialout
+
+# Vytvoříme definici systemd služby.
+sudo tee /etc/systemd/system/ac2mqtt.service << EOF
+[Unit]
+Description=Provide MQTT API for AlarmClock
+After=mosquitto.service dev-ttyUSB0.device
+
+[Service]
+User=homeassistant
+ExecStart=/opt/PyAlarmClock/bin/ac2mqtt -c /etc/ac2mqtt.conf
+Restart=on-failure
+RestartSec=30s
+RestartPreventExitStatus=255
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Službu spustíme.
+sudo systemctl daemon-reload
+sudo systemctl enable --now ac2mqtt.service
+\end{lstlisting}
+
+Spouštění, zastavování, restart a další operace se službou se poté provádí
+standardním příkazem \shellcmd{systemctl}. S jeho pomocí lze vypsat i informace
+o stavu služby a několik záznamů z protokolu:
+\begin{lstlisting}[style=terminal]
+$ sudo systemctl status ac2mqtt.service --no-pager -l
+  ac2mqtt.service - Provide MQTT API for AlarmClock
+   Loaded: loaded (/etc/systemd/system/ac2mqtt.service; enabled; vendor preset: enabled)
+   Active: active (running) since Fri 2022-03-18 22:28:20 CET; 58min ago
+ Main PID: 8781 (ac2mqtt)
+    Tasks: 1 (limit: 3720)
+   CGroup: /system.slice/ac2mqtt.service
+           +-8781 /opt/PyAlarmClock/bin/python3 /opt/PyAlarmClock/bin/ac2mqtt -c /etc/ac2mqtt.conf
+
+bře 18 22:28:20 rpi-lab systemd[1]: Started Provide MQTT API for AlarmClock.
+bře 18 22:28:20 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:20,805 INFO Reading config from /etc/ac2mqtt.conf
+bře 18 22:28:20 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:20,807 INFO err topic: alarmclock/err
+bře 18 22:28:20 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:20,807 INFO state topic: alarmclock/stat
+bře 18 22:28:20 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:20,807 INFO command topic: alarmclock/cmnd
+bře 18 22:28:20 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:20,807 INFO Connecting to MQTT on localhost:1883
+bře 18 22:28:23 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:23,583 INFO MQTT connected with result code 0
+\end{lstlisting}

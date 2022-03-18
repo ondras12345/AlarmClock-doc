@@ -60,7 +60,7 @@ bold_msg "\nZakladni kontrola pravopisu..."
 # Tady se muzou kontrolovat napriklad slova, u kterych jsou mozne dva tvary,
 # ale v celem dokumentu by mel byt pouzivan jen jeden z nich (impuls/impulz,
 # ...)
-grep --color=auto "aby jsme" "${search_files[@]}"
+grep --color=auto "impulz\|repositář" "${search_files[@]}"
 prev_exit="$?"
 if [ $prev_exit -eq 0 ] ; then
     err_msg "pravopisna chyba nebo nekonzistentni tvar"

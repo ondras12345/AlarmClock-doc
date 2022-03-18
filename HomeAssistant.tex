@@ -146,7 +146,7 @@ light:
 % jinja2 templates
 
 \subsection{Integrace s budíkem}
-MQTT adaptér \shellcmd{mqtt_bridge.py} popisovaný v předchozím textu
+MQTT adaptér \shellcmd{ac2mqtt} popisovaný v předchozím textu
 umožňuje snadnou integraci s tímto systémem. Platforma \texttt{mqtt} nabízí
 v prostředí Home Assistant možnost vytvářet entity z celé řady domén~--
 například \HAdomain{sensor}, \HAdomain{binary_sensor}, \HAdomain{light},
@@ -168,7 +168,7 @@ light:
 \end{lstlisting}
 Využíváme totiž výchozích hodnot -- například \lstinline!payload_off: OFF!
 a~\lstinline!payload_on: ON!. Ty se shodují se zprávami odesílanými programem
-\shellcmd{mqtt_bridge.py}. \yamlkey{availability_topic} složí k detekci
+\shellcmd{ac2mqtt}. \yamlkey{availability_topic} složí k detekci
 nefunkčního spojení s budíkem. V takovém případě přejde entita
 \HAentity{light.alarmclock_lamp} do stavu \HAstate{unavailable}.
 
