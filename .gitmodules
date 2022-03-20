@@ -1,3 +1,6 @@
 [submodule "prilohy/AlarmClockWeb"]
 	path = prilohy/AlarmClockWeb
 	url = https://github.com/ondras12345/AlarmClockWeb.git
+[submodule "prilohy/PyAlarmClock"]
+	path = prilohy/PyAlarmClock
+	url = https://github.com/ondras12345/PyAlarmClock

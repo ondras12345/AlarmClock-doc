@@ -395,3 +395,57 @@ bře 18 22:28:20 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:20,807 INFO command top
 bře 18 22:28:20 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:20,807 INFO Connecting to MQTT on localhost:1883
 bře 18 22:28:23 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:23,583 INFO MQTT connected with result code 0
 \end{lstlisting}
+
+
+\subsection{Automatické testy a průběžná integrace}
+Správná funkce knihovny \texttt{PyAlarmClock} je průběžně kontrolována
+automatickými testy. Některé testy vyžadují připojení hardware (MCU s firmware
+\texttt{AlarmClock}), jednotkové testy ale lze spouštět zcela automaticky na
+libovolném stroji.
+Aby byly testy spouštěny při každém novém commitu či pull requestu, je využita
+bezplatná služba Github actions. Jednoduchý konfigurační soubor
+\repopath{.github/workflows/ci.yml} specifikuje, jaké programy se mají
+spouštět:
+\lstinputlisting[language=yaml, style=numbers]{prilohy/PyAlarmClock/.github/workflows/ci.yml}
+Celý proces testování se provádí se dvěma verzemi jazyka Python: Python 3.6
+a~novější Python 3.10. Starší verze je testována, aby programátor, který má na
+svém počítači nainstalovanou novější verzi, omylem nepoužil nějakou příliš
+novou funkci jazyka. Test tedy slouží k zachování zpětné kompatibility.
+V současné době nejnovější verze je testována, protože nemusí být s verzí 3.6
+plně zpětně kompatibilní.
+
+Po instalaci balíčku \texttt{PyAlarmClock} a programu \shellcmd{pytest} je
+zavolán takzvaný linter \shellcmd{flake8}. Ten provádí statickou analýzu kódu
+a vyhledává programátorské i stylistické chyby.
+
+Bezpečnostní linter \shellcmd{bandit} hledá v kódu bezpečnostní chyby. Nejde
+jen o zapomenutá hesla a tokeny, ale také o použití nebezpečných funkcí jako
+\lstinline[language=Python]!eval!.
+
+\shellcmd{mypy} kontroluje statickou analýzou správnost datových typů
+proměnných předávaných mezi funkcemi v programu. Python je dynamicky typovaný
+programovací jazyk, ale od
+PEP~484\footnote{\url{https://peps.python.org/pep-0484/}} umožňuje přidávání
+takzvaných \foreignlanguage{english}{type hints}. Lze tak například
+specifikovat očekávaný datový typ argumentu funkce či její návratové hodnoty:
+\begin{lstlisting}[language=Python]
+def read_alarms(self) -> List[Alarm]:
+    # ...
+
+def write_alarm(self, index: int, value: Alarm) -> None:
+    # ...
+\end{lstlisting}
+Za běhu programu jsou tyto anotace ignorovány, může je ale využívat právě
+software pro statickou analýzu kódu. Jejich další funkcí je zvýšení
+srozumitelnosti dokumentace API knihovny. Potenciální uživatel knihovny
+(programátor software, který na ní závisí) si může velmi rychle utvořit
+představu o tom, jak danou funkci volat.
+
+\shellcmd{pytest} spouští jednotkové testy z \repopath{tests/unit/}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.90\textwidth]{github-CI}
+    \caption{Výsledek úspěšného běhu CI na platformě Github actions}
+    \label{fig:PyAlarmClock CI}
+\end{figure}
