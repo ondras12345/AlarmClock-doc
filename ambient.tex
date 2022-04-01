@@ -110,6 +110,15 @@ rezistoru mezi zdroj napětí \SI{5}{\volt} a bázi Q2. Nechtěným oscilacím
 zabráníme přidáním kondenzátoru mezi bázi Q2 a zem. Hodnota jeho kapacity není
 kritická, dokonale postačí běžná hodnota \SI{100}{\nano\farad}.
 
+Praktickým zapojením bylo zjištěno, že výkonová LED svítí i při velmi malých
+proudech v řádu \si{\micro\ampere}. Její svit při požadovaném jasu
+\SI{0}{\percent} lze eliminovat připojením rezistoru paralelně k ní. Hodnota
+odporu rezistoru není kritická, pro zhasnutí stačil i odpor
+\SI{100}{\kilo\ohm}. Na plošném spoji je osazen rezistor s odporem
+\SI{10}{\kilo\ohm}. Na funkci zbytku obvodu stmívače má tento odpor
+zanedbatelný vliv a ve schématu na
+obrázku~\vref{fig:ambient linear prod sim sch} proto není zobrazen.
+
 \begin{figure}
     \centering
     \subcaptionbox{%

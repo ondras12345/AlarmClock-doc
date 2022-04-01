@@ -6,11 +6,23 @@
 Zdrojové kódy firmware, software, návrh hardwarového řešení, elektronické
 simulace, jakož i zdrojový kód této práce využívající systému pro počítačovou
 sazbu \LaTeX{} jsou k práci přiloženy jako elektronická příloha. Ta je rozdělena
-do několika adresářů:
+do několika adresářů (výpis souborů není úplný):
 \dirtree{%
     .1 /.
     .2 figures/\DTcomment{obrázky použité v práci}.
     .2 prilohy/\DTcomment{elektronické přílohy}.
+    .3 AlarmClock/\DTcomment{repozitář \gitrepo{AlarmClock} (firmware)}.
+    .4 README.md\DTcomment{instrukce pro instalaci}.
+    .3 AlarmClock-hardware/\DTcomment{repozitář \gitrepo{AlarmClock-hardware} (hardware)}.
+    .4 AlarmClock/\DTcomment{hlavní DPS}.
+    .5 3d/\DTcomment{3D vizualizace přední a zadní strany DPS}.
+    .5 bom/\DTcomment{BOM}.
+    .6 ibom.html\DTcomment{interaktivní osazovací plán}.
+    .5 cnc/\DTcomment{gcode programy pro CNC frézu}.
+    .3 AlarmClockWeb/\DTcomment{repozitář \gitrepo{AlarmClockWeb} (webová stránka)}.
+    .4 README.md\DTcomment{instrukce pro instalaci}.
+    .3 PyAlarmClock/\DTcomment{repozitář \gitrepo{PyAlarmClock} (Python sofware)}.
+    .4 README.md\DTcomment{instrukce pro instalaci}.
     .2 script/\DTcomment{skripty a jendoduché programy používané při zpracovávání práce}.
     .2 sim/\DTcomment{simulace elektronických obvodů}.
     .3 models/\DTcomment{dodatečné SPICE modely součástek}.
@@ -163,6 +175,63 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
 
 
 
+\clearpage
+\includepdf[
+    pages=1,
+    %landscape,
+    angle=90,
+    noautoscale,
+    width=\linewidth,
+    %height=\textheight,
+    % trial and error with frame and geometry's showframe, both width and
+    % height specified
+    offset=12.5mm 2.6mm,
+    %frame,
+    pagecommand={%
+        \newappendix{Schéma zapojení a návrh DPS}
+        \label{app:PCB}
+    },
+]{prilohy/AlarmClock-hardware/AlarmClock/AlarmClock.pdf}
+
+\includepdf[
+    pages={2-last},
+    %landscape,
+    angle=90,
+    noautoscale,
+    width=\linewidth,
+    %height=\textheight,
+    offset=12.5mm 2.6mm,
+    %frame,
+    pagecommand={},
+]{prilohy/AlarmClock-hardware/AlarmClock/AlarmClock.pdf}
+
+\includepdf[
+    pages=-,
+    %landscape,
+    angle=90,
+    noautoscale,
+    width=\linewidth,
+    %height=\textheight,
+    offset=12.5mm 2.6mm,
+    %frame,
+    pagecommand={},
+]{prilohy/AlarmClock-hardware/AlarmClock/AlarmClock-PCB.pdf}
+
+\begin{figure}[htbp]
+    \centering
+    \subcaptionbox{přední strana}{%
+        \includegraphics[height=0.45\textheight]{prilohy/AlarmClock-hardware/AlarmClock/3d/AlarmClock-top.png}
+    }
+    \subcaptionbox{zadní strana}{%
+        \includegraphics[height=0.45\textheight]{prilohy/AlarmClock-hardware/AlarmClock/3d/AlarmClock-bottom.png}
+    }
+    \caption{3D vizualizace DPS}
+    \label{fig:PCB 3d}
+\end{figure}
+
+
+
+\clearpage
 \todo[inline]{%
     dalsi prilohy
 }

@@ -23,7 +23,7 @@ apod. Řadič umožňuje i provoz ve 4bitovém režimu, v takovém případě se
 sběrnice využijí pouze piny $\mathrm{DB4}$ až $\mathrm{DB7}$.~\cite{dshHD44780}
 
 Pro nedostatek I/O portů použitého MCU je displej připojen přes
-8bitový I\textsuperscript{2}C I/O expandér PCF8574. Komunikace s řadičem
+8bitový \IIC{} I/O expandér PCF8574. Komunikace s řadičem
 HD44780 probíhá vzhledem k malému počtu dostupných pinů ve 4bitovém režimu.
 Expandér PCF8574 má 8 pinů, které lze nezávisle nastavit jako vstup či výstup.
 Výstupní pin $\overline{\mathrm{INT}}$ může být využit pro spuštění

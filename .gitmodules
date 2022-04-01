@@ -4,3 +4,9 @@
 [submodule "prilohy/PyAlarmClock"]
 	path = prilohy/PyAlarmClock
 	url = https://github.com/ondras12345/PyAlarmClock
+[submodule "prilohy/AlarmClock-hardware"]
+	path = prilohy/AlarmClock-hardware
+	url = https://github.com/ondras12345/AlarmClock-hardware
+[submodule "prilohy/AlarmClock"]
+	path = prilohy/AlarmClock
+	url = https://github.com/ondras12345/AlarmClock

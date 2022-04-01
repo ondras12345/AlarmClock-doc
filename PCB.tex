@@ -1,7 +1,40 @@
 \section{Proces návrhu a výroby desky plošných spojů}
 \subsection{Návrh DPS}
-\todo[inline]{proces navrhu PCB (DRC hodnoty)}
-\todo[inline]{proces vyroby PCB (CNC)}
+Pro návrh DPS byl využit svobodný software KiCAD. Součástky a jejich propojení
+jsou importovány ze schématu, jejich rozmístění na DPS a propojení cestami ale
+musí provést člověk.
+
+Před generováním návrhu plošného spoje je vhodné ověřit správnost schématu
+nástrojem ERC (Electrical Rules Checker).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.70\textwidth]{KICAD-ERC}
+    \caption{Výsledek kontroly ERC s několika detekovanými chybami}
+    \label{fig:kicad ERC}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.80\textwidth]{KICAD-po-importu}
+    \caption{%
+        Nástroj pro návrh DPS \shellcmd{pcbnew} po importu součástek ze
+        schématu
+    }
+    \label{fig:kicad po importu}
+\end{figure}
+
+Nástroj pro kontrolu správnosti návrhu plošného spoje se nazývá DRC. Ten
+kontroluje, zda-li je možné DPS vyrobit procesem s definovanými vlastnostmi
+(minimální šířka cesty, minimální izolační mezera, ...). Pro proces frézování
+je vhodné používat poměrně široké cesty~-- \SI{1}{\milli\meter} pro většinu
+spojů, \SI{0,8}{\milli\meter} pro cesty propojující SMD integrované obvody.
+
+DPS byla navržena tak, aby ji bylo možné vyrobit s mědí z jedné strany či
+oboustranně. Na jednostranném plošném spoji jsou cesty na horní měděné vrstvě
+nahrazeny drátovými propojkami.
+
+Úplné schéma zapojení a návrh DPS jsou otištěny v příloze~\ref{app:PCB}.
 
 
 \subsection{Výroba DPS}
@@ -24,7 +57,7 @@ získává uživatel stroj s pracovním prostorem \SI{160 x 100 x 40}{\milli\met
 
 \begin{figure}[htbp]
     \centering
-    \missingfigure{CNC 1610}
+    \includegraphics[width=1.0\textwidth]{CNC-freza}
     \caption{CNC fréza CNC~1610 s drobnými úpravami}
     \label{fig:CNC freza}
 \end{figure}
@@ -52,7 +85,7 @@ frézování je totiž velmi mělké, méně než \SI{200}{\micro\meter}.
 
 \begin{figure}[htbp]
     \centering
-    \missingfigure{CNC woodpecker board}
+    \includegraphics[width=1.0\textwidth]{CNC-rizeni}
     \caption{%
         Řídicí elektronika CNC frézy s připojenými koncovými spínači a~sondou
     }
@@ -90,12 +123,52 @@ zálohou a příslušně je upravit.
 Pro frézování obrazce DPS jsou vhodné nástroje ve tvaru V. Průměr nástroje
 v místě upnutí je \SI{3,175}{\milli\meter}, to je standardní rozměr používaný
 na malých CNC frézách. Nástroj se poté zužuje s úhlem
-\SI{30}{\degree}\todo{nebo 15?} až k velmi tenkému hrotu.
+\SI{15}{\degree} až k velmi tenkému hrotu.
 
 Pro vrtání děr využíváme tvrzené vrtáky o průměru \SI{0,8}{\milli\meter}
 a \SI{1}{\milli\meter}. Tyto dva rozměry postačí pro naprostou většinu běžných
-DPS.
-\todo{dopsat nastroje}
+DPS. Montážní díry o průměru \SI{3,2}{\milli\meter} se tímto vrtákem předvrtají
+a na požadovaný průměr je zvětšíme stojanovou vrtačkou. Drážky pro vývody
+napájecího konektoru lze vyfrézovat frézou \uv{corn bit} o průměru
+\SI{1}{\milli\meter}. Stejným nástrojem je provedeno i oddělení hotové DPS od
+zbytku materiálu.
+
+\begin{figure}[htbp]
+    \centering
+    \subcaptionbox{%
+        V-bit a fréza \SI{1}{\milli\meter}
+    }[0.3\textwidth]{%
+        \includegraphics[height=50mm]{CNC-nastroj-V-freza}
+    }
+    \subcaptionbox{%
+        Vrták \SI{0,8}{\milli\meter}
+    }[0.3\textwidth]{%
+        \includegraphics[height=50mm]{CNC-nastroj-08}
+    }
+    \subcaptionbox{%
+        Vrták \SI{1,0}{\milli\meter}
+    }[0.3\textwidth]{%
+        \includegraphics[height=50mm]{CNC-nastroj-10}
+    }
+    \caption{Nástroje používané při frézování DPS}
+    \label{fig:CNC nastroje}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{CNC-drazky-nastroj}
+    \hfill
+    \includegraphics[width=0.25\textwidth]{CNC-drazky}
+    \caption{Frézování drážek pro vývody napájecího konektoru}
+    \label{fig:CNC drazky}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.80\textwidth]{CNC-outline}
+    \caption{Frézování okraje DPS}
+    \label{fig:CNC outline}
+\end{figure}
 
 
 \paragraph{Řídicí software}
@@ -133,3 +206,69 @@ vyžadují desítky tisíc příkazů a jejich ruční tvorba by byla prakticky 
 Existuje ale svobodný software FlatCAM\footnote{\url{http://flatcam.org/}},
 který slouží k automatickému generování G-kódu z podkladů ve formátu Gerber.
 \todo{FlatCAM}
+
+
+\subsection{Osazování DPS}
+Pro osazování součástek pro povrchovou montáž na DPS vyrobenou procesem
+frézování nelze využít pájení horkým vzduchem po aplikaci pájecí pasty, protože
+by pravděpodobně došlo k nechtěnému připájení součástek k neodfrézované ploše
+mědi. Všechny součástky jsou proto pájeny ručně.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.45\textwidth,height=60mm,keepaspectratio]{T12-hroty-detail}
+    \\
+    {\footnotesize Nalevo T12-D16 používaný pro pájení SMD součástek;
+    napravo T12-K používaný pro pájení THT součástek.}
+    \caption{Hroty pro pájecí stanici T12 používané při osazování DPS}
+    \label{fig:PCB pajecka hroty}
+\end{figure}
+
+Nejprve osazujeme součástky pro povrchovou montáž (SMT) na spodní straně DPS.
+Abychom zabránili poškození polovodičových součástek elektrostatickými výboji,
+provádíme osazování a pájení na antistatické podložce. Technik pracující na DPS
+by měl nosit antistatický náramek. Je také vhodné nejdříve osazovat pasivní
+součástky, aby se riziko poškození polovodičových součástek dále zmenšilo.
+
+Součástky pro THT montáž osazujeme od nejnižších po nejvyšší. Na místo
+mikrokontroléru (U2) je vhodné připájet patici, do které se integrovaný obvod
+vloží. Pokud byl plošný spoj vyroben jako jednostranný, je nutné vyrobit
+a připájet několik drátových propojek.
+
+Při osazování je výhodné využít interaktivní osazovací plán, který je generován
+pluginem do KiCAD zvaným
+\texttt{InteractiveHtmlBom}\footnote{\url{https://github.com/openscopeproject/InteractiveHtmlBom}}.
+Pro jeho zobrazení je využit webový prohlížeč, ve kterém se otevře soubor
+\repopath{AlarmClock/bom/ibom.html} z repozitáře \gitrepo{AlarmClock-hardware}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{KICAD-ibom}
+    \caption{Interaktivní osazovací plán}
+    \label{fig:PCB ibom}
+\end{figure}
+
+
+\subsubsection{Modifikace LCD modulu}
+Modul s I/O expandérem PCF8574 je nutné před připájením na zadní stranu LCD
+upravit. Obsahuje totiž pull-up rezistory na sběrnici \IIC{}, které by po jeho
+připojení tvořili paralelní kombinaci s rezistory na hlavní DPS. Modul také
+obsahuje červenou SMD LED, která po připojení napájení neustále svítí.
+\todo[inline]{modifikace LCD modulu (odpajeni 3 odporu)}
+
+
+\subsection{Oživování DPS}
+Prvotní testy funkčnosti DPS lze provádět před vložením MCU do patice. Záložní
+baterii RTC je vhodné vyjmout z držáku, abychom zabránili jejímu vybití častým
+spínáním bzučáku~-- ten totiž při zapnutí DPS bez MCU či s MCU bez validního
+firmware nepřetržitě píská. Na jednotlivé piny patice můžeme přivádět různé
+signály či provádět měření napětí na nich pomocí digitálního multimetru nebo
+osciloskopu. Tímto způsobem lze testovat stmívač LED, zvukový výstup, bzučák
+indikující ztrátu napájení a tlačítka. Toto ověření funkčnosti není nutné
+provádět, je to ale vhodné pro snížení rizika poškození MCU.
+
+Po provedení základních testů vložíme MCU do patice. Nahrání firmware se
+provádí pomocí ISP programátoru USBasp připojeného ke konektoru J4. Postup
+programování je popsán v souboru \repopath{README.md} repozitáře
+\gitrepo{AlarmClock}. Po nahrání firmware by měla DPS být plně funkční, není
+nutné provádět žádná další analogová nastavení.
