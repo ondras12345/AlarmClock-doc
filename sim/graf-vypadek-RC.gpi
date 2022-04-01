@@ -1,0 +1,17 @@
+set output "graf-vypadek-RC.tex"
+load "graf-common.gpi"
+
+set xlabel '$t\,[\si{\second}]$'
+set ylabel '$I_{R_3}\,[\si{\micro\ampere}]$'
+
+set xrange [0:6]
+set yrange [0:500]
+set xtics 0.5
+set mxtics 5
+set ytics 50
+set mytics 5
+
+unset key
+
+plot \
+    "vypadek-RC.txt" u 1:($2*1.0e6) with lines ls 1
