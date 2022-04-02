@@ -15,6 +15,7 @@ autocmd BufRead,BufNewFile *.tex
     \ set spell |
     \ set spelllang=cs |
     \ set spellfile=~/.vim/spell/techspeakC.utf-8.add |
+    \ set keywordprg=texdoc |
     \ source ~/scripts/cz-mappings-local.vim
 
 iabbrev Vmetr voltmetr
