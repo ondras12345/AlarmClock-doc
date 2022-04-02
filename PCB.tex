@@ -250,11 +250,36 @@ Pro jeho zobrazení je využit webový prohlížeč, ve kterém se otevře soubo
 
 
 \subsubsection{Modifikace LCD modulu}
-Modul s I/O expandérem PCF8574 je nutné před připájením na zadní stranu LCD
-upravit. Obsahuje totiž pull-up rezistory na sběrnici \IIC{}, které by po jeho
-připojení tvořili paralelní kombinaci s rezistory na hlavní DPS. Modul také
-obsahuje červenou SMD LED, která po připojení napájení neustále svítí.
-\todo[inline]{modifikace LCD modulu (odpajeni 3 odporu)}
+Pro připojení LCD je využit komerčně dostupný modul s I/O expandérem PCF8574.
+Ten je ale nutné před připájením na zadní stranu LCD upravit. Obsahuje totiž
+pull-up rezistory na sběrnici \IIC{}, které by po jeho připojení tvořily
+paralelní kombinaci s rezistory na hlavní DPS. Modul také obsahuje červenou SMD
+LED, která po připojení napájení neustále svítí.
+
+Modifikace spočívá v odpájení 3 SMD rezistorů v pouzdře 0805. Rezistory jsou
+umístěny těsně vedle sebe, další blízkou součástkou je právě LED dioda. Tu není
+nutné odpájet, protože z obvodu odstraníme její předřadný rezistor R10
+(\SI{1}{\kilo\ohm}), ale pokud k jejímu poškození dojde omylem, nezmění se nic
+na funkci modulu. Pull-up rezistory R8 a R9 mají hodnotu \SI{4,7}{\kilo\ohm}.
+Úpravu lze snadno provést horkovzdušnou stanicí.
+
+\begin{figure}[htbp]
+    \centering
+    \subcaptionbox{Modul před modifikací}{%
+        \includegraphics[width=0.45\textwidth]{PCB-LCD-modul-pred}
+    }
+    \subcaptionbox{Modul po modifikaci}{%
+        \includegraphics[width=0.45\textwidth]{PCB-LCD-modul-po}
+    }
+    \subcaptionbox{%
+        Odpájení SMD součástek horkovzdušnou stanicí (poznámka: fotografie byla
+        pořízena před aplikací tavidla)
+    }{%
+        \includegraphics[width=0.80\textwidth]{PCB-LCD-modul-horkovzduska}
+    }
+    \caption{Modifikace LCD modulu}
+    \label{fig:PCB LCD modul modifikace}
+\end{figure}
 
 
 \subsection{Oživování DPS}
@@ -271,4 +296,26 @@ Po provedení základních testů vložíme MCU do patice. Nahrání firmware se
 provádí pomocí ISP programátoru USBasp připojeného ke konektoru J4. Postup
 programování je popsán v souboru \repopath{README.md} repozitáře
 \gitrepo{AlarmClock}. Po nahrání firmware by měla DPS být plně funkční, není
-nutné provádět žádná další analogová nastavení.
+nutné provádět žádná analogová nastavení.
+
+U prvního prototypu bylo provedeno měření s cílem ověřit správnou funkci všech
+jeho částí. Digitální signály (sběrnice \IIC{} a UART) byly měřeny logickým
+analyzátorem Saleae Logic 16. Stmívač LED byl kontrolován připojením stolního
+multimetru do série s LED a zasíláním příkazů pro rozsvěcení s různými
+požadovanými hodnotami jasu na rozhraní UART. Kontrolu zvukového výstupu lze
+provést připojením osciloskopu paralelně k reproduktoru.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.00\textwidth]{PCB-ozivovani-obvod}
+    \caption{%
+        Kontrola správné funkce DPS budíku s využitím logického analyzátoru
+        a~digitálních mutlimetrů
+    }
+    \label{fig:PCB ozivovani logic}
+\end{figure}
+\begin{figure}\ContinuedFloat
+    \centering
+    \includegraphics[width=0.90\textwidth]{PCB-ozivovani-metra}
+    \includegraphics[width=1.00\textwidth]{PCB-ozivovani-logic}
+\end{figure}
