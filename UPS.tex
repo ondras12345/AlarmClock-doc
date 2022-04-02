@@ -23,7 +23,8 @@ Jako zdroj energie pro bzučák je použita knoflíková baterie typu CR2032, kt
 slouží i jako záložní baterie hodin reálného času. Protože jde o primární
 lithiový článek, je nutné zajistit minimální proudový odběr v obou klidových
 stavech (připojené napájení s plnou funkčností budíku a odpojené napájení po
-zaznění zvukového signálu).
+zaznění zvukového signálu). V době výpadku již neběží na MCU program, proto je
+nutné implementovat funkčnost akustické indikace v hardware.
 
 Obvod je navržen tak, že pokud je připojené napájení \SI{5}{\volt} a na vstupu
 \texttt{buzzer} je napětí \SI{5}{\volt}, bzučák nepíská. Pokud je připojeno
