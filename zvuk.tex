@@ -137,7 +137,7 @@ obvodového řešení.
 Účinnějším (a z hlediska počtu součástek jednodušším) řešením je zesilování PWM
 signálu spínacími tranzistory. Filtrace je řešena na výstupu zesilovače.
 MCU není schopen dodat do bází tranzistorů tvořících zesilovací stupeň
-push-pull (Q2, Q3 na obrázku~\ref{fig:zvuk D tranzistory}) dostatečný \todo{vref; byl na hranici stranek}
+push-pull (Q2, Q3 na obrázku~\vref{fig:zvuk D tranzistory}) dostatečný
 proud, proto je potřeba přidat další stupeň (Q1). Ten také zajistí, že se na
 bázi NPN tranzistoru Q2 zapojeného jako emitorový sledovač dostane plné napětí
 \SI{5}{\volt}, i když bude na výstupu MCU napětí nižší (při
@@ -242,8 +242,6 @@ při kterých může dojít k nežádoucímu nárůstu napětí na jeho součás
 připojené zátěži (reproduktor s impedancí \SI{8}{\ohm}) jsou kmity tlumené,
 s odpojenou zátěží ale může dojít k výraznému nárůstu napětí například na
 kondenzátorech filtru (viz obrázek~\vref{fig:zvuk D filtr sim graf}).
-%V praxi se ale neprojevily žádné problémy způsobené touto nedokonalostí.
-\todo{prakticky otestovat novy filtr}
 
 
 
@@ -892,6 +890,9 @@ S pomocí \shellcmd{poke} bychom mohli například snadno upravit adresu dat
 v první hlavičce (\lstinline[language=Poke]|melody_headers[0].address = 0x0123|)
 a s pomocí \shellcmd{acEEPROM} binární soubor zapsat zpět do paměti
 EEPROM.
+
+
+\todo[inline]{nekde ukazat postupne zvysovanou amplitudu piskani (scope)}
 
 
 % Zajimave zdroje (nepouzito, necituji):

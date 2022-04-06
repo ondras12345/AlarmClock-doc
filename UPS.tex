@@ -10,8 +10,6 @@ akumulátoru a složitých nabíjecích obvodů.
     \centering
     \includegraphics[page=1, clip, bb=90mm 12mm 176mm 58mm, width=0.80\textwidth]{prilohy/AlarmClock-hardware/AlarmClock/AlarmClock.pdf}
     \par\bigskip
-    {\footnotesize Označení součástek neodpovídá simulaci na
-    obrázku~\vref{fig:UPS RC sim sch}}
     \caption{Schéma zapojení obvodu akustické indikace výpadku napájení}
     \label{fig:UPS sch}
 \end{figure}
@@ -61,6 +59,9 @@ mínus úbytek napětí na křemíkové diodě).
     }{%
         \input{sim/graf-vypadek-RC.tex}
     }
+    \par\bigskip
+    {\footnotesize Označení součástek neodpovídá schématu na
+    obrázku~\vref{fig:UPS sch}}
     \caption{Simulace konečné verze lineárního stmívače v programu LTspice}
     \label{fig:UPS RC sim}
 \end{figure}
