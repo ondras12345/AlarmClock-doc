@@ -1,4 +1,4 @@
-\section{Proces návrhu a výroby desky plošných spojů}
+\section{Návrh a výroba desky plošných spojů}
 \subsection{Návrh DPS}
 Pro návrh DPS byl využit svobodný software KiCAD. Součástky a jejich propojení
 jsou importovány ze schématu, jejich rozmístění na DPS a propojení cestami ale
@@ -249,7 +249,7 @@ Pro jeho zobrazení je využit webový prohlížeč, ve kterém se otevře soubo
 \end{figure}
 
 
-\subsubsection{Modifikace LCD modulu}
+\subsubsection{Modifikace modulu I/O expandéru}
 Pro připojení LCD je využit komerčně dostupný modul s I/O expandérem PCF8574.
 Ten je ale nutné před připájením na zadní stranu LCD upravit. Obsahuje totiž
 pull-up rezistory na sběrnici \IIC{}, které by po jeho připojení tvořily
@@ -295,8 +295,9 @@ provádět, je to ale vhodné pro snížení rizika poškození MCU.
 Po provedení základních testů vložíme MCU do patice. Nahrání firmware se
 provádí pomocí ISP programátoru USBasp připojeného ke konektoru J4. Postup
 programování je popsán v souboru \repopath{README.md} repozitáře
-\gitrepo{AlarmClock}. Po nahrání firmware by měla DPS být plně funkční, není
-nutné provádět žádná analogová nastavení.
+\gitrepo{AlarmClock}. Po nahrání firmware by měla DPS být plně funkční, na
+hlavní DPS není nutné provádět žádná analogová nastavení. Po připojení LCD je
+ale potřeba nastavit jeho kontrast trimrem na desce I/O expandéru PCF8574.
 
 U prvního prototypu bylo provedeno měření s cílem ověřit správnou funkci všech
 jeho částí. Digitální signály (sběrnice \IIC{} a UART) byly měřeny logickým

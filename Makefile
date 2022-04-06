@@ -12,8 +12,8 @@ clean:      ## Clean up the working directory.
 
 
 .PHONY: ext
-ext:        ## Make everything pdflatex needs, except for ods2csv.
-ext: graphssim svgfigures croppedfigures gnuplotfigures croppedsim
+ext:        ## Make everything pdflatex needs.
+ext: graphssim svgfigures croppedfigures gnuplotfigures croppedsim LCDchars.tex
 
 .PHONY: help
 help:       ## Show this help.
@@ -52,3 +52,7 @@ gnuplotfigures: $(addsuffix .tex, $(basename $(filter-out figures/graf-common.gp
 sim/cropped_%.pdf: sim/cropme_%.pdf
 	pdfcrop --pdfversion 1.5 $< $@
 croppedsim: $(patsubst sim/cropme_%.pdf,sim/cropped_%.pdf,$(wildcard sim/cropme_*.pdf))
+
+
+LCDchars.tex: prilohy/AlarmClock/lib/GUI/LCDchars.cpp
+	./script/LCDchars

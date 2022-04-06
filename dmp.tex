@@ -32,7 +32,7 @@
 \usepackage{booktabs}
 %\usepackage{calc} % e.g. for calculations in desky-predni
 %\usepackage{refcount} % calculations with references (Lastpage in desky-predni)
-%\usepackage{makecell} % for multiline cells in desky-predni
+%\usepackage{makecell} % for multiline cells
 %\usepackage{lastpage}
 
 %\usepackage{fancyhdr}
@@ -72,6 +72,12 @@
 \reversemarginpar
 \usepackage{dirtree}
 \usepackage{pdfpages}
+
+% Typesetting LCD displays with custom characters.
+% Full documentation for this package can be build from sources downloaded from
+% CTAN.
+\usepackage{lcd}
+\usepackage{longtable}
 
 \usetikzlibrary{fit}
 
@@ -164,7 +170,7 @@
     \addcontentsline{apc}{appendices}{\protect\numberline{\theappendices}#1}
 }
 
-
+\input{LCDchars}
 
 \begin{document}
 \input{titlepage}
