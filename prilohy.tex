@@ -21,6 +21,7 @@ do několika adresářů (výpis souborů není úplný):
     .6 ibom.html\DTcomment{interaktivní osazovací plán}.
     .5 cnc/\DTcomment{gcode programy pro CNC frézu}.
     .6 AlarmClock.FlatPrj\DTcomment{FlatCAM projekt}.
+    .4 AlarmClock-encoder/\DTcomment{DPS pro otočný enkodér}.
     .3 AlarmClockWeb/\DTcomment{repozitář \gitrepo{AlarmClockWeb} (webová stránka)}.
     .4 README.md\DTcomment{instrukce pro instalaci}.
     .3 PyAlarmClock/\DTcomment{repozitář \gitrepo{PyAlarmClock} (Python sofware)}.
@@ -189,7 +190,7 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
     offset=12.5mm 2.6mm,
     %frame,
     pagecommand={%
-        \newappendix{Schéma zapojení a návrh DPS}
+        \newappendix{Schéma zapojení a návrh hlavní DPS}
         \label{app:PCB}
     },
 ]{prilohy/AlarmClock-hardware/AlarmClock/AlarmClock.pdf}
@@ -233,7 +234,35 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
 
 
 \clearpage
-\todo[inline]{%
-    dalsi prilohy
-}
+\includepdf[
+    pages=1,
+    %landscape,
+    angle=90,
+    noautoscale,
+    width=\linewidth,
+    %height=\textheight,
+    % trial and error with frame and geometry's showframe, both width and
+    % height specified
+    offset=12.5mm 2.6mm,
+    %frame,
+    pagecommand={%
+        \newappendix{Schéma zapojení a návrh DPS pro otočný enkodér}
+        \label{app:PCB}
+    },
+]{prilohy/AlarmClock-hardware/AlarmClock-encoder/AlarmClock-encoder.pdf}
+
+\includepdf[
+    pages=-,
+    %landscape,
+    angle=90,
+    noautoscale,
+    width=\linewidth,
+    %height=\textheight,
+    offset=12.5mm 2.6mm,
+    %frame,
+    pagecommand={},
+]{prilohy/AlarmClock-hardware/AlarmClock-encoder/AlarmClock-encoder-PCB.pdf}
+
+
+\clearpage
 \todo[inline]{cislovani obrazku a tabulek v prilohach}
