@@ -152,3 +152,26 @@ docker run -d \
     -v $PWD/config.php:/var/www/html/config.php:ro \
     alarmclockweb
 \end{lstlisting}
+
+Pokud je požadována integrace se složitější webovou stránkou, lze v konfiguraci
+jejího webového serveru nastavit funkci reverzní proxy. Tímto způsobem lze
+i přidat dodatečné funkce, jako například ověřování uživatelských hesel.
+Následuje příklad konfigurace webového serveru Apache.
+Předpokladem je, že kontejner \texttt{alarmclockweb} vystavuje port
+\port{8080}. Pro zamezení přímého připojení uživatele na port \port{8080}
+serveru je vhodné specifikovat při spouštění kontejneru argument
+\texttt{-p 127.0.0.1:8080:80}, kterým je připojení na port \port{8080} omezeno
+na rozhraní \texttt{loopback} s IP adresou \ipaddress{127.0.0.1}.
+\begin{lstlisting}[style=numbers]
+# alarmclockweb docker container
+<Location /alarmclock>
+        AuthType Basic
+        AuthName "AlarmClockWeb"
+        AuthBasicProvider file
+        # htpasswd -c /etc/apache2/.htpasswd uzivatel
+        AuthUserFile /etc/apache2/.htpasswd
+        Require user uzivatel
+</Location>
+ProxyPass /alarmclock http://localhost:8080/
+ProxyPassReverse /alarmclock http://localhost:8080/
+\end{lstlisting}
