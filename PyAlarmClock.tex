@@ -311,6 +311,16 @@ $ mosquitto_pub -t alarmclock/cmnd/alarm/write -m '{"index": 0, "enabled": "OFF"
 Zprávy o případných chybách (například nevalidní JSON objekt) jsou zasílány do
 topic \topic{alarmclock/err}.
 
+Přes MQTT API lze provést i změnu datumu a času \acs{RTC} budíku, a to zasláním
+textového řetězce ve formátu ISO8601:
+\begin{lstlisting}[style=terminal]
+$ date -Iseconds
+2022-04-09T11:24:27+02:00
+$ mosquitto_pub -t alarmclock/cmnd/rtc -m "$(date -Iseconds)"
+\end{lstlisting}
+
+
+
 \subsection{Instalace a automatické spouštění}
 Aby se MQTT adaptér spouštěl automaticky po startu serveru, je vhodné vytvořit
 \shellcmd{systemd} službu. Postup je obecně zdokumentován v souboru
