@@ -31,8 +31,6 @@ hardwarového přerušení (interrupt) na straně MCU při změně stavu vstupn�
 pinů, MCU tedy nemusí pravidelně kontrolovat jejich stav.~\cite{dshPCF8574}
 Tato funkce ale není při ovládání LCD využita.
 
-\todo[inline]{knihovna}
-
 \begin{figure}[htbp]
     \centering
     \tikzstyle{box}=[draw, rounded corners=2mm, font={\bfseries}, align=center, inner sep=3mm]
@@ -81,6 +79,13 @@ tvarem plexiskla a montáží LED do tohoto plexiskla.
 
 \begin{figure}[htbp]
     \centering
+    \includegraphics[width=0.7\textwidth]{figures/LCD-mod-after}
+    \caption{LCD po změně barvy podsvícení}
+    \label{fig:LCD cervena}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
     \includegraphics[width=0.8\textwidth]{figures/LCD-mod-disassembly}
     \includegraphics[width=0.8\textwidth]{figures/LCD-mod-BLU-sheet}
     \begin{tikzpicture}
@@ -120,15 +125,49 @@ tvarem plexiskla a montáží LED do tohoto plexiskla.
 \end{figure}
 
 Úprava spočívá v rozebrání displeje, vyjmutí plexiskla z BLU a vylomení
-přilepené bílé LED. Displej je poté složen a na DPS je připájena červená
+přilepené bílé LED. Displej je poté složen a na jeho DPS je připájena červená
 \num{3}\si{\milli\meter} LED, která je vložena do dutiny v plexiskle.
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.7\textwidth]{figures/LCD-mod-after}
-    \caption{LCD po změně barvy podsvícení}
-    \label{fig:LCD cervena}
-\end{figure}
+
+\subsection{Grafické konfigurační rozhraní budíku}
+Na displeji jsou zobrazována textová data s jednoduchými grafickými ikonkami
+(\num{5 x 8} obrazových bodů). Uživatel zařízení ovládá pomocí otočného
+enkodéru s tlačítkem aktivovaným stisknutím jeho osy. Je-li podsvícení displeje
+zhasnuté, dojde při prvním otočení enkodéru či stisku tlačítka k rozsvícení
+v nočním režimu. Jas podsvitové LED je minimální a s rozhraním budíku ještě
+není možné pracovat. Další stisk tlačítka či otočení ovládacího prvku vede
+k rozsvícení na maximální jas a odblokování interakce.
+Po \num{10} sekundách neaktivity uživatele je podsvícení displeje opět
+zhasnuto.
+
+Otáčením ovládacího prvku se po displeji pohybuje kurzor, jehož pozice je
+indikována podtržením (rozsvícením nejnižšího řádku obrazových bodů) daného
+znaku. Většina znaků proto využívá pouze vyšších \num{7} řádků. Ne všechny
+znaky lze tímto způsobem vybrat, kurzor lze umístit pouze pod interaktivní
+prvky. Existují 3 typy těchto prvků:
+\begin{itemize}[nosep]
+    \item tlačítka, která slouží k přechodu na jinou obrazovku,
+    \item přepínače, které mají pouze dva stavy (zapnuto / vypnuto),
+    \item výběrová menu, která mají více stavů (například číslo v rozsahu
+        \numrange{0}{60}).
+\end{itemize}
+
+Při stisku tlačítka ovládacího prvku s kurzorem umístěným pod znakem s významem
+tlačítka dochází k přechodu na jinou obrazovku (jiný pohled) a překreslení
+displeje.
+
+Stiskem ovládacího prvku při výběru přepínače dochází ke změně stavu tohoto
+přepínače; tato změna je indikována změnou jeho znaku. Malá písmena značí
+vypnutý přepínač, zatímco velká písmena jsou použita pro zapnuté přepínače.
+Pokud je přepínač reprezentován číslicí, je ve vypnutém stavu nahrazen znakem
+\textLCD{1}!-!.
+
+Při stisku ovládacího prvku s kurzorem umístěným pod výběrovým menu dochází
+k přechodu do režimu výběru. První ze znaků reprezentujících toto menu se
+rozbliká (je střídavě nahrazován znakem \textLCD{1}!{fcur} !). Otáčením
+ovládacího prvku se provádí výběr z prvků v tomto menu (nebo inkrementace /
+dekrementace čísla). Volba je potvrzena stiskem ovládacího prvku, blikání znaku
+ustává a otáčení volicího prvku opět pohybuje běžným kurzorem.
 
 \begingroup
 %\renewcommand{\arraystretch}{1.5}
@@ -180,7 +219,7 @@ přilepené bílé LED. Displej je poté složen a na DPS je připájena červen
             \\
     alarms
     \par\smallskip
-    \LCD{2}{16}!{home}0/5 12   67 OFF!
+    \LCD{2}{16}!{home}0/5 12---67 OFF!
                !12:34+01*1  25lS!
         &
             Nastavení budicích časů
