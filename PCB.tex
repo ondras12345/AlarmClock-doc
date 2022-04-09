@@ -5,12 +5,12 @@ jsou importovány ze schématu, jejich rozmístění na DPS a propojení cestami
 musí provést člověk.
 
 Před generováním návrhu plošného spoje je vhodné ověřit správnost schématu
-nástrojem ERC (Electrical Rules Checker).
+nástrojem \ac{ERC}.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.70\textwidth]{KICAD-ERC}
-    \caption{Výsledek kontroly ERC s několika detekovanými chybami}
+    \caption{Výsledek kontroly \acs{ERC} s několika detekovanými chybami}
     \label{fig:kicad ERC}
 \end{figure}
 
@@ -24,15 +24,15 @@ nástrojem ERC (Electrical Rules Checker).
     \label{fig:kicad po importu}
 \end{figure}
 
-Nástroj pro kontrolu správnosti návrhu plošného spoje se nazývá DRC. Ten
+Nástroj pro kontrolu správnosti návrhu plošného spoje se nazývá \ac{DRC}. Ten
 kontroluje, zda-li je možné DPS vyrobit procesem s definovanými vlastnostmi
 (minimální šířka cesty, minimální izolační mezera, ...). Pro proces frézování
 je vhodné používat poměrně široké cesty~-- \SI{1}{\milli\meter} pro většinu
 spojů, \SI{0,8}{\milli\meter} pro cesty propojující SMD integrované obvody.
 
-DPS byla navržena tak, aby ji bylo možné vyrobit s mědí z jedné strany či
-oboustranně. Na jednostranném plošném spoji jsou cesty na horní měděné vrstvě
-nahrazeny drátovými propojkami.
+DPS byla navržena tak, aby ji bylo možné vyrobit jak s mědí z jedné strany,
+tak i oboustranně. Na jednostranném plošném spoji jsou cesty na horní měděné
+vrstvě nahrazeny drátovými propojkami.
 
 Úplné schéma zapojení a návrh DPS jsou otištěny v příloze~\ref{app:PCB}.
 
