@@ -289,10 +289,36 @@ nahradit kód komunikující s hardware, protože tím je umožněno spouštěn�
 v prostředí \texttt{native}, naprosto odděleně od vlastního hardware.
 
 Knihovna
-ArduinoFake\footnote{\url{https://github.com/FabioBatSilva/ArduinoFake}}
-poskytuje předdefinované pomocné objekty nahrazující funkce specifické pro
-Arduino -- například \texttt{Serial}.
-\todo{dopsat mocking}
+\texttt{ArduinoFake}\footnote{\url{https://github.com/FabioBatSilva/ArduinoFake}}
+nahrazuje knihovnu \texttt{Arduino.h} a poskytuje definice specifické pro
+framework Arduino. Knihovna \texttt{FakeIt}, na které \texttt{ArduinoFake}
+staví, umožňuje nahrazovat libovolné metody objektů či funkce vlastní definicí,
+díky čemuž je testovaná jednotka zbavena závislostí na ostatních jednotkách.
+
+Jako jednoduchá ukázka poslouží nahrazení funkce \texttt{digitalWrite}:
+\begin{lstlisting}[language=C++]
+#include <unity.h>
+#include <ArduinoFake.h>
+using namespace fakeit;
+
+#include <TestedUnit.h>  // testovaná jednotka závsisející na Arduino.h
+
+void test_example()
+{
+    // Nastavíme, že funkce digitalWrite po zavolání nic nevrací.
+    When(Method(ArduinoFake(), digitalWrite)).AlwaysReturn();
+
+    constexpr uint8_t pin = 1;
+    tested_unit.tested_method(pin);  // testovaná funkce
+
+    // Ověříme, zda byla funkce digitalWrite zavolána pouze jednou,
+    // a to s prvním argumentem rovným 1 (pin)
+    // a druhým argumentem LOW (konstanta definovaná v Arduino.h).
+    Verify(Method(ArduinoFake(), digitalWrite).Using(pin, LOW)).Once();
+}
+
+// ...
+\end{lstlisting}
 
 
 \subsection{Statická analýza kódu}
