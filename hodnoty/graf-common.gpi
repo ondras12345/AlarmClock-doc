@@ -1,0 +1,17 @@
+set terminal epslatex size 24cm,14.5cm
+set encoding utf8
+set decimalsign ','
+set format xy '$\num{%g}$'
+
+set grid lt -1 lc rgb 'gray70' lw 1.5, lt 0 lc rgb 'gray60' lw 2.0
+set pointsize 2
+
+set style line 1 lw 3 lc rgb "black"
+#set style line 2 lw 3 dt 2 lc rgb "black"
+#set style line 3 lw 3 dt 3 lc rgb "black"
+#set style line 4 lw 3 dt 4 lc rgb "black"
+#set style line 5 lw 3 dt 5 lc rgb "black"
+
+set datafile separator ","
+
+set grid xtics ytics mxtics mytics

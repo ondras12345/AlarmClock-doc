@@ -264,5 +264,91 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
 ]{prilohy/AlarmClock-hardware/AlarmClock-encoder/AlarmClock-encoder-PCB.pdf}
 
 
+
+
+\newappendix{Měření charakteristiky stmívače}
+\label{app:ambient}
+Průběh závislosti proudu protékajícího výkonovou LED na požadovaném jasu (číslo
+v rozsahu \numrange{0}{255}) lze změřit metodou bod po bodu. Digitální
+ampérmetr je připojen v sérii s LED, zadaný jas je nastavován přes sériový port
+budíku. S digitálním multimetrem Owon B35T, který podporuje připojení
+k počítači přes Bluetooth, lze provést měření zcela automaticky s pomocí
+následujícího programu:
+\lstinputlisting[language=Python,style=numbers]{prilohy/measure_ambient.py}
+
+\begin{lstlisting}[style=terminal]
+$ ./measure_ambient.py
+duty; value
+0;2022-04-10 15:53:14.949140;0.0;mA;(DC-auto)
+10;2022-04-10 15:53:24.769441;0.0;mA;(DC-auto)
+20;2022-04-10 15:53:35.191933;0.61;mA;(DC-auto)
+30;2022-04-10 15:53:45.012132;2.6;mA;(DC-auto)
+40;2022-04-10 15:53:55.433162;6.78;mA;(DC-auto)
+50;2022-04-10 15:54:05.454056;12.94;mA;(DC-auto)
+60;2022-04-10 15:54:15.273836;20.42;mA;(DC-auto)
+70;2022-04-10 15:54:25.694675;28.72;mA;(DC-auto)
+80;2022-04-10 15:54:35.716312;37.5;mA;(DC-auto)
+90;2022-04-10 15:54:45.736972;46.6;mA;(DC-auto)
+100;2022-04-10 15:54:55.558120;55.89;mA;(DC-auto)
+110;2022-04-10 15:55:05.578489;65.3;mA;(DC-auto)
+120;2022-04-10 15:55:15.800582;74.8;mA;(DC-auto)
+130;2022-04-10 15:55:26.021199;84.4;mA;(DC-auto)
+140;2022-04-10 15:55:35.642069;93.8;mA;(DC-auto)
+150;2022-04-10 15:55:45.663607;103.0;mA;(DC-auto)
+160;2022-04-10 15:55:56.286673;111.7;mA;(DC-auto)
+170;2022-04-10 15:56:06.306743;119.6;mA;(DC-auto)
+180;2022-04-10 15:56:15.926708;126.1;mA;(DC-auto)
+190;2022-04-10 15:56:26.146637;131.5;mA;(DC-auto)
+200;2022-04-10 15:56:36.167047;135.3;mA;(DC-auto)
+210;2022-04-10 15:56:46.387852;137.9;mA;(DC-auto)
+220;2022-04-10 15:56:56.207813;139.8;mA;(DC-auto)
+230;2022-04-10 15:57:06.429305;141.2;mA;(DC-auto)
+240;2022-04-10 15:57:16.450719;142.3;mA;(DC-auto)
+250;2022-04-10 15:57:26.471619;143.5;mA;(DC-auto)
+255;2022-04-10 15:57:36.693283;143.6;mA;(DC-auto)
+done
+\end{lstlisting}
+
+\noindent
+\begin{minipage}[t]{1.00\textwidth}
+    \centering
+    \captionsetup{type=table}
+    \caption{%
+        Naměřené hodnoty závislosti velikosti proudu protékajícího výkonovou
+        LED na požadovaném jasu stmívače
+    }
+    \label{tab:hodnoty ambient}
+    \CatchFileDef{\tabambient}{hodnoty/c_ambient.tex}{}
+    \sisetup{
+        table-number-alignment = center
+    }
+    \begin{tabular}{
+            S[table-format=3.0]
+            S[table-format=3.2]
+        }
+        \toprule
+        {Požadovaný jas (\numrange{0}{255})}
+        & {$I_\mathrm{LED}\,[\si{\milli\ampere}]$}
+        \\
+        \midrule
+        \tabambient
+        \bottomrule
+    \end{tabular}
+\end{minipage}
+
+\clearpage
+\begin{landscape}
+    \begin{figure}[H]
+        \centering
+        \input{hodnoty/graf-ambient.tex}
+        \caption{%
+            Naměřená závislost velikosti proudu protékajícího výkonovou LED na
+            požadovaném jasu stmívače
+        }
+        \label{fig:graf ambient}
+    \end{figure}
+\end{landscape}
+
+
 \clearpage
 \todo[inline]{cislovani obrazku a tabulek v prilohach}

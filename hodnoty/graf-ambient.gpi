@@ -1,0 +1,18 @@
+set output "graf-ambient.tex"
+load "graf-common.gpi"
+
+set xlabel 'Požadovaný jas (\numrange{0}{255})'
+set xrange [0:255]
+set xtics 10
+set mxtics 5
+
+set ylabel '$I_\mathrm{LED}\,[\si{\milli\ampere}]$'
+set yrange [0:150]
+set ytics 10
+set mytics 5
+
+unset key
+
+plot \
+    "c_ambient.csv" u 1:2 with points ls 1 notitle, \
+    "" u 1:2:(1e-2) smooth acsplines ls 1 notitle

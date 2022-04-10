@@ -5,6 +5,11 @@ sim/cropped_*.pdf
 figures/cropped_*.pdf
 figures/graf-*.eps
 figures/graf-*.tex
+hodnoty/c_*.csv
+hodnoty/c_*.tex
+hodnoty/graf-*.pdf
+hodnoty/graf-*.tex
+hodnoty/graf-*.eps
 
 
 ## LaTeX
