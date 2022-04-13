@@ -137,7 +137,8 @@ void test_decode()
         DaysOfWeek dow;
         // ...a přiřadíme mu dané 8bitové číslo.
         dow.days_of_week = Cases[i].code;
-        // V rámci daného případu iterujeme přes všechny dny v týdnu...
+        // V rámci daného případu iterujeme
+        // přes všechny dny v týdnu...
         for (size_t j = 0; j < sizeof(Cases[i].days)/sizeof(Cases[i].days[0]); j++)
         {
             // ...a porovnáváme správnou hodnotu daného dne

@@ -5,11 +5,12 @@
 
 % https://tex.stackexchange.com/questions/30512/how-to-insert-code-with-accents-with-listings
 \lstset{
-  basicstyle=\mysinglespacing,
+  basicstyle=\mysinglespacing\fontfamily{lmtt}\selectfont,
   columns=flexible,
   frame=single,
   breaklines=true,
-  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  postbreak=\mbox{$\hookrightarrow$\space},
+  showstringspaces=false,
   literate=%
     {á}{{\'a}}1
     {í}{{\'i}}1
@@ -44,22 +45,23 @@
 }
   %literate={█}{{\#}}1
 
-\lstdefinestyle{numbers}
-    { numbers=left, xleftmargin=2em, %
-      %framexleftmargin=1.5em,  % cisla radku uvnitr ramecku, vypada hnusne
-    }
+\lstdefinestyle{numbers}{
+    numbers=left,
+    xleftmargin=2em,
+    %framexleftmargin=1.5em,  % cisla radku uvnitr ramecku, vypada hnusne
+}
 
-\lstdefinestyle{terminal}
-    {basicstyle=\ttfamily\mysinglespacing,basewidth={0.5em,0.5em}}
+\lstdefinestyle{terminal}{
+    basicstyle=\ttfamily\mysinglespacing,
+    basewidth={0.5em,0.5em}
+}
 
 
 \lstdefinelanguage{Ini}
 {
-    basicstyle=\ttfamily\mysinglespacing,
-    morecomment=[s][\rmfamily\bfseries]{[}{]},
+    morecomment=[s][\bfseries]{[}{]},
     morecomment=[l]{\#},
     morecomment=[l]{;},
-    commentstyle=\rmfamily\itshape,
     morekeywords={},
 }
 
@@ -76,7 +78,6 @@
     sensitive=false,
     %
     comment=[l]{\#},
-    commentstyle=\mdseries\rmfamily\itshape,
     %
     morestring=[d]',
     morestring=[b]",
@@ -231,4 +232,8 @@
   morestring=[b]",
     literate =%
         {-}{{-}}1
+}
+
+\lstdefinelanguage{hashcomment}{
+    comment=[l]{\#},
 }

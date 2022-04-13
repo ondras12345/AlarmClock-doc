@@ -160,7 +160,7 @@ Předpokladem je, že kontejner \texttt{alarmclockweb} vystavuje port
 serveru je vhodné specifikovat při spouštění kontejneru argument
 \texttt{-p 127.0.0.1:8080:80}, kterým je připojení na port \port{8080} omezeno
 na rozhraní \texttt{loopback} s IP adresou \ipaddress{127.0.0.1}.
-\begin{lstlisting}[style=numbers]
+\begin{lstlisting}[language=hashcomment,style=numbers]
 # alarmclockweb docker container
 <Location /alarmclock>
         AuthType Basic
