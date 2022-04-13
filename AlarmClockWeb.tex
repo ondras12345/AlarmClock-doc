@@ -94,8 +94,6 @@ Select field, name a0-enabled
     \label{fig:web links}
 \end{figure}
 
-\todo[inline]{MQTT knihovna a jednoduchy priklad?}
-
 Použitá knihovna \texttt{php-mqtt/client} vyžaduje PHP verze 7.4. Operační
 systém Debian 10 (buster) ale nabízí ve standardních repozitářích pouze PHP
 7.3. Existuje možnost doinstalovat balíčky třetích stran, to by ale mohlo
@@ -104,7 +102,7 @@ potřebují PHP 7.3 a s PHP 7.4 nefungují).
 U programů napsaných v jazyce Python (jako například MQTT adaptér) je řešení
 podobných problémů velice jednoduché, protože můžeme využít virtuální prostředí
 \texttt{virtualenv}. Pro PHP spouštěné webových serverem Apache ale žádné
-podobné řešení neexistuje.
+podobné jednoduché řešení neexistuje.
 Proto byl vytvořen soubor \filename{Dockerfile}, který obsahuje definici
 kontejneru. V tomto kontejneru běží zcela oddělená instance Apache s vlastní
 konfigurací a vlastní verzí PHP. To přináší i další výhody. Protože služba běží

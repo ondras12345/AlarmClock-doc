@@ -641,6 +641,21 @@ Objekt \texttt{BuzzerManager} proto v takových případech využívá právě m
 \texttt{silence}, která na výstupním pinu generuje PWM signál o konstantní
 střídě \SI{50}{\percent}.
 
+\begin{figure}[htbp]
+    \centering
+    \subcaptionbox{s využitím metody \texttt{noTone}}{%
+        \includegraphics[width=\textwidth]{zvuk-sine-1k-ramp}
+    }
+    \subcaptionbox{s využitím metody \texttt{silence}}{%
+        \includegraphics[width=\textwidth]{zvuk-sine-1k-ramp-silence}
+    }
+    \caption{%
+        Buzení přerušovaným akustickým signálem o frekvenci \SI{1}{\kilo\hertz}
+        s postupně zvyšovanou amplitudou
+    }
+    \label{fig:zvuk sine ramp}
+\end{figure}
+
 
 \paragraph{Příkazy v \texttt{AlarmClockCLI}}
 V příkazovém řádku (CLI) budíku byly implementovány příkazy umožňující
@@ -889,8 +904,6 @@ v první hlavičce (\lstinline[language=Poke]|melody_headers[0].address = 0x0123
 a s pomocí \shellcmd{acEEPROM} binární soubor zapsat zpět do paměti
 EEPROM.
 
-
-\todo[inline]{nekde ukazat postupne zvysovanou amplitudu piskani (scope)}
 
 
 % Zajimave zdroje (nepouzito, necituji):
