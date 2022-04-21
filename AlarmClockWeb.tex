@@ -64,9 +64,10 @@ prohlížečů pro příkazový řádek (viz obrázek~\vref{fig:web links}).
 \begin{figure}[htbp]
     \begin{lstlisting}[style=terminal,columns=fixed]
                                                     Alarms (p1 of 13) 
-                             Alarm Clock                              
+     * home                                                           
+     * alarms                                                         
                                                                       
-Alarms                                                                
+                                Alarms                                
                                                                       
    This simple UI allows for reading and writing configuration of     
    alarms.                                                            
@@ -75,17 +76,16 @@ Alarms
    | Index | Configuration                                        |   
    |-------+------------------------------------------------------|   
    |       | +--------------------------------------------------+ |   
-   |       | | Enabled      | [+---------+                      | |   
-   |       | |--------------+--| unknown |----------------------| |   
-   |       | |              | [| OFF     | ] Tuesday [ ]        | |   
-   |       | | Days of week | W| SGL     |] Thursday [X] Friday | |   
-   |       | |              | [| RPT     | [ ] Sunday           | |   
-   |       | |--------------+--| SKP     |----------------------| |   
-   |       | | Time         | 1+---------+_________             | |   
+   |       | | Enabled      | [OFF____]                         | |   
    |       | |--------------+-----------------------------------| |   
-   |       | | Snooze time  | 1____________________  min        | |   
+   |       | |              | [ ] Monday [ ] Tuesday [ ]        | |   
+   |       | | Days of week | Wednesday [ ] Thursday [X] Friday | |   
+   |       | |              | [ ] Saturday [ ] Sunday           | |   
    |       | |--------------+-----------------------------------| |   
-   |       | | Snooze count | 1____________________             | |   
+   |       | | Time         | 12:34________________             | |   
+   |       | |--------------+-----------------------------------| |   
+   |       | | Snooze time  | 1____________________  min        | |   
+   |       | |--------------+-----------------------------------| |   
 Select field, name a0-enabled                                        
     \end{lstlisting}
     {\footnotesize (Menu \uv{Enabled} je rozbalené. Ve skutečném terminálu je
@@ -163,12 +163,17 @@ na rozhraní \texttt{loopback} s IP adresou \ipaddress{127.0.0.1}.
 \begin{lstlisting}[language=hashcomment,style=numbers]
 # alarmclockweb docker container
 <Location /alarmclock>
-        AuthType Basic
-        AuthName "AlarmClockWeb"
-        AuthBasicProvider file
-        # htpasswd -c /etc/apache2/.htpasswd uzivatel
-        AuthUserFile /etc/apache2/.htpasswd
-        Require user uzivatel
+    ProxyHTMLEnable On
+    ProxyHTMLURLMap / /alarmclock/
+    RequestHeader unset Accept-Encoding
+    ProxyHTMLCharsetOut *
+    AuthType Basic
+    AuthName "AlarmClockWeb"
+    AuthBasicProvider file
+    # htpasswd -c /etc/apache2/.htpasswd ondra
+    # (-c means create/rewrite)
+    AuthUserFile /etc/apache2/.htpasswd
+    Require user ondra
 </Location>
 ProxyPass /alarmclock http://localhost:8080/
 ProxyPassReverse /alarmclock http://localhost:8080/
