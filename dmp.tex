@@ -105,7 +105,10 @@
 \DeclareRobustCommand{\topic}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\gitrepo}{\texttt}
 \newcommand{\gitbranch}[1]{\texttt{#1}}
-\DeclareRobustCommand{\repopath}[1]{\texttt{\detokenize{#1}}}
+%\DeclareRobustCommand{\repopath}[1]{\texttt{\detokenize{#1}}}
+% \detokenize would disallow use of \fshyp
+\DeclareRobustCommand{\repopath}{\begingroup\catcode`_=12\dorepopath}
+\DeclareRobustCommand{\dorepopath}[1]{\texttt{#1}\endgroup}
 \newcommand{\filename}{\texttt}
 \DeclareRobustCommand{\yamlkey}[1]{\texttt{\detokenize{#1}}}
 \DeclareRobustCommand{\inikey}[1]{\texttt{\detokenize{#1}}}

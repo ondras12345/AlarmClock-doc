@@ -369,15 +369,20 @@ void PWMSine_noTone(uint8_t pin);
 #endif  // PWMSINE_H
 \end{lstlisting}
 
-Knihovna implementuje pouze tři funkce~--
-\lstinline[language=C]!void PWMSine_setup()! provádí inicializaci časovače.
-\lstinline[language=C]!void PWMSine_tone(uint8_t pin, uint16_t freq, uint8_t amplitude=255)!
-zahajuje generování sinusového signálu na výstupním pinu \texttt{pin} (na desce
-Arduino UNO jsou použitou knihovnou \texttt{TimerOne} podporované piny 9
-a~10~\cite{TimerOnedocs}). Generovaný signál má frekvenci \texttt{freq} a jeho
-amplituda je určena 8bitovým číslem \texttt{amplitude}.
-\lstinline[language=C]!void PWMSine_noTone(uint8_t pin)! ukončuje generování
-tónu na výstupním pinu \texttt{pin}.
+Knihovna implementuje pouze tři funkce:
+\begin{itemize}[nosep]
+    \item \lstinline[language=C]!void PWMSine_setup()! provádí inicializaci časovače.
+
+    \item \lstinline[language=C]!void PWMSine_tone(uint8_t pin, uint16_t freq, uint8_t amplitude)!
+        zahajuje generování sinusového signálu na výstupním pinu \texttt{pin}
+        (na desce Arduino UNO jsou použitou knihovnou \texttt{TimerOne}
+        podporované piny 9 a~10~\cite{TimerOnedocs}). Generovaný signál má
+        frekvenci \texttt{freq} a jeho amplituda je určena 8bitovým číslem
+        \texttt{amplitude}.
+
+    \item \lstinline[language=C]!void PWMSine_noTone(uint8_t pin)!
+        ukončuje generování tónu na výstupním pinu \texttt{pin}.
+\end{itemize}
 
 Vlastní definice funkcí se nachází v souboru \filename{PWMSine.cpp}:
 \begin{lstlisting}[language=C++,style=numbers]
@@ -599,8 +604,9 @@ s testovací verzí složitější. API knihovny je dokumentováno standardně
 technologií \shellcmd{doxygen}.
 
 Oproti testovací verzi přibyla metoda
-\lstinline[language=C++]!void PWMSine::silence(uint8_t pin)!, která slouží ke
-generování ticha. Kdyby byla místo této metody využita metoda \texttt{noTone},
+\lstinline[language=C++]!void PWMSine::silence(uint8_t pin)!, \\% POZOR rucni zalomeni radku
+která slouží ke generování ticha.
+Kdyby byla místo této metody využita metoda \texttt{noTone},
 došlo by k úplnému vypnutí PWM výstupu a výstupní pin by přešel do úrovně
 logické~0. To by v reproduktoru způsobilo slyšitelné cvaknutí, protože do té
 doby zpracovávaný sinusový signál měl stejnosměrnou složku \SI{2,5}{\volt} a na
@@ -644,10 +650,10 @@ střídě \SI{50}{\percent}.
 \begin{figure}[htbp]
     \centering
     \subcaptionbox{s využitím metody \texttt{noTone}}{%
-        \includegraphics[width=\textwidth]{zvuk-sine-1k-ramp}
+        \includegraphics[width=\textwidth]{zvuk-sine-1k-ramp}%
     }
     \subcaptionbox{s využitím metody \texttt{silence}}{%
-        \includegraphics[width=\textwidth]{zvuk-sine-1k-ramp-silence}
+        \includegraphics[width=\textwidth]{zvuk-sine-1k-ramp-silence}%
     }
     \caption{%
         Buzení přerušovaným akustickým signálem o frekvenci \SI{1}{\kilo\hertz}
