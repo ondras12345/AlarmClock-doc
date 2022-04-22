@@ -26,6 +26,7 @@ do několika adresářů (výpis souborů není úplný):
     .4 README.md\DTcomment{instrukce pro instalaci}.
     .3 PyAlarmClock/\DTcomment{repozitář \gitrepo{PyAlarmClock} (Python sofware)}.
     .4 README.md\DTcomment{instrukce pro instalaci}.
+    .3 homeassistant/\DTcomment{konfigurace Home Assistant}.
     .2 script/\DTcomment{skripty a jendoduché programy používané při zpracovávání práce}.
     .2 sim/\DTcomment{simulace elektronických obvodů}.
     .3 models/\DTcomment{dodatečné SPICE modely součástek}.
@@ -352,6 +353,12 @@ done
         \label{fig:graf ambient}
     \end{figure}
 \end{landscape}
+
+
+\clearpage
+\newappendix{Balíček konfigurace pro Home Assistant}
+\label{app:HAconfig}
+\lstinputlisting[language=yaml,style=numbers]{prilohy/homeassistant/alarmclock.yaml}
 
 
 \clearpage
