@@ -1,14 +1,15 @@
 \section{Home Assistant}
 Home Assistant je svobodný software (licence Apache) pro domácí automatizaci se
 zaměřením na soukromí. Uživatel jej provozuje na vlastním serveru (například
-NAS či Raspberry Pi). Cílem projektu je \emph{automatizace}, ne vzdálené
-ovládání.\footnote{\url{https://www.home-assistant.io/blog/2016/01/19/perfect-home-automation/}}.
-K němu lze využít také, v obvyklých situacích je ale hodnota získaná možností
-ovládat různá zařízení z mobilního telefonu přinejmenším sporná.
+NAS či jednodeskový počítač Raspberry Pi). Cílem projektu je
+\emph{automatizace}, ne vzdálené
+ovládání\footnote{\url{https://www.home-assistant.io/blog/2016/01/19/perfect-home-automation/}},
+ke kterému ho lze využít také, v obvyklých situacích je ale hodnota získaná
+možností ovládat různá zařízení z mobilního telefonu přinejmenším sporná.
 
 \subsection{Instalace}
-Software Home Assistant je napsaný v jazyce Python je existuje tedy několik
-způsobů, jak jen nainstalovat. Nejjednodušší a pravděpodobně nejrobustnější
+Software Home Assistant je napsaný v jazyce Python, existuje tedy několik
+způsobů, jak jej nainstalovat. Nejjednodušší a pravděpodobně nejrobustnější
 možností je instalace v kontejneru nástroje Docker. Podrobnou dokumentaci
 s návodem pro instalaci lze nalézt na webových stránkách
 \url{https://www.home-assistant.io/installation/}.
@@ -25,9 +26,11 @@ less get-docker.sh
 # Provedeme instalaci jako uživatel root.
 sudo sh get-docker.sh
 
-# Vytvoříme uživatele homeassistant a přidáme mu práva pro práci s dockerem.
+# Vytvoříme uživatele homeassistant a přidáme mu práva pro práci
+# s dockerem.
 sudo useradd -rm homeassistant -G docker
-# Vytvoříme funkci umožňující snadné spouštění příkazů pod tímto uživatelem.
+# Vytvoříme funkci umožňující snadné spouštění příkazů pod tímto
+# uživatelem.
 hau(){
     sudo -u homeassistant "$@"
 }
@@ -72,7 +75,7 @@ Jeho zdrojový kód je otištěn v příloze~\vref{app:update ha}.
 Po spuštění poslouchá webový server Home Assistant na portu \port{8123/tcp}.
 Pokud je na serveru provozován firewall, je nutné tento port otevřít pro
 zařízení, která mají mít k webovému rozhraní přístup. S jednoduchým nástrojem
-pro konfiguraci \shellcmd{iptables} nazvaného \shellcmd{ufw}
+pro konfiguraci \shellcmd{iptables} nazvaným \shellcmd{ufw}
 (\foreignlanguage{english}{Uncomplicated FireWall} to lze provést následovně:
 \begin{lstlisting}[language=mybash]
 sudo tee /etc/ufw/applications.d/homeassistant << EOF
@@ -128,20 +131,12 @@ switch:
     command_topic: alarmclock/cmnd/inhibit
     availability_topic: alarmclock/stat/available
 
-
-light:
-  - platform: mqtt
-    name: AlarmClock lamp
-    state_topic: alarmclock/stat/lamp
-    command_topic: alarmclock/cmnd/lamp
-    availability_topic: alarmclock/stat/available
-
 # ...
 \end{lstlisting}
 \todo[inline]{repozitar s HA konfiguraci}
 
 
-\todo[inline]{obecne info o HA}
+% Obecne info o HA:
 % https://www.home-assistant.io/docs/glossary/
 % jinja2 templates
 
@@ -152,10 +147,10 @@ v prostředí Home Assistant možnost vytvářet entity z celé řady domén~--
 například \HAdomain{sensor}, \HAdomain{binary_sensor}, \HAdomain{light},
 \HAdomain{switch} a další.
 
-Příkladem funkce budíku, kterou lze do tohoto systému snadno integrovat, je
-ovládání světla \uv{lamp}. To je určeno primárně pro buzení, není ale důvod,
-proč by nemohlo být využíváno i pro jiné účely. Protože jde o osvětlení,
-využijeme typ entity
+Příkladem funkce budíku, kterou lze do systému snadno integrovat, je ovládání
+světla \uv{lamp}. To je určeno primárně pro buzení, není ale důvod, proč by
+nemohlo být využíváno i pro jiné účely. Protože jde o osvětlení, využijeme typ
+entity
 \href{https://www.home-assistant.io/integrations/light.mqtt}{MQTT Light}.
 Vlastní konfigurace je triviální:
 \begin{lstlisting}[language=yaml]
@@ -166,14 +161,14 @@ light:
     command_topic: alarmclock/cmnd/lamp
     availability_topic: alarmclock/stat/available
 \end{lstlisting}
-Využíváme totiž výchozích hodnot -- například \lstinline!payload_off: OFF!
+Využíváme výchozích hodnot~-- například \lstinline!payload_off: OFF!
 a~\lstinline!payload_on: ON!. Ty se shodují se zprávami odesílanými programem
 \shellcmd{ac2mqtt}. \yamlkey{availability_topic} složí k detekci
 nefunkčního spojení s budíkem. V takovém případě přejde entita
 \HAentity{light.alarmclock_lamp} do stavu \HAstate{unavailable}.
 
 Platforma \foreignlanguage{english}{MQTT Light} umožňuje i ovládání jasu
-světla, čehož využíváme u stmívatelného LED pásku \uv{ambient}. Konfigurace je
+světla, čehož využíváme u stmívatelné LED \uv{ambient}. Konfigurace je
 o něco složitější.
 \begin{lstlisting}[language=yaml]
 light:
@@ -204,7 +199,7 @@ možností by bylo převést \texttt{value} na celočíselný datový typ filtre
 \yamlkey{brightness_template} určuje, jak z přijaté MQTT zprávy odvodit jas
 světla jako číslo v rozsahu \numrange{0}{255}.
 
-\yamlkey{command_off_template} určuje zprávu, která se má poslat na
+\yamlkey{command_off_template} specifikuje zprávu, která se má poslat na
 \yamlkey{command_topic}, když je požadováno vypnutí světla. Protože vypnutí
 provádíme nastavením jasu na \num{0}, není ani potřeba využít šablonu.
 
