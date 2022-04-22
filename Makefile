@@ -1,3 +1,7 @@
+.PHONY: all
+all:        ## Make the final pdf and extra files.
+all: doxygenAlarmClock pdf
+
 .PHONY: pdf
 pdf:        ## Make the final pdf (uses latexmk).
 pdf: ext
@@ -11,6 +15,7 @@ clean:      ## Clean up the working directory.
 	    hodnoty/graf-*.tex hodnoty/graf-*.eps \
 	    hodnoty/graf-*-eps-converted-to.pdf hodnoty/fit.log
 	#-rm schemata/c_*.pdf
+	-rm -r prilohy/AlarmClock/docs/doxygen
 
 
 .PHONY: ext
@@ -78,3 +83,13 @@ hodnoty/graf-%.tex: hodnoty/graf-%.gpi hodnoty/graf-common.gpi hodnoty/c_%.csv
 
 .PHONY: graphs
 graphs: $(addsuffix .tex, $(basename $(filter-out hodnoty/graf-common.gpi, $(wildcard hodnoty/graf-*.gpi))))
+
+
+.PHONY: doxygenAlarmClock
+doxygenAlarmClock: prilohy/AlarmClock/docs/doxygen/latex/refman.pdf
+
+prilohy/AlarmClock/docs/doxygen/latex/refman.tex: $(shell find prilohy/AlarmClock/ -name '*.cpp' -o -name '*.h' -o -name '*.ino')
+	$(MAKE) -C prilohy/AlarmClock docs
+
+prilohy/AlarmClock/docs/doxygen/latex/refman.pdf: prilohy/AlarmClock/docs/doxygen/latex/refman.tex $(wildcard prilohy/AlarmClock/docs/doxygen/latex/*.tex)
+	$(MAKE) -C prilohy/AlarmClock/docs/doxygen/latex
