@@ -42,7 +42,7 @@
 %\usepackage{hhline}
 \usepackage{float}
 \usepackage{csquotes}
-\usepackage[backend=biber,style=iso-numeric]{biblatex}
+\usepackage[backend=biber,style=iso-numeric,sorting=nty]{biblatex}
 \addbibresource{reference.bib}
 \usepackage[czech]{varioref}
 \usepackage[unicode,hidelinks]{hyperref}
@@ -206,10 +206,8 @@
 % Reference a odkazy
 {\singlespacing%
 \printbibliography[title={Odkazy a~literatura}]
-\todo[inline]{poznamky a odkazy ??}
 \phantomsection
 \addcontentsline{toc}{chapter}{Odkazy a~literatura}  % v toc, ale bez cisla
-\todo{abecedni razeni seznamu literatury}
 }
 
 \listoffigures
