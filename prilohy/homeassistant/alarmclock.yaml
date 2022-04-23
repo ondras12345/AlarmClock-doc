@@ -1,0 +1,32 @@
+# vim: tabstop=2 softtabstop=2 shiftwidth=2 expandtab
+
+switch:
+  - platform: mqtt
+    name: AlarmClock inhibit
+    state_topic: alarmclock/stat/inhibit
+    command_topic: alarmclock/cmnd/inhibit
+    availability_topic: alarmclock/stat/available
+
+
+light:
+  - platform: mqtt
+    name: AlarmClock lamp
+    state_topic: alarmclock/stat/lamp
+    command_topic: alarmclock/cmnd/lamp
+    availability_topic: alarmclock/stat/available
+
+  - platform: mqtt
+    schema: template
+    name: AlarmClock ambient
+    availability_topic: alarmclock/stat/available
+    command_topic: alarmclock/cmnd/ambient
+    state_topic: alarmclock/stat/ambient
+    state_template: "{{ 'off' if value == '0' else 'on' }}"
+    brightness_template: "{{ value }}"
+    command_off_template: 0
+    command_on_template: >
+      {%- if brightness is defined -%}
+      {{ brightness }}
+      {%- else -%}
+      255
+      {%- endif -%}
