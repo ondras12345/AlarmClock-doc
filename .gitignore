@@ -13,9 +13,12 @@ hodnoty/graf-*.eps
 
 figures/TTL-232R-5V-AJ-pinout.pdf
 
+.venv
+dmp.pdf
+slukao_dmp.zip
+
 
 ## LaTeX
-dmp.pdf
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof

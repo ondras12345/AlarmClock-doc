@@ -14,8 +14,8 @@ clean:      ## Clean up the working directory.
 	-rm figures/cropped_*.pdf sim/cropped_*.pdf \
 	    hodnoty/graf-*.tex hodnoty/graf-*.eps \
 	    hodnoty/graf-*-eps-converted-to.pdf hodnoty/fit.log
-	#-rm schemata/c_*.pdf
-	-rm -r prilohy/AlarmClock/docs/doxygen
+	-rm -r prilohy/AlarmClock/docs/doxygen \
+	    slukao_dmp.zip
 
 
 .PHONY: ext
@@ -93,3 +93,9 @@ prilohy/AlarmClock/docs/doxygen/latex/refman.tex: $(shell find prilohy/AlarmCloc
 
 prilohy/AlarmClock/docs/doxygen/latex/refman.pdf: prilohy/AlarmClock/docs/doxygen/latex/refman.tex $(wildcard prilohy/AlarmClock/docs/doxygen/latex/*.tex)
 	$(MAKE) -C prilohy/AlarmClock/docs/doxygen/latex
+
+
+.PHONY: archive
+archive:    ## Make final zip with everything (including submodules).
+archive: all
+	git-archive-all --include "dmp.pdf" --include "prilohy/AlarmClock/docs/doxygen/latex/refman.pdf" $(addprefix --include , $(shell find prilohy/AlarmClock/docs/doxygen/html/ -name '*')) slukao_dmp.zip
