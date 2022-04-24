@@ -1,13 +1,14 @@
 \section{PyAlarmClock}
-Pro usnadnění manipulace s budíkem připojeným přes rozhraní UART z počítače
-byla vytvořena knihovna \texttt{PyAlarmClock}. Je to modul jazyka Python
-obsahující abstrakce pro práci s budíkem. Programátor vytvářející počítačový
-program díky tomu nemusí ani znát konkrétní příkazy prostředí
-\texttt{AlarmClockCLI}. Například nastavení data času modulu RTC se provádí
-přiřazením objektu \texttt{datetime.datetime} vlastnosti \verb|RTC_time|
-objektu \texttt{AlarmClock} bez nutnosti znát vnitřní implementaci, která
-využívá příkazu \texttt{st} pro nastavení času a \texttt{sd} pro nastavení
-data.
+\label{sec:PyAlarmClock}
+Pro usnadnění manipulace s budíkem připojeným přes rozhraní UART k počítači
+(serveru) byla vytvořena knihovna \texttt{PyAlarmClock}. Jde o modul jazyka
+Python obsahující abstrakce pro práci s budíkem. Programátor vytvářející
+počítačový program díky tomu nemusí ani znát konkrétní příkazy prostředí
+\texttt{AlarmClockCLI}. Například nastavení data a času modulu \acs{RTC} se
+provádí přiřazením objektu \texttt{datetime.datetime} vlastnosti
+\verb|RTC_time| objektu \texttt{AlarmClock} bez nutnosti znát vnitřní
+implementaci (příkaz \texttt{st} pro nastavení času a \texttt{sd} pro nastavení
+data).
 
 Pro ilustraci konceptu poslouží jeden z ukázkových programů~--
 \repopath{src/PyAlarmClock/examples/set_time.py}. V následující ukázce je navíc
@@ -40,11 +41,11 @@ Jedním z programů využívajících knihovnu \texttt{PyAlarmClock} je
 dostupný jako \shellcmd{ac2mqtt}). Tento program umožňuje vzdálené ovládání
 budíku zprávami přenášenými protokolem MQTT. Tímto způsobem lze zajistit
 ovládání budíku několika programy současně bez nutnosti sdílet sériový port
-mezi více procesy. Komunikace může probíhat nejen mezi více zařízeními ve
-stejné počítačové síti, ale i v rámci jednoho serveru (\texttt{localhost}).
+mezi více procesy. Komunikace může probíhat nejen v rámci jednoho serveru
+(\texttt{localhost}), ale i mezi více zařízeními ve stejné počítačové síti.
 
-Použití adaptéru je velmi jednoduché. Příkazem \verb|ac2mqtt --help|
-lze vypsat seznam argumentů, které lze programu předávat.
+Použití adaptéru je velmi jednoduché. Příkaz \verb|ac2mqtt --help|
+vypíše seznam argumentů, které lze programu předávat.
 % nechci sem davat cely usage, protoze bych ho pak treba musel aktualizovat...
 Následuje jednoduchý příklad~-- program se připojí k MQTT brokeru na
 \texttt{localhost} na výchozím portu 1883 jako uživatel \texttt{DEBUG} s heslem
@@ -70,14 +71,14 @@ alarmclock/stat/number_of_alarms 6
 \end{lstlisting}
 Číslo posílané v topic \topic{alarmclock/stat/number_of_alarms} udává počet
 konfigurovatelných časů buzení, které firmware připojeného budíku podporuje
-(interně zjišťováno příkazem \texttt{ver}). Zpráva je adaptérem zasílána
+(interně zjišťováno příkazem \texttt{ver}). MQTT zpráva je adaptérem zasílána
 s příznakem \texttt{retain}, proto je automaticky zaslána nově příchozímu
 subscriberovi.
 
-Zpráva v topic \topic{alarmclock/stat/available} určuje, zda je adaptér
-aktivní. Při jeho ukončení či náhodném odpojení je MQTT brokerem do tohoto
-topic automaticky zaslána zpráva \texttt{offline}. K tomu je využívána funkce
-MQTT \ac{LWT}.
+Zpráva v topic \topic{alarmclock/stat/available} nese informaci o tom, zda je
+adaptér aktivní. Při jeho ukončení či náhodném odpojení je MQTT brokerem do
+tohoto topic automaticky zaslána zpráva \texttt{offline}. K tomu je využívána
+funkce MQTT \ac{LWT}.
 
 Požadujeme-li, aby budík provedl nějakou akci, pošleme zprávu do příslušného
 \texttt{command topic} -- \topic{alarmclock/cmnd/nazev_prikazu}.
@@ -115,14 +116,15 @@ class AlarmClockMQTT:
         def do_command(self, ac: AlarmClock, msg: str):
             """Handle reception of msg.
 
-            The return value (if not None) of this function will be published
-            in the corresponding state_topic.
+            The return value (if not None) of this function will be
+            published in the corresponding state_topic.
 
-            If a tuple is returned, the first value in the tuple is a topic
-            under state_topic where the second value should be published.
+            If a tuple is returned,
+            the first value in the tuple is a topic under state_topic
+            where the second value should be published.
 
-            If a list is returned, each item will be handled according to
-            the above rules.
+            If a list is returned, each item will be handled
+            according to the above rules.
             """
             raise NotImplementedError()
 
@@ -283,7 +285,7 @@ u nichž potřebujeme přijímat asynchronní informace o jejich stavu.
 
 MQTT API je v současné době používáno i pro nastavování budicích časů, ty jsou
 pro účely přenosu v textových zprávách serializovány do formátu JSON.
-Každému budicímu času odpovídá jeden MQTT topic. Aby klient používajíci API
+Každému budicímu času odpovídá jeden MQTT topic. Aby klient používající API
 věděl, kolik budicích časů budík podporuje, je do topic
 \topic{alarmclock/stat/number_of_alarms} zasílána zpráva s příznakem
 \texttt{retain} obsahující jejich celkový počet.
@@ -311,7 +313,7 @@ $ mosquitto_pub -t alarmclock/cmnd/alarm/write -m '{"index": 0, "enabled": "OFF"
 Zprávy o případných chybách (například nevalidní JSON objekt) jsou zasílány do
 topic \topic{alarmclock/err}.
 
-Přes MQTT API lze provést i změnu datumu a času \acs{RTC} budíku, a to zasláním
+Přes MQTT API lze provést i změnu data a času \acs{RTC} budíku, a to zasláním
 textového řetězce ve formátu ISO8601:
 \begin{lstlisting}[style=terminal]
 $ date -Iseconds
@@ -332,7 +334,7 @@ cd ~/source/repos
 git clone https://github.com/ondras12345/PyAlarmClock.git
 cd PyAlarmClock
 
-# Vytvoříme adresář /opt, do kterého software nainstalujeme.
+# Vytvoříme adresář v /opt/, do kterého software nainstalujeme.
 sudo mkdir /opt/PyAlarmClock
 sudo chown $USERNAME:$USERNAME /opt/PyAlarmClock
 # Provedeme instalaci do virtuálního prostředí venv.
@@ -352,14 +354,15 @@ password = pass
 device = /dev/ttyUSB0
 EOF
 
-# Software poběží pod uživatelem homeassistant, proto upravíme přístupová
-# práva konfiguračního souboru.
+# Software poběží pod uživatelem homeassistant, proto upravíme
+# přístupová práva konfiguračního souboru.
 sudo chown homeassistant:homeassistant /etc/ac2mqtt.conf
 # Soubor obsahuje citlivé údaje (heslo), proto nesmí být čitelný
 # pro všechny uživatele systému.
 sudo chmod 660 /etc/ac2mqtt.conf
 
-# Uživatel homeassistant musí mít práva pro přístup k sériovému portu.
+# Uživatel homeassistant musí mít práva
+# pro přístup k sériovému portu.
 sudo adduser homeassistant dialout
 
 # Vytvoříme definici systemd služby.
@@ -409,28 +412,27 @@ bře 18 22:28:23 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:23,583 INFO MQTT connec
 
 \subsection{Automatické testy a průběžná integrace}
 Správná funkce knihovny \texttt{PyAlarmClock} je průběžně kontrolována
-automatickými testy. Některé testy vyžadují připojení hardware (MCU s firmware
-\texttt{AlarmClock}), jednotkové testy ale lze spouštět zcela automaticky na
-libovolném stroji.
-Aby byly testy spouštěny při každém novém commitu či pull requestu, je využita
-bezplatná služba Github actions. Jednoduchý konfigurační soubor
-\repopath{.github/workflows/ci.yml} specifikuje, jaké programy se mají
-spouštět:
+automatickými testy. Některé testy vyžadují připojení hardware (\acs{MCU}
+s firmware \texttt{AlarmClock}), jednotkové testy ale lze spouštět zcela
+automaticky na libovolném stroji. Aby byly testy spouštěny při každém novém
+commitu či pull requestu, je využita bezplatná služba Github actions.
+Jednoduchý konfigurační soubor \repopath{.github/workflows/ci.yml} specifikuje,
+jaké programy se mají spouštět:
 \lstinputlisting[language=yaml, style=numbers]{prilohy/PyAlarmClock/.github/workflows/ci.yml}
 Celý proces testování se provádí se dvěma verzemi jazyka Python: Python 3.6
 a~novější Python 3.10. Starší verze je testována, aby programátor, který má na
 svém počítači nainstalovanou novější verzi, omylem nepoužil nějakou příliš
 novou funkci jazyka. Test tedy slouží k zachování zpětné kompatibility.
-V současné době nejnovější verze je testována, protože nemusí být s verzí 3.6
-plně zpětně kompatibilní.
+V současné době nejnovější verze 3.10 je testována, protože nemusí být s verzí
+3.6 plně zpětně kompatibilní.
 
 Po instalaci balíčku \texttt{PyAlarmClock} a programu \shellcmd{pytest} je
 zavolán takzvaný linter \shellcmd{flake8}. Ten provádí statickou analýzu kódu
 a vyhledává programátorské i stylistické chyby.
 
 Bezpečnostní linter \shellcmd{bandit} hledá v kódu bezpečnostní chyby. Nejde
-jen o zapomenutá hesla a tokeny, ale také o použití nebezpečných funkcí jako
-\lstinline[language=Python]!eval!.
+jen o zapomenutá hesla a tokeny, ale také o použití nebezpečných funkcí (jako
+například \lstinline[language=Python]!eval!).
 
 \shellcmd{mypy} kontroluje statickou analýzou správnost datových typů
 proměnných předávaných mezi funkcemi v programu. Python je dynamicky typovaný
@@ -449,7 +451,7 @@ Za běhu programu jsou tyto anotace ignorovány, může je ale využívat práv�
 software pro statickou analýzu kódu. Jejich další funkcí je zvýšení
 srozumitelnosti dokumentace API knihovny. Potenciální uživatel knihovny
 (programátor software, který na ní závisí) si může velmi rychle utvořit
-představu o tom, jak danou funkci volat.
+představu o tom, jak danou funkci volat a jaký výstup od ní očekávat.
 
 \shellcmd{pytest} spouští jednotkové testy z \repopath{tests/unit/}.
 

@@ -5,31 +5,32 @@ Pro zobrazování dat se v dnešní době využívá široká škála různých 
 displejů. Vzhledem k textovému charakteru zobrazovaných dat jsou pro toto
 zařízení vhodné znakové či grafické displeje, segmentové displeje by neumožnily
 zobrazení většího množství údajů na jednom místě. Protože není potřeba
-zobrazovat složitou grafiku, zvolil jsem znakový LCD displej (16 znaků na
-řádek, 2 řádky) s řadičem HD44780. Ten je asi nejlevnější alternativou, je
-snadno dostupný a díky možnosti nadefinovat několik vlastních znaků lze
-zobrazovat i jednoduchou grafiku.
+zobrazovat složitou grafiku, byl zvolen znakový LCD displej 1602 (16 znaků na
+řádek, 2 řádky) s řadičem \texttt{HD44780}. Ten je asi nejlevnější
+alternativou, je snadno dostupný a díky možnosti nadefinovat několik vlastních
+znaků lze zobrazovat i jednoduchou grafiku.
 
-Řadič HD44780 využívá pro komunikaci 8bitovou sběrnici ($\mathrm{DB0}$ až
-$\mathrm{DB7}$) a tři řídicí piny: $\mathrm{R}/\overline{\mathrm{W}}$,
-$\mathrm{E}$ a $\mathrm{RS}$. Pin $\mathrm{R}/\overline{\mathrm{W}}$ určuje,
-jestli požaduje mikrokontrolér čtení dat z řadiče (logická 1) či zápis (logická
-0). V obou případech se data přenášejí po sběrnici. Pin $\mathrm{E}$ zahajuje
-operaci čtení či zápisu. $\mathrm{RS}$ určuje, jestli jsou data na sběrnici
-daty pro zápis do paměti řadiče ($\mathrm{RS} = 1$, obvykle zápis ASCII hodnoty
-požadovaného znaku) nebo instrukce, kterou má řadič provést ($\mathrm{RS} =
-0$). Podporované instrukce zahrnují smazání displeje, zapnutí blikání kurzoru
-apod. Řadič umožňuje i provoz ve 4bitovém režimu, v takovém případě se ze
-sběrnice využijí pouze piny $\mathrm{DB4}$ až $\mathrm{DB7}$.~\cite{dshHD44780}
+Řadič \texttt{HD44780} využívá pro komunikaci 8bitovou sběrnici (\texttt{DB0}
+až \texttt{DB7}) a tři řídicí piny: $\texttt{R}/\overline{\texttt{W}}$,
+\texttt{E} a \texttt{RS}. Pin $\texttt{R}/\overline{\texttt{W}}$ určuje,
+jestli požaduje mikrokontrolér čtení dat z řadiče (logická 1)
+či zápis (logická 0). V obou případech se data přenášejí po sběrnici.
+Pin $\mathrm{E}$ zahajuje operaci čtení či zápisu. $\mathrm{RS}$ určuje, jestli
+jsou data na sběrnici daty pro zápis do paměti řadiče ($\texttt{RS} = 1$,
+obvykle zápis ASCII hodnoty požadovaného znaku) nebo instrukce, kterou má řadič
+provést ($\texttt{RS} = 0$). Podporované instrukce zahrnují smazání displeje,
+zapnutí blikání kurzoru apod. Řadič umožňuje i provoz ve 4bitovém režimu,
+v takovém případě se ze sběrnice využijí pouze piny $\texttt{DB4}$ až
+$\texttt{DB7}$.~\cite{dshHD44780}
 
 Pro nedostatek I/O portů použitého MCU je displej připojen přes
-8bitový \IIC{} I/O expandér PCF8574. Komunikace s řadičem
-HD44780 probíhá vzhledem k malému počtu dostupných pinů ve 4bitovém režimu.
-Expandér PCF8574 má 8 pinů, které lze nezávisle nastavit jako vstup či výstup.
-Výstupní pin $\overline{\mathrm{INT}}$ může být využit pro spuštění
-hardwarového přerušení (interrupt) na straně MCU při změně stavu vstupních
-pinů, MCU tedy nemusí pravidelně kontrolovat jejich stav.~\cite{dshPCF8574}
-Tato funkce ale není při ovládání LCD využita.
+8bitový \IIC{} I/O expandér \texttt{PCF8574}. Komunikace s řadičem
+\texttt{HD44780} probíhá vzhledem k malému počtu dostupných pinů ve 4bitovém
+režimu. Expandér \texttt{PCF8574} ovládá 8 pinů, které lze nezávisle nastavit
+jako vstup či výstup. Výstupní pin $\overline{\texttt{INT}}$ může být využit
+pro spuštění hardwarového přerušení (interrupt) na straně MCU při změně stavu
+vstupních pinů, MCU tedy nemusí pravidelně kontrolovat jejich
+stav.~\cite{dshPCF8574} Tato funkce ale není při ovládání LCD využita.
 
 \begin{figure}[htbp]
     \centering
@@ -59,19 +60,20 @@ Tato funkce ale není při ovládání LCD využita.
 
 
 Expandér ovládá také podsvícení displeje. To je zajištěno elektroluminiscenční
-diodou (LED) svítící z boku do plexiskla pod open cell (viz rozebrané LCD na
-obrázku~\vref{fig:LCD modifikace}). V běžně prodávaných znakových LCD jsou
-osazovány bílé LED, přičemž vlastní open cell je modrý. Pro použití
+diodou (LED) svítící z boku do plexiskla pod open cell (sklo LCD, viz rozebraný
+LCD na obrázku~\vref{fig:LCD modifikace}). V běžně prodávaných znakových LCD
+jsou osazovány bílé LED, přičemž vlastní open cell je modrý. Pro použití
 v prostředí s nízkou intenzitou osvětlení se ale považuje za vhodnější
 podsvícení červenou barvou.\todo{ozdrojovat modre svetlo v noci} Když pro
 podsvícení použijeme červenou LED, blokuje open cell většinu světla a ven
-z panelu vychází červené světlo pouze v místech, kde jsou otevřené pixely.
+z panelu vychází červené světlo pouze v místech, kde jsou otevřené obrazové
+body.
 
 \subsection{Změna barvy podsvícení displeje}
 Modifikace barvy podsvícení není triviální, protože se na trhu vyskytuje mnoho
 displejů se stejnými rozměry, komunikačním rozhraním apod., ale s rozdílným
-provedením podsvětlení (BLU). U všech autorem zakoupených displejů je
-podsvícení řešenou jednou LED zapuštěnou do plexiskla na pravé straně displeje.
+provedením podsvětlení (\acs{BLU}). U všech autorem zakoupených displejů je
+podsvícení řešeno jednou LED zapuštěnou do plexiskla na pravé straně displeje.
 LED je na desce plošných spojů připájena do prokovených děr, které jsou na
 hraně DPS přesně ve své polovině odfrézovány. Důvod pro toto řešení je
 pravděpodobně zjednodušení montáže při výrobě. Jednotlivé displeje se liší
@@ -79,15 +81,15 @@ tvarem plexiskla a montáží LED do tohoto plexiskla.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{figures/LCD-mod-after}
-    \caption{LCD po změně barvy podsvícení}
-    \label{fig:LCD cervena}
+    \includegraphics[width=0.8\textwidth]{figures/LCD-mod-disassembly}
+    \includegraphics[width=0.8\textwidth]{figures/LCD-mod-BLU-sheet}
+    \includegraphics[width=0.8\textwidth]{figures/LCD-mod-BLU-plexiglass}
+    \caption{Výměna LED v podsvícení LCD}
+    \label{fig:LCD modifikace}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/LCD-mod-disassembly}
-    \includegraphics[width=0.8\textwidth]{figures/LCD-mod-BLU-sheet}
     \begin{tikzpicture}
         \node [above right, inner sep=0] (image) at (0,0) {\includegraphics[width=\textwidth]{LCD-mod-pieces}};
 
@@ -120,8 +122,15 @@ tvarem plexiskla a montáží LED do tohoto plexiskla.
             \node at (1,0) [above left, black,fill=white] {Na obrázku chybí plexisklo z BLU.};
         \end{scope}
     \end{tikzpicture}
-    \caption{Výměna LED v podsvícení LCD}
-    \label{fig:LCD modifikace}
+    \caption{Jednotlivé části rozebraného LCD}
+    \label{fig:LCD modifikace casti}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/LCD-mod-after}
+    \caption{LCD po změně barvy podsvícení}
+    \label{fig:LCD cervena}
 \end{figure}
 
 Úprava spočívá v rozebrání displeje, vyjmutí plexiskla z BLU a vylomení
@@ -129,30 +138,32 @@ přilepené bílé LED. Displej je poté složen a na jeho DPS je připájena č
 \num{3}\si{\milli\meter} LED, která je vložena do dutiny v plexiskle.
 
 
+\FloatBarrier
 \subsection{Grafické konfigurační rozhraní budíku}
 Na displeji jsou zobrazována textová data s jednoduchými grafickými ikonkami
 (\num{5 x 8} obrazových bodů). Uživatel zařízení ovládá pomocí otočného
-enkodéru s tlačítkem aktivovaným stisknutím jeho osy. Je-li podsvícení displeje
-zhasnuté, dojde při prvním otočení enkodéru či stisku tlačítka k rozsvícení
-v nočním režimu. Jas podsvitové LED je minimální a s rozhraním budíku ještě
-není možné pracovat. Další stisk tlačítka či otočení ovládacího prvku vede
-k rozsvícení na maximální jas a odblokování interakce.
-Po \num{10} sekundách neaktivity uživatele je podsvícení displeje opět
-zhasnuto.
+enkodéru s tlačítkem aktivovaným stisknutím jeho osy.
 
-Otáčením ovládacího prvku se po displeji pohybuje kurzor, jehož pozice je
+Je-li podsvícení displeje zhasnuté, dojde při prvním otočení enkodéru či stisku
+tlačítka k rozsvícení v nočním režimu. Jas podsvitové LED je minimální
+a s rozhraním budíku ještě není možné pracovat (je ale možné přečíst údaj
+o datu a čase). Další stisk tlačítka či otočení ovládacího prvku vede
+k rozsvícení na maximální jas a odblokování interakce. Po \num{10} sekundách
+neaktivity uživatele je podsvícení displeje opět zhasnuto.
+
+Při otáčení ovládacího prvku se po displeji pohybuje kurzor, jehož pozice je
 indikována podtržením (rozsvícením nejnižšího řádku obrazových bodů) daného
-znaku. Většina znaků proto využívá pouze vyšších \num{7} řádků. Ne všechny
-znaky lze tímto způsobem vybrat, kurzor lze umístit pouze pod interaktivní
-prvky. Existují 3 typy těchto prvků:
+znaku. (Většina grafických znaků proto využívá pouze vyšších \num{7} řádků
+displeje.) Ne všechny znaky lze tímto způsobem vybrat, kurzor lze umístit pouze
+pod interaktivní prvky. Existují 3 typy těchto prvků:
 \begin{itemize}[nosep]
-    \item tlačítka, která slouží k přechodu na jinou obrazovku,
-    \item přepínače, které mají pouze dva stavy (zapnuto / vypnuto),
-    \item výběrová menu, která mají více stavů (například číslo v rozsahu
-        \numrange{0}{60}).
+    \item \emph{tlačítka}, která slouží k přechodu na jinou obrazovku,
+    \item \emph{přepínače}, které mají pouze dva stavy (zapnuto / vypnuto),
+    \item \emph{výběrová menu}, která mají více stavů (například číslo
+        v rozsahu \numrange{0}{60}).
 \end{itemize}
 
-Při stisku tlačítka ovládacího prvku s kurzorem umístěným pod znakem s významem
+Při stisku osy ovládacího prvku s kurzorem umístěným pod znakem s významem
 tlačítka dochází k přechodu na jinou obrazovku (jiný pohled) a překreslení
 displeje.
 
@@ -169,13 +180,19 @@ ovládacího prvku se provádí výběr z prvků v tomto menu (nebo inkrementace
 dekrementace čísla). Volba je potvrzena stiskem ovládacího prvku, blikání znaku
 ustává a otáčení volicího prvku opět pohybuje běžným kurzorem.
 
+Datum je formátováno podle mezinárodní normy ISO8601 ([YYYY]-[MM]-[DD]).
+Pro nedostatek místa na displeji ale musel být na domovské obrazovce potlačen
+výpis roku ([YYYY]). Tato úprava je v rozporu s normou. Protože ale není údaj
+na displeji parsován strojově, nýbrž člověkem, nemělo by jít o příliš velkou
+překážku.
+
 \begingroup
 %\renewcommand{\arraystretch}{1.5}
 \begin{longtable}{
         >{\centering\arraybackslash}m{50mm}
         m{\textwidth - 50mm - 4\tabcolsep - 3\arrayrulewidth}
     }
-    \caption{Přehled obrazovek/pohledů grafického rozhraní budíku\label{tab:GUI screens}}
+    \caption{Přehled obrazovek (pohledů) grafického rozhraní budíku\label{tab:GUI screens}}
     \\
     \toprule
     Obrazovka
@@ -201,7 +218,7 @@ ustává a otáčení volicího prvku opět pohybuje běžným kurzorem.
 
             První řádek:
             \begin{itemize}[nosep]
-                \item datum: [2022]-04-03,
+                \item datum: [2022-]04-03,
                 \item den v týdnu: 7. (neděle),
                 \item čas: 00:05:30.
             \end{itemize}
@@ -222,7 +239,7 @@ ustává a otáčení volicího prvku opět pohybuje běžným kurzorem.
     \LCD{2}{16}!{home}0/5 12---67 OFF!
                !12:34+01*1  25lS!
         &
-            Nastavení budicích časů
+            Nastavení časů buzení
 
             První řádek:
             \begin{itemize}[nosep]
@@ -266,7 +283,7 @@ ustává a otáčení volicího prvku opět pohybuje běžným kurzorem.
                 a zastavení časovače,
             \item čas časovače: 00:12:34,
                 \item jas stmívatelné LED (\numrange{0}{25}): \num{0},
-                \item rozsvícení lampy: ne,
+                \item rozsvícení lampy: \textLCD{1}!l! (ne) / \textLCD{1}!L! (ano),
                 \item akustické buzení \textLCD{1}!b! (ne) / \textLCD{1}!B! (ano, přerušovaným pískáním): ne.
         \end{itemize}
         \\

@@ -1,15 +1,15 @@
 \section{Stmívaný zdroj světla}
 K budíku lze připojit zdroj světla (ve firmware je tato funkce nazývána
 \texttt{ambient}), který je pozvolna rozsvěcen před zahájením akustického
-buzení. Cílem je simulovat postupné rozednění.
+buzení. Cílem je napodobovat postupné rozednění.
 
 Na výstupu \MCUpin{PD6} mikrokontroléru je PWM signál o frekvenci
 \SI{980}{\hertz}\footnote{\url{https://www.arduino.cc/reference/en/language/functions/analog-io/analogwrite/}}.
 Na většině ostatních výstupních pinů by byla frekvence \SI{490}{\hertz}, piny 5
 a 6 jsou v tomto výjimečné. % Pouze uno, na MEGA piny 4 a 13
 Přímé řízení samostatné výkonové LED či LED pásku tímto signálem by způsobovalo
-blikání světla na této frekvenci. Proto je vhodnější plynule regulovat proud
-protékající LED, která je napájena zdrojem konstantního proudu.
+blikání světla na této frekvenci, proto je vhodnější plynule regulovat proud
+protékající LED napájenou zdrojem konstantního proudu.
 % https://electronics.stackexchange.com/questions/277238/disadvantages-of-dimming-leds-via-current-regulation-as-opposed-to-via-pulse-fre
 
 
@@ -29,10 +29,11 @@ Výkonovou LED v pouzdře pro povrchovou montáž je nutné chladit, pro testov�
 prototypů lze využít výrobcem dodaný chladič. Jde o malou desku plošných spojů
 s hliníkovým podkladem. Pro odvod tepla má LED na spodní straně plochu pro
 připájení k chladiči. To znemožňuje pájení standardní mikropáječkou, spodní
-strana totiž není přístupná. Vhodnější metodou je aplikování pájecí pasty
-(tavidlo s obsahem pájky) a zahřátí celé desky na teplotu pájení. Pájení horkým
-vzduchem by zbytečně tepelně namáhalo horní stranu LED (např. čočku), proto je
-vhodnější aplikovat teplo ze spodní strany.
+strana součástky totiž není při pájení přístupná. Vhodnější metodou je
+aplikování pájecí pasty (tavidla s obsahem pájky) a zahřátí celé desky na
+teplotu pájení. Pájení horkým vzduchem by zbytečně tepelně namáhalo horní
+stranu LED (např. čočku), proto je vhodnější aplikovat teplo ze spodní strany
+(viz obrázek~\vref{fig:ambient LED pajeni}).
 
 \begin{figure}[htbp]
     \centering
@@ -71,13 +72,14 @@ vhodnější aplikovat teplo ze spodní strany.
 
 Vstupní PWM signál je převáděn na analogové napětí dolní propustí (integračním
 článkem RC tvořeným R1 a C1). Rezistory R2 a R3 určují střídu PWM
-signálu, při které se LED začne rozsvěcet a kdy dosáhne plného jasu. Tranzistor
-Q2 je použit kvůli nízkému proudovému zesilovacímu činiteli tranzistoru Q3, se
-kterým tvoří darlingtonovo zapojení. Tranzistor Q3 reguluje proud protékající
-LED (D1). Z důvodu poměrně velkého ztrátového výkonu na této součástce byl
-použit tranzistor KUY12 v pouzdře TO-3. Rezistor R4 převádí proud protékající
-větví s LED na napětí. Velikost odporu tohoto rezistoru určuje konstantní proud
-při plném jasu, protože tranzistor Q1 na tomto rezistoru udržuje přibližně
+signálu, při které se LED začne rozsvěcet a při jaké střídě dosáhne plného
+jasu. Tranzistor Q2 je použit kvůli nízkému proudovému zesilovacímu činiteli
+tranzistoru Q3, se kterým tvoří darlingtonovo zapojení. Tranzistor Q3 reguluje
+proud protékající LED (D1). Z důvodu poměrně velkého ztrátového výkonu na této
+součástce byl použit tranzistor KUY12 v pouzdře TO-3. Rezistor R4 převádí
+velikost proudu protékajícího větví s LED na napětí. Velikost odporu tohoto
+rezistoru určuje konstantní proud při plném jasu, protože tranzistor Q1 na
+tomto rezistoru udržuje přibližně
 konstantní úbytek napětí ($U_\mathrm{CE} \cong \SI{700}{\milli\volt}$).
 Konstantní proud je tedy $I = \frac{U_\mathrm{CE}}{R_4} =
 \frac{\SI{700}{\milli\volt}}{\SI{6,8}{\ohm}} \doteq \SI{103}{\milli\ampere}$.
@@ -86,17 +88,17 @@ Regulace probíhá přivíráním Q3.
 \FloatBarrier
 \subsection{Konečná verze}
 Na finální verzi stmívače jsou přísnější požadavky:
-\begin{itemize}
+\begin{itemize}[nosep]
     \item Obvod musí pracovat při napájecím napětí \SI{5}{\volt}.
     \item Při nulové střídě PWM signálu $d = \SI{0}{\percent}$ musí být LED
         zcela zhasnutá.
     \item Při střídě $d = \SI{100}{\percent}$ musí být proud protékající LED
-        udržován konstantní na bezpečné hodnotě, nezávisle na jejím úbytku
-        napětí a velikosti napájecího napětí.
+        udržován na bezpečné konstantní hodnotě, nezávisle na velikosti
+        napětí na LED a napájecího napětí.
     \item Závislost proudu protékajícího LED (a tedy i její svítivosti) na
         střídě PWM signálu musí být přibližně lineární, rozsah
         $\SI{0}{\percent} \le d \le \SI{100}{\percent}$ musí být co nejlépe
-        využit při zachování jednoduchosti obvodového řešení.
+        využit za současného zachování jednoduchosti obvodového řešení.
     \item Tepelné ztráty regulačního obvodu nesmí být příliš velké, aktivní
         i pasivní součástky by se měly obejít bez rozměrných chladičů.
 \end{itemize}
@@ -108,10 +110,10 @@ dosáhnout přidáním polovodičové diody D2 v propustném směru mezi emitor 
 a~zem. Střídu, při které se začne LED rozsvěcet, můžeme zmenšit přidáním
 rezistoru mezi zdroj napětí \SI{5}{\volt} a bázi Q2. Nechtěným oscilacím
 zabráníme přidáním kondenzátoru mezi bázi Q2 a zem. Hodnota jeho kapacity není
-kritická, dokonale postačí běžná hodnota \SI{100}{\nano\farad}.
+kritická, postačí běžná hodnota \SI{100}{\nano\farad}.
 
 Praktickým zapojením bylo zjištěno, že výkonová LED svítí i při velmi malých
-proudech v řádu \si{\micro\ampere}. Její svit při požadovaném jasu
+proudech v řádu stovek \si{\nano\ampere}. Její svit při požadovaném jasu
 \SI{0}{\percent} lze eliminovat připojením rezistoru paralelně k ní. Hodnota
 odporu rezistoru není kritická, pro zhasnutí stačil i odpor
 \SI{100}{\kilo\ohm}. Na plošném spoji je osazen rezistor s odporem
@@ -138,18 +140,20 @@ obrázku~\vref{fig:ambient linear prod sim sch} proto není zobrazen.
 \end{figure}
 
 \subsubsection{Měření závislosti proudu protékajícího LED na střídě}
-Pro experimenty dobře poslouží počítačová simulace v programu
+Pro prvotní experimenty dobře poslouží počítačová simulace v programu
 LTspice, dříve či později je ale potřeba navržené řešení vyzkoušet v praxi.
 Není absolutně nutné použít stejné typy tranzistorů jako na plošném spoji, tam
 budou pravděpodobně použity součástky SMD, které ale nelze snadno připojit
-k nepájivému poli. Namísto SMD součástky BC847 lze například použít BC547 či
-BC546. Proměřování charakteristik metodou bod po bodu opakované při každé změně
+k nepájivému poli. Namísto SMD tranzistoru BC847 lze například použít BC547 či
+BC546.
+
+Proměřování charakteristik metodou bod po bodu opakované při každé změně
 zapojení by bylo velmi zdlouhavé, proto byla vyvinuta jednodušší metoda jejich
 měření.
 
-Pro nahrazení PWM signálu vycházejícího z MCU je využit laboratorní generátor
-funkcí FY6900. Jde o dvoukanálový generátor využívající přímé digitální syntézy
-(DDS) s rozlišením 14 bitů a vzorkovací frekvencí
+Pro nahrazení PWM signálu vycházejícího z \acs{MCU} je využit laboratorní
+generátor funkcí FY6900. Jde o dvoukanálový generátor využívající přímé
+digitální syntézy (DDS) s rozlišením 14 bitů a vzorkovací frekvencí
 \SI{250}{\mega\sample\per\second}. Pro účely tohoto měření využijeme funkci
 rozmítání střídy. Generátor je nastaven tak, aby generoval na kanálu 1
 obdélníkový signál (\texttt{Rectangle}) o frekvenci \SI{1}{\kilo\hertz} (volba
@@ -172,15 +176,13 @@ Stiskem tlačítka \texttt{OK} je zahájeno rozmítání.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.80\textwidth]{ambient-linear-gen}
+    \includegraphics[width=0.90\textwidth]{ambient-linear-gen}
     \\ \vspace{5mm}
-    \includegraphics[height=4cm]{ambient-linear-gen-ch1}
+    \includegraphics[height=4.5cm]{ambient-linear-gen-ch1}
     \hfill
-    \includegraphics[height=4cm]{ambient-linear-gen-sweep}
+    \includegraphics[height=4.5cm]{ambient-linear-gen-sweep}
     \caption{%
-        Nastavení generátoru funkcí FY6900 pro měření závislosti proudu
-        protékajícího výkonovou LED na střídě PWM signálu přiváděného na vstup
-        stmívače
+        Nastavení generátoru funkcí FY6900 pro měření charakteristiky stmívače
     }
     \label{fig:ambient linear mereni generator}
 \end{figure}
@@ -190,11 +192,11 @@ měřeno napětí na rezistoru R4, které je přímo úměrné proudu protékaj�
 diodou (proud protékající bází Q3 můžeme zanedbat). Časová základna osciloskopu
 je nastavena na \SI{2}{\second}/dílek, režim spouště \texttt{NORMAL}, spouštění
 na sestupné hraně použitého vstupního kanálu (na následujících snímcích
-obrazovky je to kanál 2), posunutí okamžiku spuštění k levému okraji obrazovky.
-Na obrazovce osciloskopu je tedy zobrazen celý průběh charakteristiky. Od
-sestupné hrany signálu střída lineárně narůstá od \SI{1}{\percent} do
-\SI{99}{\percent}, lze ji proto považovat za veličinu vynášenou na vodorovné
-ose.
+obrazovky je to kanál 2) a posunutí okamžiku spuštění k levému okraji
+obrazovky. Na obrazovce osciloskopu je tedy zobrazen celý průběh
+charakteristiky. Od sestupné hrany signálu střída lineárně narůstá od
+\SI{1}{\percent} do \SI{99}{\percent}, lze ji proto považovat za veličinu
+vynášenou na vodorovné ose.
 
 Osciloskop umožňuje uložení úplného nastavení do textového souboru na disketu:
 \begin{lstlisting}[style=terminal]
@@ -217,9 +219,9 @@ Acquisition Realtime  Vectors  Infinite Persistence
    Normal      Off       On             Off
 \end{lstlisting}
 
-Pro porovnávání charakteristik lze navíc použít funkci digitálního osciloskopu
-umožňující uložení referenčního průběhu. Ten je na obrazovce zobrazen světlejší
-barvou.
+Pro porovnávání průběhů charakteristiky na obrazovce digitálního osciloskopu
+lze využít funkci uložení referenčního průběhu. Ten je na obrazovce zobrazen
+světlejší barvou.
 
 Na obrázku~\vref{fig:ambient linear mereni scope dioda} jsou zobrazeny dvě
 charakteristiky. Světlejší z nich je uložený referenční průběh, který byl

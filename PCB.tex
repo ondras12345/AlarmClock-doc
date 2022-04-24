@@ -9,7 +9,7 @@ nástrojem \ac{ERC}.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.70\textwidth]{KICAD-ERC}
+    \includegraphics[width=0.85\textwidth]{KICAD-ERC}
     \caption{Výsledek kontroly \acs{ERC} s několika detekovanými chybami}
     \label{fig:kicad ERC}
 \end{figure}
@@ -24,8 +24,8 @@ nástrojem \ac{ERC}.
     \label{fig:kicad po importu}
 \end{figure}
 
-Nástroj pro kontrolu správnosti návrhu plošného spoje se nazývá \ac{DRC}. Ten
-kontroluje, zda-li je možné DPS vyrobit procesem s definovanými vlastnostmi
+Nástroj pro kontrolu správnosti návrhu plošného spoje se nazývá \ac{DRC}.
+Kontroluje, zda-li je možné DPS vyrobit procesem s definovanými vlastnostmi
 (minimální šířka cesty, minimální izolační mezera, ...). Pro proces frézování
 je vhodné používat poměrně široké cesty~-- \SI{1}{\milli\meter} pro většinu
 spojů, \SI{0,8}{\milli\meter} pro cesty propojující SMD integrované obvody.
@@ -34,7 +34,7 @@ DPS byla navržena tak, aby ji bylo možné vyrobit jak s mědí z jedné strany
 tak i oboustranně. Na jednostranném plošném spoji jsou cesty na horní měděné
 vrstvě nahrazeny drátovými propojkami.
 
-Úplné schéma zapojení a návrh DPS jsou otištěny v příloze~\ref{app:PCB main}.
+Úplné schéma zapojení a návrh DPS jsou otištěny v příloze~\vref{app:PCB main}.
 
 
 \subsection{Výroba DPS}
@@ -50,10 +50,11 @@ zachovat pozici referenčního bodu při otáčení desky.
 \subsubsection{CNC fréza}
 Levným CNC strojem splňujícím požadavky na přesnost, rozměry pracovního
 prostoru a podporované funkce vhodným pro amatérské účely je stavebnice
-prodávaná prodejci na platformě Aliexpress pod označením CNC~1610. Je tvořena
-konstrukcí z hliníkových profilů a několika 3D tištěných částí. Po sestavení
-získává uživatel stroj s pracovním prostorem \SI{160 x 100 x 40}{\milli\meter}
-řízený svobodným firmware Grbl\footnote{\url{https://github.com/gnea/grbl}}.
+nabízená prodejci na platformě Aliexpress pod označením \uv{CNC~1610}.
+Je tvořena konstrukcí z hliníkových profilů a několika 3D tištěných částí. Po
+sestavení získává uživatel stroj
+s pracovním prostorem \SI{160 x 100 x 40}{\milli\meter} řízený svobodným
+firmware Grbl\footnote{\url{https://github.com/gnea/grbl}}.
 
 \begin{figure}[htbp]
     \centering
@@ -64,13 +65,12 @@ získává uživatel stroj s pracovním prostorem \SI{160 x 100 x 40}{\milli\met
 
 
 \paragraph{Modifikace}
-Po zakoupení stroje byly provedeny některé modifikace, které nadále
-zjednodušují proces výroby DPS. Jednou z nich je přidání koncových spínačů.
-Jejich funkce je dvojí. Zvyšují bezpečnost, protože zabraňují nárazu
-pohyblivých částí stroje do jeho rámu (v případě využití
-\foreignlanguage{english}{homing cycle} dokonce nemusí nutně dojít ani
-k sepnutí tohoto spínače, pohyb mimo pracovní prostor je detekován výpočetně).
-Umožňují také provést po spuštění stroje kalibraci
+Po zakoupení stroje byly provedeny modifikace, které nadále zjednodušují proces
+výroby DPS. Jednou z nich je přidání koncových spínačů. Jejich funkce je dvojí.
+Zvyšují bezpečnost, protože zabraňují nárazu pohyblivých částí stroje do jeho
+rámu (v případě využití \foreignlanguage{english}{homing cycle} dokonce nemusí
+nutně dojít ani k sepnutí tohoto spínače, pohyb mimo pracovní prostor je
+detekován výpočetně). Umožňují také provést po spuštění stroje kalibraci
 (\foreignlanguage{english}{homing cycle}), po které odpovídají souřadnice
 stroje (v Grbl zvané \foreignlanguage{english}{machine coordinates})
 konkrétním bodům v jeho pracovním prostoru. Díky tomu je možné beze ztráty
@@ -127,11 +127,11 @@ na malých CNC frézách. Nástroj se poté zužuje s úhlem
 
 Pro vrtání děr využíváme tvrzené vrtáky o průměru \SI{0,8}{\milli\meter}
 a \SI{1}{\milli\meter}. Tyto dva rozměry postačí pro naprostou většinu běžných
-DPS. Montážní díry o průměru \SI{3,2}{\milli\meter} se tímto vrtákem předvrtají
-a na požadovaný průměr je zvětšíme stojanovou vrtačkou. Drážky pro vývody
-napájecího konektoru lze vyfrézovat frézou \uv{corn bit} o průměru
-\SI{1}{\milli\meter}. Stejným nástrojem je provedeno i oddělení hotové DPS od
-zbytku materiálu.
+amatérských DPS. Montážní díry o průměru \SI{3,2}{\milli\meter} se tímto
+vrtákem předvrtají a na požadovaný průměr je zvětšíme stojanovou vrtačkou.
+Drážky pro vývody napájecího konektoru lze vyfrézovat frézou \uv{corn bit}
+o průměru \SI{1}{\milli\meter}. Stejným nástrojem je provedeno i oddělení
+hotové DPS od zbytku materiálu.
 
 \begin{figure}[htbp]
     \centering
@@ -158,14 +158,14 @@ zbytku materiálu.
     \centering
     \includegraphics[width=0.65\textwidth]{CNC-drazky-nastroj}
     \hfill
-    \includegraphics[width=0.25\textwidth]{CNC-drazky}
+    \includegraphics[width=0.30\textwidth]{CNC-drazky}
     \caption{Frézování drážek pro vývody napájecího konektoru}
     \label{fig:CNC drazky}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.80\textwidth]{CNC-outline}
+    \includegraphics[width=1.00\textwidth]{CNC-outline}
     \caption{Frézování okraje DPS}
     \label{fig:CNC outline}
 \end{figure}
@@ -173,14 +173,14 @@ zbytku materiálu.
 
 \paragraph{Řídicí software}
 Řízení vlastního stroje (krokových motorů a vřetena) je řešeno mikrokontrolérem
-na jeho desce s řídicí elektronikou. Jeho firmware Grbl implementuje jazyk
+na jeho desce s řídicí elektronikou. Firmware Grbl implementuje jazyk
 G-kód, příkazy jsou přijímány na sériovém portu. Tyto příkazy by bylo možné
 zasílat z běžného terminálu, pro zvýšení pohodlí při obsluze stroje je ale
 vhodné využít specializovaný software. Jedním z takových programů je
 Candle\footnote{\url{https://github.com/Denvi/Candle}}. Jde o svobodný software
 distribuovaný pod licencí GNU GPL v3.0. Kromě GNU/Linux je podporován
 i operační systém Microsoft Windows. Uživatelské rozhraní tohoto programu (viz
-obrázek~\vref{fig:CNC Candle} velmi dobře funguje s dotykovým monitorem.
+obrázek~\vref{fig:CNC Candle}) lze velmi dobře ovládat dotykovým monitorem.
 Jednoduché operace je možné provádět přímo dedikovanými tlačítky či klávesovými
 zkratkami, složitější příkazy je možné vypisovat přímo do okna \uv{Console}.
 
@@ -197,12 +197,12 @@ zkratkami, složitější příkazy je možné vypisovat přímo do okna \uv{Con
 
 
 \subsubsection{Generování G-kódu}
-G-kód lze psát ručně pomocí běžného textového editoru. Mnohdy je to dokonce
+G-kód lze psát ručně pomocí běžného textového editoru, mnohdy je to dokonce
 nejrychlejší metoda. Jednoduché operace, jako například vyříznutí hotové DPS
 z větší cuprextitové destičky, obvykle sestávají z méně než 15 příkazů
-a operátor se základní znalostí G-kódu je zvládne vytvořit velmi rychle.
+a operátor se základní znalostí G-kódu je zvládne naprogramovat velice rychle.
 Složitější operace, jako například frézování vlastního obrazce DPS, ale
-vyžadují desítky tisíc příkazů a jejich ruční tvorba by byla prakticky nemožná.
+vyžadují desetitisíce příkazů a jejich ruční tvorba by byla prakticky nemožná.
 Existuje ale svobodný software FlatCAM\footnote{\url{http://flatcam.org/}},
 který slouží k automatickému generování G-kódu z podkladů ve formátu Gerber.
 Úplný popis postupu práce s tímto software by byl nad rámec této práce, soubor
@@ -227,19 +227,20 @@ mědi. Všechny součástky jsou proto pájeny ručně.
     \centering
     \includegraphics[width=0.45\textwidth,height=60mm,keepaspectratio]{T12-hroty-detail}
     \\
-    {\footnotesize Nalevo T12-D16 používaný pro pájení SMD součástek;
-    napravo T12-K používaný pro pájení THT součástek.}
+    {\footnotesize Nalevo \texttt{T12-D16} používaný pro pájení SMD součástek;
+    napravo \texttt{T12-K} používaný pro pájení vývodových součástek.}
     \caption{Hroty pro pájecí stanici T12 používané při osazování DPS}
     \label{fig:PCB pajecka hroty}
 \end{figure}
 
-Nejprve osazujeme součástky pro povrchovou montáž (SMT) na spodní straně DPS.
-Abychom zabránili poškození polovodičových součástek elektrostatickými výboji,
-provádíme osazování a pájení na antistatické podložce. Technik pracující na DPS
-by měl nosit antistatický náramek. Je také vhodné nejdříve osazovat pasivní
-součástky, aby se riziko poškození polovodičových součástek dále zmenšilo.
+Nejprve osazujeme součástky pro povrchovou montáž (\acs{SMD}) na spodní straně
+DPS. Abychom zabránili poškození polovodičových součástek elektrostatickými
+výboji, provádíme osazování a pájení na antistatické podložce. Technik
+pracující na DPS by měl nosit uzemněný antistatický náramek. Je také vhodné
+nejdříve osazovat pasivní součástky, aby se riziko poškození polovodičových
+součástek dále zmenšilo.
 
-Součástky pro THT montáž osazujeme od nejnižších po nejvyšší. Na místo
+Vývodové součástky pro osazujeme od nejnižších po nejvyšší. Na místo
 mikrokontroléru (U2) je vhodné připájet patici, do které se integrovaný obvod
 vloží. Pokud byl plošný spoj vyroben jako jednostranný, je nutné vyrobit
 a připájet několik drátových propojek.
@@ -259,18 +260,18 @@ Pro jeho zobrazení je využit webový prohlížeč, ve kterém se otevře soubo
 
 
 \subsubsection{Modifikace modulu I/O expandéru}
-Pro připojení LCD je využit komerčně dostupný modul s I/O expandérem PCF8574.
-Ten je ale nutné před připájením na zadní stranu LCD upravit. Obsahuje totiž
-pull-up rezistory na sběrnici \IIC{}, které by po jeho připojení tvořily
-paralelní kombinaci s rezistory na hlavní DPS. Modul také obsahuje červenou SMD
-LED, která po připojení napájení neustále svítí.
+Pro připojení LCD je využit komerčně dostupný modul s I/O expandérem
+\texttt{PCF8574}. Ten je ale nutné před připájením na zadní stranu LCD upravit.
+Obsahuje totiž pull-up rezistory na sběrnici \IIC{}, které by po jeho připojení
+tvořily paralelní kombinaci s rezistory na hlavní DPS. Modul také obsahuje
+červenou SMD LED, která po připojení napájení neustále svítí.
 
 Modifikace spočívá v odpájení 3 SMD rezistorů v pouzdře 0805. Rezistory jsou
-umístěny těsně vedle sebe, další blízkou součástkou je právě LED dioda. Tu není
-nutné odpájet, protože z obvodu odstraníme její předřadný rezistor R10
-(\SI{1}{\kilo\ohm}), ale pokud k jejímu poškození dojde omylem, nezmění se nic
-na funkci modulu. Pull-up rezistory R8 a R9 mají hodnotu \SI{4,7}{\kilo\ohm}.
-Úpravu lze snadno provést horkovzdušnou stanicí.
+umístěny těsně vedle sebe, další blízkou součástkou je právě výše zmíněná LED
+dioda. Tu není nutné odpájet, protože z obvodu odstraníme její předřadný
+rezistor R10 (\SI{1}{\kilo\ohm}), ale pokud k jejímu poškození dojde omylem,
+nezmění se nic na funkci modulu. Pull-up rezistory R8 a R9 mají hodnotu
+\SI{4,7}{\kilo\ohm}. Úpravu lze snadno provést horkovzdušnou pájecí stanicí.
 
 \begin{figure}[htbp]
     \centering
@@ -294,26 +295,28 @@ na funkci modulu. Pull-up rezistory R8 a R9 mají hodnotu \SI{4,7}{\kilo\ohm}.
 \subsection{Oživování DPS}
 Prvotní testy funkčnosti DPS lze provádět před vložením MCU do patice. Záložní
 baterii RTC je vhodné vyjmout z držáku, abychom zabránili jejímu vybití častým
-spínáním bzučáku~-- ten totiž při zapnutí DPS bez MCU či s MCU bez validního
-firmware nepřetržitě píská. Na jednotlivé piny patice můžeme přivádět různé
-signály či provádět měření napětí na nich pomocí digitálního multimetru nebo
-osciloskopu. Tímto způsobem lze testovat stmívač LED, zvukový výstup, bzučák
-indikující ztrátu napájení a tlačítka. Toto ověření funkčnosti není nutné
-provádět, je to ale vhodné pro snížení rizika poškození MCU.
+spínáním bzučáku~-- ten totiž při zapnutí DPS bez MCU (nebo s MCU, ale bez
+nahraného firmware) nepřetržitě píská. Na jednotlivé piny patice můžeme přivádět
+různé signály či provádět měření napětí na nich pomocí digitálního multimetru
+nebo osciloskopu. Tímto způsobem lze testovat stmívač LED, zvukový výstup,
+bzučák indikující ztrátu napájení a tlačítka. Toto ověření funkčnosti není
+nutné provádět, je to ale vhodné pro snížení rizika elektrického poškození MCU.
 
 Po provedení základních testů vložíme MCU do patice. Nahrání firmware se
 provádí pomocí ISP programátoru USBasp připojeného ke konektoru J4. Postup
 programování je popsán v souboru \repopath{README.md} repozitáře
-\gitrepo{AlarmClock}. Po nahrání firmware by měla DPS být plně funkční, na
-hlavní DPS není nutné provádět žádná analogová nastavení. Po připojení LCD je
-ale potřeba nastavit jeho kontrast trimrem na desce I/O expandéru PCF8574.
+\gitrepo{AlarmClock}. Po nahrání firmware by měla DPS být plně funkční.
+Na hlavní DPS není nutné provádět žádná analogová nastavení. Po připojení LCD
+je ale potřeba nastavit jeho kontrast trimrem na desce I/O expandéru
+\texttt{PCF8574}.
 
 U prvního prototypu bylo provedeno měření s cílem ověřit správnou funkci všech
 jeho částí. Digitální signály (sběrnice \IIC{} a UART) byly měřeny logickým
 analyzátorem Saleae Logic 16. Stmívač LED byl kontrolován připojením stolního
 multimetru do série s LED a zasíláním příkazů pro rozsvěcení s různými
-požadovanými hodnotami jasu na rozhraní UART. Kontrolu zvukového výstupu lze
-provést připojením osciloskopu paralelně k reproduktoru.
+požadovanými hodnotami jasu na rozhraní UART (úplné měření charakteristiky viz
+příloha~\vref{app:ambient}). Kontrolu zvukového výstupu lze provést připojením
+osciloskopu paralelně k reproduktoru.
 
 \begin{figure}[htbp]
     \centering

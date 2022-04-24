@@ -116,17 +116,17 @@ Pořadí příkazů v \filename{Dockerfile} je důležité. Nejde jen o běžné
 (například soubor musí být do kontejneru nakopírován před tím, než jej můžeme
 číst). Každá instrukce \texttt{RUN}, \texttt{COPY} či \texttt{ADD} vytváří
 novou vrstvu. Jednotlivé vrstvy jsou drženy v mezipaměti a drobná změna ve
-zdrojových kódech naší webové aplikaci proto nemusí znamenat sestavení celého
-obrazu od úplného počátku. Z tohoto důvodu je vhodné postavit
-\filename{Dockerfile} tak, aby pouhá změna v jednom ze zdrojových souborů
-aplikace nevedla k invalidaci celé mezipaměti. Tato změna totiž vyžaduje pouze
+zdrojových kódech naší webové aplikaci proto nemusí nutně znamenat sestavení
+celého obrazu od úplného počátku. Z tohoto důvodu je vhodné sestavit
+\filename{Dockerfile} tak, aby změna v jednom ze zdrojových souborů aplikace
+nevedla k invalidaci celé mezipaměti. Tato změna totiž vyžaduje pouze
 nakopírování nového souboru do obrazu kontejneru, není ale třeba například
 znovu instalovat všechny softwarové balíčky.
 
 \shellcmd{docker} umožňuje distribuci již sestavených obrazů, například na
 webovém portálu Docker Hub. Pro tento malý projekt s minimem uživatelů ale
-udržování vlastní binární distribuce a řešení bezpečnostních problémů s tím
-spojených není výhodné.
+udržování vlastní binární distribuce a řešení potenciálních bezpečnostních
+problémů s tím spojených není výhodné.
 
 
 Nasazení služby AlarmClockWeb na linuxový server se zjednodušuje na několik
@@ -135,13 +135,14 @@ příkazů:
 # Zkopírujeme ukázkovou konfiguraci do config.php
 cp config-sample.php config.php
 # Nyní je potřeba konfiguraci upravit a správně nastavit
-# např. adresu MQTT # brokeru.
+# např. adresu MQTT brokeru.
 
 # Sestavíme obraz kontejneru z instrukcí v Dockerfile.
 docker build -t alarmclockweb .
 
 # Spustíme vlastní kontejner.
-# Soubor config.php v aktuální složce ($PWD) je připojen ke kontejneru.
+# Soubor config.php v aktuální složce ($PWD) je připojen
+# ke kontejneru.
 # Pokud již na portu 80 poslouchá jiná služba,
 # můžeme použít například -p 8080:80.
 docker run -d \
@@ -160,7 +161,7 @@ Předpokladem je, že kontejner \texttt{alarmclockweb} vystavuje port
 serveru je vhodné specifikovat při spouštění kontejneru argument
 \texttt{-p 127.0.0.1:8080:80}, kterým je připojení na port \port{8080} omezeno
 na rozhraní \texttt{loopback} s IP adresou \ipaddress{127.0.0.1}.
-\begin{lstlisting}[language=hashcomment,style=numbers]
+\begin{lstlisting}[language=hashcomment]
 # alarmclockweb docker container
 <Location /alarmclock>
     ProxyHTMLEnable On

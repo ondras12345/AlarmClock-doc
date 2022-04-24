@@ -3,13 +3,16 @@
   \setstretch{1}% no correction afterwards
 }
 
+
+\newcommand{\lstpostbreak}{\mbox{$\hookrightarrow$\space}}
+
 % https://tex.stackexchange.com/questions/30512/how-to-insert-code-with-accents-with-listings
 \lstset{
   basicstyle=\mysinglespacing\fontfamily{lmtt}\selectfont,
   columns=flexible,
   frame=single,
   breaklines=true,
-  postbreak=\mbox{$\hookrightarrow$\space},
+  postbreak=\lstpostbreak,
   showstringspaces=false,
   literate=%
     {á}{{\'a}}1
@@ -63,6 +66,8 @@
     morecomment=[l]{\#},
     morecomment=[l]{;},
     morekeywords={},
+    literate =%
+        {-}{{-}}1
 }
 
 \lstdefinelanguage{yaml}
@@ -225,13 +230,24 @@
 }
 
 \lstdefinelanguage{Dockerfile}{
-  keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
-  sensitive=false,
-  comment=[l]{\#},
-  morestring=[b]',
-  morestring=[b]",
+    keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+    sensitive=false,
+    comment=[l]{\#},
+    morestring=[b]',
+    morestring=[b]",
     literate =%
         {-}{{-}}1
+}
+
+\lstdefinelanguage{myC++}{
+    language=C++,
+    morekeywords={%
+        uint8_t, uint16_t, uint32_t,
+        int8_t, int16_t, int32_t,
+        size_t,
+        constexpr,
+        byte
+    }
 }
 
 \lstdefinelanguage{hashcomment}{

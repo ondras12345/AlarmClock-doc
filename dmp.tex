@@ -100,7 +100,7 @@
 \DeclareRobustCommand{\HAentity}[1]{\texttt{\detokenize{#1}}}  % detokenize makes underscores printable
 \DeclareRobustCommand{\HAdomain}[1]{\href{https://www.home-assistant.io/integrations/#1/}{\texttt{\detokenize{#1}}}}
 \DeclareRobustCommand{\HAintegration}[1]{\href{https://www.home-assistant.io/integrations/#1/}{\texttt{\detokenize{#1}}}}
-\DeclareRobustCommand{\shellcmd}[1]{\texttt{\detokenize{#1}}}  % POZOR na '--' ve flags
+\DeclareRobustCommand{\shellcmd}[1]{\texttt{\detokenize{#1}}}  % POZOR na '--' ve flags (\verb|--tohle-je-lepsi|)
 \newcommand{\HAstate}{\texttt}
 \DeclareRobustCommand{\topic}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\gitrepo}{\texttt}
@@ -119,7 +119,7 @@
 
 \title{Chytrý budík}
 \author{Ondřej Sluka}
-\date{2022}  % TODO
+\date{2022}  % TODO (je i na titlepage)
 
 \frenchspacing
 \sisetup{
@@ -181,17 +181,34 @@
 
 \input{LCDchars}
 
+\AtBeginDocument{\addtocontents{toc}{\protect\thispagestyle{empty}}} % remove page number on first page of the TOC
+
 \begin{document}
+
 \input{titlepage}
+
 \includepdf{zadani.pdf}
+
+\pagestyle{empty}
+
 \clearpage
 \input{anotace}
 \vfill
 \input{prohlaseni}
 
+\clearpage
+\mbox{}
+\vfill
+\input{podekovani}
+
+\addtocontents{toc}{\protect\label{toc}}%
 \tableofcontents
 
+\clearpage
+\pagestyle{plain}
+
 \input{uvod}
+
 \chapter{Hardware a firmware}
 \input{MCU}
 \input{platformio}
@@ -201,11 +218,13 @@
 \input{UPS}
 \input{UART}
 \input{PCB}
+
 \chapter{Software}
-\todo[inline]{Uvod - cemu rikam software a cemu firmware}
 \input{PyAlarmClock}
 \input{AlarmClockWeb}
 \input{HomeAssistant}
+
+\input{zaver}
 
 % Reference a odkazy
 {\singlespacing%
@@ -214,16 +233,22 @@
 \addcontentsline{toc}{chapter}{Odkazy a~literatura}  % v toc, ale bez cisla
 }
 
+{\singlespacing%
 \listoffigures
 \phantomsection
 \addcontentsline{toc}{chapter}{\listfigurename}  % v toc, ale bez cisla
+}
 
+{\singlespacing%
 \listoftables
 \phantomsection
 \addcontentsline{toc}{chapter}{\listtablename}  % v toc, ale bez cisla
+}
 
 
+{\singlespacing%
 \input{zkratky}
+}
 
 
 \listoftodos

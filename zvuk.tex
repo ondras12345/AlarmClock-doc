@@ -1,17 +1,18 @@
 \section{Zvukový výstup}
 Aby mohl budík plnit svou funkci, musí mít možnost vytvářet akustické signály.
-To je možné řešit mnoha jednoduchými způsoby, například piezoelektrickým
-bzučákem. Aby bylo akustické buzení pro uživatele přijatelnější, je vhodné
-plynule zvyšovat amplitudu akustického signálu. Výhodná je také možnost měnit
-frekvenci zvuku, aby mohl uživatel snadno rozlišit různé typy buzení podle
-tónu.
+Tuto funkcionalitu je možné implementovat mnoha jednoduchými způsoby, například
+piezoelektrickým bzučákem. Aby bylo akustické buzení pro uživatele
+přijatelnější, je vhodné plynule zvyšovat amplitudu akustického signálu.
+Výhodná je také možnost měnit frekvenci zvuku, aby mohl uživatel snadno
+rozlišit různé typy buzení podle výšky tónu. Tyto funkce ale výše zmíněná
+jednoduchá řešení nenabízí.
 
-Požadavky na blok zvukového výstupu jsou tedy
+Požadavky na blok zvukového výstupu jsou
 \begin{itemize}[nosep]
     \item nastavitelná frekvence (v rozsahu alespoň \SI{50}{\hertz} až
         \SI{8}{\kilo\hertz}),
     \item nastavitelná amplituda (s rozlišením 8 bitů, tedy ve 256 krocích),
-    \item práce s nesymetrickým napájením \SI{5}{\volt},
+    \item práce s nesymetrickým napájecím napětím \SI{5}{\volt},
     \item dokonalé ticho ve stavu softwarového vypnutí zvukového výstupu,
     %\item vysoká účinnost,
     \item míra zkreslení dostatečné nízká na to, aby na uživatele nepůsobila
@@ -20,22 +21,22 @@ Požadavky na blok zvukového výstupu jsou tedy
 
 Pro generování harmonického (sinusového) analogového signálu akustických
 frekvencí (D/A převod) pomocí mikrokontroléru můžeme využít přímý převod pomocí
-odporové sítě nebo nepřímý převod pomocí pulzně šířkové modulace (PWM).
+odporové sítě nebo nepřímý převod pomocí pulzně šířkové modulace (\acs{PWM}).
 
-Přímý DAC (D/A převodník) s dostatečným rozlišením by vyžadoval využití osmi
-výstupních pinů, těch je ale u použitého MCU nedostatek. Oproti tomu PWM signál
-můžeme snadno generovat pomocí vestavěného čítače/časovače a výstupem je
-obdélníkový signál s časově proměnnou střídou na jednom výstupním pinu. Po
-průchodu tohoto signálu dolní propustí získáváme analogový signál, jehož
-okamžitou hodnotu určuje střída PWM signálu v daném okamžiku.
+Přímý DAC (D/A převodník) s dostatečným rozlišením by vyžadoval využití celého
+jednoho portu (osmi výstupních pinů), těch je ale u použitého \acs{MCU}
+nedostatek. Oproti tomu PWM signál lze snadno generovat pomocí vestavěného
+čítače/časovače a výstupem je obdélníkový signál s časově proměnnou střídou na
+jednom výstupním pinu. Po průchodu tohoto signálu vhodně navrženou dolní
+propustí získáváme analogový signál, jehož okamžitou hodnotu určuje střída PWM
+signálu v daném okamžiku.
 
 Aby bylo dosaženo dostatečného časového rozlišení (počet \uv{vzorků} za dobu
 jedné periody výsledné sinusoidy), musí být frekvence PWM signálu
 několikanásobně vyšší než frekvence sinusového signálu. Poměrně vysoká
 frekvence PWM signálu navíc zjednodušuje návrh potřebné dolní propusti, protože
 potřebná strmost její útlumové frekvenční charakteristiky není tak velká.
-
-Příliš vysoká frekvence PWM signálu zase přináší problémy s implementací na
+Příliš vysoká frekvence PWM signálu ale přináší problémy s implementací na
 straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
 
 \begin{figure}[htb]
@@ -46,11 +47,18 @@ straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
 \end{figure}
 
 \subsection{Zesilovač}
-Z hlediska zesilování výstupního signálu máme dvě možnosti -- můžeme zesilovat
-vyfiltrovaný sinusový signál pomocí lineárního zesilovače (zesilovače
+Z hlediska zesilování výstupního signálu existují dvě možnosti -- můžeme
+zesilovat vyfiltrovaný sinusový signál pomocí lineárního zesilovače (zesilovače
 pracujícího v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM signál
 \uv{spínaným} zesilovačem (obdoba třídy D) a filtrovat až zesílený signál.
 
+
+\subsubsection{Lineární zesilovač}
+Při prvotním vývoji bloku zvukového výstupu byl z důvodu jednoduchosti využit
+lineární zesilovač založený na integrovaném obvodu TDA2030, jehož dokumentace
+je otištěna v příloze~\vref{app:TDA2030}.
+Pro přizpůsobení signálu na úroveň vhodnou pro zpracování zesilovačem byl
+použit obvod zobrazený na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
 
 \begin{figure}[htb]
     \centering
@@ -67,13 +75,6 @@ pracujícího v třídě A nebo AB), nebo můžeme zesilovat obdélníkový PWM 
     \caption{Blokové schéma zvukového výstupu s lineárním zesilovačem}
     \label{fig:zvuk blok linearni}
 \end{figure}
-
-\subsubsection{Lineární zesilovač}
-Při prvotním vývoji zvukového výstupu byl z důvodu jednoduchosti využit
-lineární zesilovač založený na integrovaném obvodu TDA2030, jehož dokumentace
-je otištěna v příloze~\ref{app:TDA2030}.
-Pro přizpůsobení signálu na úroveň vhodnou pro zpracování zesilovačem byl
-použit obvod zobrazený na schématu na obrázku~\vref{fig:zvuk filtr linearni}.
 
 \begin{figure}[htb]
     \centering
@@ -93,8 +94,8 @@ použit obvod zobrazený na schématu na obrázku~\vref{fig:zvuk filtr linearni}
             ;
     \end{circuitikz}
     \caption{Schéma zapojení jednoduchého filtru a útlumového článku
-        umožňujícího využití zesilovače s TDA2030 pro ověření funkce zvukového
-        výstupu}
+        pro zesilovač s TDA2030
+    }
     \label{fig:zvuk filtr linearni}
 \end{figure}
 
@@ -113,9 +114,23 @@ obvodového řešení, kdy musíme signál vyfiltrovat, upravit na vhodnou ampli
 a správně navrženým analogovým zesilovačem zesílit. Obvod také nesplňuje
 požadavek na nesymetrické napájení napětím \SI{5}{\volt} (ale tento problém je
 řešitelný použitím jiného integrovaného obvodu, například LM386). Vypínání
-zesilovače pro dosažení dokonalého ticha by si vyžadovalo další zesložitění
-obvodového řešení.
+zesilovače pro dosažení dokonalého ticha by si vyžádalo další zesložitění
+obvodu.
 
+
+\FloatBarrier
+\subsubsection{Spínaný zesilovač}
+Účinnějším (a z hlediska počtu součástek jednodušším) řešením je zesilování PWM
+signálu spínacími tranzistory. Filtrace je řešena na výstupu zesilovače.
+MCU není schopen dodat do bází tranzistorů tvořících zesilovací stupeň
+push-pull (Q2, Q3 na obrázku~\vref{fig:zvuk D tranzistory}) dostatečný
+proud, proto je potřeba přidat další stupeň (Q1). Ten také zajistí, že se na
+bázi NPN tranzistoru Q2 zapojeného jako emitorový sledovač dostane plné napětí
+\SI{5}{\volt}, i když bude na výstupu MCU napětí nižší (při
+$U_\mathrm{CC} = \SI{5}{\volt}$ minimálně
+$U_\mathrm{OH} = \SI{4,1}{\volt}$~\cite{dshATmega328}). % dshATmega328 323
+Obvod je navržen tak, aby při stavu vypnutí (\SI{0}{\volt} na vstupu)
+neprotékal tranzistory žádný proud.
 
 \begin{figure}[htb]
     \centering
@@ -133,18 +148,6 @@ obvodového řešení.
     \label{fig:zvuk blok D}
 \end{figure}
 
-\subsubsection{Spínaný zesilovač}
-Účinnějším (a z hlediska počtu součástek jednodušším) řešením je zesilování PWM
-signálu spínacími tranzistory. Filtrace je řešena na výstupu zesilovače.
-MCU není schopen dodat do bází tranzistorů tvořících zesilovací stupeň
-push-pull (Q2, Q3 na obrázku~\vref{fig:zvuk D tranzistory}) dostatečný
-proud, proto je potřeba přidat další stupeň (Q1). Ten také zajistí, že se na
-bázi NPN tranzistoru Q2 zapojeného jako emitorový sledovač dostane plné napětí
-\SI{5}{\volt}, i když bude na výstupu MCU napětí nižší (při
-$U_\mathrm{CC} = \SI{5}{\volt}$ minimálně
-$U_\mathrm{OH} = \SI{4,1}{\volt}$~\cite{dshATmega328}). % dshATmega328 323
-Obvod je navržen tak, aby při stavu vypnutí (\SI{0}{\volt} na vstupu)
-neprotékal tranzistory žádný proud.
 
 \begin{figure}[htb]
     \centering
@@ -191,10 +194,9 @@ filtru (dolní propust 4. řádu typu Butterworth, mezní frekvence
 obrázek~\vref{fig:zvuk D butterworth}).
 Výsledné hodnoty součástek byly upraveny, protože byly již při předchozích
 experimentech nakoupeny cívky s indukčností \SI{100}{\micro\henry} a kvůli
-špatné dostupnosti keramických kondenzátorů o kapacitě \SI{820}{\nano\farad}
-v pouzdře pro povrchovou montáž 1206. Simulací v programu LTspice byl průběžně
-kontrolován průběh útlumové charakteristiky, aby nedošlo k přílišnému zhoršení
-vlastností filtru.
+špatné dostupnosti kondenzátorů o kapacitě \SI{820}{\nano\farad}.
+Simulací v programu LTspice byl průběžně kontrolován průběh útlumové
+charakteristiky, aby nedošlo k přílišnému zhoršení vlastností filtru.
 
 \begin{figure}[hptb]
     \centering
@@ -233,9 +235,13 @@ vlastností filtru.
 Umístění vazebního kondenzátoru $C_3$ odstraňujícího stejnosměrnou složku
 signálu až na výstup filtru umožňuje použít jako $C_1$ a $C_2$ elektrolytické
 kondenzátory, které mají při stejné kapacitě několikanásobně menší rozměry než
-například kondenzátory fóliové. Napětí na nich je totiž při normálním provozu
-vždy kladné. Vzhledem k malým potřebným kapacitám a provozním napětím ale
-postačí i vícevrstvé keramické kondenzátory (MLCC).
+například kondenzátory fóliové. Napětí na nich je při normálním provozu vždy
+kladné. Vzhledem k malým potřebným kapacitám a provozním napětím by postačily
+i vícevrstvé keramické kondenzátory (MLCC), ty ale mají další nevhodné
+vlastnosti~-- zejména závislost kapacity na napětí a produkování zvuku vlivem
+piezoelektrického jevu~\cite{NICcomp-MLCC}.
+% https://product.tdk.com/system/files/contents/faq/capacitors-0031/singing_capacitors_piezoelectric_effect.pdf
+% https://www.niccomp.com/resource/files/ceramic/MLCC-Ringing-Singing-NSPH-SMT-FilmCapacitors-May2015.pdf
 
 Filtr tvořený dvěma cívkami a dvěma kondenzátory má dvě rezonanční frekvence,
 při kterých může dojít k nežádoucímu nárůstu napětí na jeho součástkách. Při
@@ -276,25 +282,25 @@ U křemíkových tranzistorů totiž v závěrném směru dochází k průrazu t
 přechodu již od cca \SI{5}{\volt}. Pro účely omezení napěťových špiček
 nepotřebujeme, aby napětí průrazu přesně odpovídalo nějaké určité hodnotě.
 
-Pro ověření tohoto konceptu byl vytvořen jednoduchý testovací obvod sestávající
-z generátoru funkcí FY6900, který umožňuje dosažení napětí až \SI{25}{\volt},
-a~digitálního osciloskopu. Využíváme faktu, že výstupní impedance použitého
-generátoru je \SI{50}{\ohm}.
+Pro praktické ověření tohoto konceptu byl vytvořen jednoduchý testovací obvod
+sestávající z generátoru funkcí FY6900, který umožňuje dosažení napětí až
+\SI{25}{\volt}, a~digitálního osciloskopu. Využíváme faktu, že výstupní
+impedance použitého generátoru je \SI{50}{\ohm}.
 
 \begin{figure}[htb]
     \centering
     \begin{circuitikz}
         \draw
-            (4,3) node [npn] (npn) {BC546}
-            (0,3) to [sinusoidal voltage source] (0,0)
-            (0,3) to [R=$\SI{50}{\ohm}$] (2,3)
+            (4,2.5) node [npn] (npn) {BC546}
+            (0,2.5) to [sinusoidal voltage source] (0,0)
+            (0,2.5) to [R=$\SI{50}{\ohm}$] (2,2.5)
             to [short] (npn.B)
             (npn.E) to [short] (npn.E |- 0,0)
             to [short] (0,0)
             %
-            (3,3) to [oscope, *-*] (3,0)
+            (3,2.5) to [oscope, *-*] (3,0)
             ;
-        \draw[thick, dash dot] (-1,4) rectangle (2.25,-0.5)
+        \draw[thick, dash dot] (-1,3.5) rectangle (2.25,-0.5)
             (1,-0.5) node[below] {FY6900}
             ;
     \end{circuitikz}
@@ -328,20 +334,20 @@ přechodu báze--emitor neuvažuje.
 
 \FloatBarrier  % TODO global ??
 \subsection{Implementace zvukového výstupu ve firmware}
-Generování obdélníkového signálu s určenou periodou je na MCU nejjednodušeji
-proveditelné s využitím hardwarové periferie čítače/časovače. V této práci
-využitý MCU má těchto periferií několik, pro účely implementace zvukového
-výstupu je ale nejvhodnější 16bitový Timer1.
+Generování obdélníkového signálu s určenou periodou a střídou je na MCU
+nejjednodušeji proveditelné s využitím hardwarové periferie čítače/časovače.
+V této práci využitý MCU má periferií tohoto typu několik, pro účely
+implementace zvukového výstupu je ale nejvhodnější 16bitový Timer1.
 
-Protože je cílem generovat sinusový signál, musí se perioda PWM signálu v čase
-měnit. Toho můžeme dosáhnout periodickým přepisováním hodnoty registru
-určujícího střídu. Pro sinusové signály vyšších frekvencí musíme tyto změny
-střídy provádět s periodou kratší než jeden průchod hlavní smyčkou. Proto
-musíme využít přerušení a hodnotu střídy přepisovat v obslužné rutině ISR.
-Toto přerušení potřebujeme spouštět periodicky, tedy při přetečení jednoho
-z časovačů. Vhodnou volbou délky běhu časovače Timer1 můžeme dosáhnout toho, že
-tento časovač bude vhodný jak pro generování PWM signálu, tak i pro spouštění
-ISR.
+Protože je cílem generovat po vyfiltrování sinusový signál, musí se perioda PWM
+signálu v čase měnit. Toho můžeme dosáhnout periodickým přepisováním hodnoty
+registru určujícího střídu. Pro sinusové signály vyšších frekvencí musíme tyto
+změny střídy provádět s periodou kratší než jeden průchod hlavní smyčkou
+firmware. Proto musíme využít asynchronní přerušení a hodnotu střídy přepisovat
+v obslužné rutině ISR. Toto přerušení potřebujeme spouštět periodicky, při
+přetečení jednoho z časovačů. Vhodnou volbou délky běhu časovače Timer1 můžeme
+dosáhnout toho, že tento časovač bude vhodný jak pro generování PWM signálu,
+tak i pro spouštění ISR.
 
 \subsubsection{Testovací verze}
 Pro prvotní ověření konceptu byl vytvořen jednoduchý firmware implementující
@@ -354,12 +360,12 @@ Arduino projektu \filename{audio.ino}, který knihovnu využívá.
 
 Hlavičkový soubor \filename{PWMSine.h} definuje API knihovny a je naprosto
 triviální:
-\begin{lstlisting}[language=C++,style=numbers]
+\begin{lstlisting}[language=myC++,style=numbers]
 #ifndef PWMSINE_H
 #define PWMSINE_H
 
-// PWM period. 20 us (50 kHz) seems to be optimal for further signal
-// processing.
+// PWM period. 20 us (50 kHz) seems to be optimal for further
+// signal processing.
 #define timer1_us 20
 
 void PWMSine_setup();
@@ -373,19 +379,19 @@ Knihovna implementuje pouze tři funkce:
 \begin{itemize}[nosep]
     \item \lstinline[language=C]!void PWMSine_setup()! provádí inicializaci časovače.
 
-    \item \lstinline[language=C]!void PWMSine_tone(uint8_t pin, uint16_t freq, uint8_t amplitude)!
+    \item \lstinline[language=myC++]!void PWMSine_tone(uint8_t pin, uint16_t freq, uint8_t amplitude)!
         zahajuje generování sinusového signálu na výstupním pinu \texttt{pin}
         (na desce Arduino UNO jsou použitou knihovnou \texttt{TimerOne}
         podporované piny 9 a~10~\cite{TimerOnedocs}). Generovaný signál má
         frekvenci \texttt{freq} a jeho amplituda je určena 8bitovým číslem
         \texttt{amplitude}.
 
-    \item \lstinline[language=C]!void PWMSine_noTone(uint8_t pin)!
+    \item \lstinline[language=myC++]!void PWMSine_noTone(uint8_t pin)!
         ukončuje generování tónu na výstupním pinu \texttt{pin}.
 \end{itemize}
 
 Vlastní definice funkcí se nachází v souboru \filename{PWMSine.cpp}:
-\begin{lstlisting}[language=C++,style=numbers]
+\begin{lstlisting}[language=myC++,style=numbers]
 // https://github.com/PaulStoffregen/TimerOne
 // version 1.1.0 (git tag 1.1)
 #include <TimerOne.h>
@@ -468,16 +474,18 @@ ale neprojeví se na generovaném strojovém kódu:
 Jediným projevem funkce je tak zastavení časovače Timer1.
 
 Funkce \verb|timer1_ISR| je volána v důsledku hardwarového přerušení,
-tedy nezávisle na běhu programu. Protože k tomuto přerušení dochází každých
-\SI{20}{\micro\second}, musí mít tato funkce na úrovni strojového kódu co
-nejméně instrukcí, aby se minimalizovalo zpomalení běžných operací prováděných
-v hlavní smyčce firmware. Funkce při každém zavolání nastavuje 16bitové číslo
-$i$ na $i + \mathrm{tone_k}$. Poté určuje výpočtem požadovanou střídu PWM
-signálu $\mathrm{value}+512$, kterou nastavuje na používaném časovači. Střída
-je 10bitové číslo, nabývá tedy hodnot od \num{0} do \num{1023}. Pro nastavení
-střídy PWM signálu je využita metoda \texttt{Timer1.setPwmDuty}, která akci
-provede rychleji než \texttt{Timer1.pwm}. \texttt{Timer1.pwm} se ale musí
-zavolat alespoň jednou před použitím \texttt{Timer1.setPwmDuty}, protože
+tedy nezávisle na normálním běhu programu (firmware). Protože k tomuto
+přerušení dochází každých \SI{20}{\micro\second}, musí mít tato funkce na
+úrovni strojového kódu co nejméně instrukcí, aby se minimalizovalo zpomalení
+běžných operací prováděných v hlavní smyčce firmware. Funkce při každém
+zavolání nastavuje 16bitové číslo $i$ na $i + \mathrm{tone_k}$. Poté určuje
+výpočtem požadovanou střídu PWM signálu $\mathrm{value}+512$, kterou nastavuje
+na používaném časovači. Střída je 10bitové číslo, které nabývá hodnot
+od \num{0} do \num{1023}.
+
+Pro nastavení střídy PWM signálu je využita metoda \texttt{Timer1.setPwmDuty},
+která akci provede rychleji než \texttt{Timer1.pwm}. \texttt{Timer1.pwm} se ale
+musí zavolat alespoň jednou před použitím \texttt{Timer1.setPwmDuty}, protože
 provádí inicializaci.~\cite[ověřeno praktickým pokusem]{TimerOnedocs}
 
 Výpočet hodnoty $\mathrm{value}$ určující střídu $\mathrm{value}+512$ pouze
@@ -489,18 +497,18 @@ implementuje následující funkci:
 kde $0 \le d \le 1$ je střída, $f$ je požadovaná frekvence, $0 \le A \le 1$ je
 požadovaná amplituda a $t$ je doba uplynulá od začátku generování signálu.
 
-Výpočty s desetinnými čísly s pohyblivou řádovou čárkou by ale byly příliš
-pomalé pro použití v ISR, proto jsou využity celočíselné proměnné. Část
+Výpočty s desetinnými čísly s pohyblivou řádovou čárkou by byly příliš pomalé
+pro použití v ISR, proto jsou využity celočíselné proměnné. Část
 výpočtů je též odsunuta do funkce \verb|PWMSine_tone| -- viz proměnná
 \verb|tone_k|.
 
-Střída PWM signálu je určena hodnotou funkce $\sin$. Matematické určování
-těchto hodnot za běhu programu přímo na MCU by ale bylo příliš časově náročné.
-Proto je využita vyhledávací tabulka (LUT) \filename{sinlut.h}, která obsahuje
-hodnoty funkce $\sin$ jako 8bitové číslo se znaménkem pro 256 hodnot argumentu
-od $0$ do $2\pi$. Tato LUT je generována jednoduchým programem napsaným
-v jazyce \texttt{Python}~-- \filename{sinlut.py}~-- spouštěným na standardním
-počítači před kompilací firmware:
+Střída PWM signálu v určitém okamžiku je určena hodnotou funkce $\sin$.
+Matematické určování jejích hodnot za běhu programu přímo na MCU by ale bylo
+příliš časově náročné. Proto je využita vyhledávací tabulka (\acs{LUT})
+\filename{sinlut.h}, která obsahuje hodnoty funkce $\sin$ jako 8bitové číslo se
+znaménkem pro 256 hodnot argumentu od $0$ do $2\pi$. Tato LUT je generována
+jednoduchým programem napsaným v jazyce \texttt{Python}~--
+\filename{sinlut.py}~-- spouštěným na počítači před kompilací firmware:
 \begin{lstlisting}[language=Python,style=numbers]
 #!/usr/bin/env python3
 """Generate sinlut.h"""
@@ -536,7 +544,7 @@ if __name__ == '__main__':
 \end{lstlisting}
 
 Výstupem je soubor \filename{sinlut.h}:
-\begin{lstlisting}[language=C++,style=numbers]
+\begin{lstlisting}[language=myC++,style=numbers]
 /*!
     @file
     @brief Lookup table for sin.
@@ -570,7 +578,7 @@ ignorována.
 
 Arduino projekt \filename{audio.ino} je velmi primitivní a pouze využívá funkce
 výše popsané knihovny ke generování testovacích signálů:
-\begin{lstlisting}[language=C++,style=numbers]
+\begin{lstlisting}[language=myC++,style=numbers]
 #include "PWMSine.h"
 
 #define pin_speaker 9  // needs to be supported by TimerOne
@@ -598,10 +606,10 @@ po dobu \SI{2}{\second}. Poté se smyčka opakuje.
 
 
 \subsubsection{Plná verze}
-Implementace ve firmware budíku je mírně odlišná. Knihovna \filename{PWMSine.h}
-definuje \texttt{C++} třídu \texttt{PWMSine} a její vnitřní kód je v porovnání
-s testovací verzí složitější. API knihovny je dokumentováno standardně
-technologií \shellcmd{doxygen}.
+Implementace v produkční verzi firmware budíku je mírně odlišná. Knihovna
+\filename{PWMSine.h} definuje \texttt{C++} třídu \texttt{PWMSine} a její
+vnitřní kód je v porovnání s testovací verzí složitější. API knihovny je
+dokumentováno standardně technologií \shellcmd{doxygen}.
 
 Oproti testovací verzi přibyla metoda
 \lstinline[language=C++]!void PWMSine::silence(uint8_t pin)!, \\% POZOR rucni zalomeni radku
@@ -612,12 +620,8 @@ logické~0. To by v reproduktoru způsobilo slyšitelné cvaknutí, protože do 
 doby zpracovávaný sinusový signál měl stejnosměrnou složku \SI{2,5}{\volt} a na
 tuto hodnotu byl nabit i vazební kondenzátor. Náhlá změna stejnosměrné složky
 signálu na \SI{0}{\volt} při vypnutí zvukového výstupu ve firmware se tak na
-vstupu lineárního zesilovače (za vazebním kondenzátorem) projeví jako impuls se
-špičkou \SI{-2,5}{\volt} -- viz obrázek \vref{fig:zvuk silence sim}. (Poznámka:
-ve skutečném obvodu s lineárním zesilovačem je před vazebním kondenzátorem
-zařazen atenuátor, takže špička dosahuje pouze zlomku amplitudy
-\SI{-2,5}{\volt}. Pro účely vysvětlení tohoto problému ale postačí atenuátor
-ignorovat.)
+reproduktoru (za vazebním kondenzátorem) projeví jako impuls se špičkou
+\SI{-2,5}{\volt} -- viz obrázek \vref{fig:zvuk silence sim}.
 
 \begin{figure}[htb]
     \centering
@@ -678,21 +682,21 @@ Help:
 \end{lstlisting}
 
 Implementace těchto příkazů je velmi jednoduchá. Pokud je firmware zkompilován
-s definicí \verb|acite_buzzer|, pouze vrátí chybu \verb|Unsupported|. Pokud je
+s definicí \verb|active_buzzer|, pouze vrátí chybu \verb|Unsupported|. Pokud je
 firmware zkompilován bez této definice, volají příslušné funkce
 z~\verb|PWMSine|. Frekvence předávaná příkazu \verb|tone| musí být vydělena 10,
 protože v opačném případě by délka tohoto příkazu mohla přesáhnout délku paměti
-pro CLI příkazy. Upravit délku paměti by bylo triviální, ale protože jde
-o příkaz určený pouze pro testování, bylo zvoleno zkrácení příkazu.
+pro CLI příkazy. (Upravit délku paměti by bylo jednoduché, ale protože jde
+o příkaz určený pouze pro testování, bylo zvoleno zkrácení příkazu.)
 
 CLI příkazy pro ovládání zvukového výstupu jsou určené pouze pro testování,
 protože je s jejich pomocí možné uvést zvukový výstup do stavu, který nelze
-s použitím standardních ovládacích prvků opustit.
+s použitím standardních ovládacích prvků budíku opustit.
 
 
 
 \paragraph{Melodie}
-V průběhu vývoje vyvstal požadavek na možnost změnit frekvenci periodu
+V průběhu vývoje vyvstal požadavek na možnost změnit frekvenci, periodu
 a hlasitost přerušovaného pískání při buzení. Vzhledem k jednoduchosti
 implementace bylo zvoleno flexibilnější řešení, které umožňuje vytváření
 jednoduchých melodií a přiřazování těchto melodií jednotlivým budicím časům.
@@ -704,10 +708,10 @@ ticha), protože pro tyto účely můžeme využít tón o libovolné frekvenci
 s amplitudou rovnou nule.
 
 Melodie musí být v mikrokontroléru ukládány tak, aby nedošlo k jejich ztrátě
-při ztrátě napájení. To vylučuje jejich ukládání v paměti SRAM. Bylo by možné
-využít programovou paměť Flash, to by ale vylučovalo jednoduché přepisování
-uložených dat za normálního běhu programu (firmware). Proto byla zvolena
-interní paměť EEPROM.
+při odpojení napájení. To vylučuje jejich ukládání v paměti SRAM. Bylo by možné
+využít programovou paměť Flash, to by ale neumožňovalo jednoduché přepisování
+uložených dat za normálního běhu firmware. Proto byla zvolena interní paměť
+EEPROM.
 
 Pro ukládání melodií v paměti EEPROM byl vytvořen následující binární formát:
 Každá melodie má 3bytovou hlavičku. Hlavička první melodie začíná v EEPROM na
@@ -728,21 +732,24 @@ dle následujících pravidel:
 Data melodie začínají 3 byty o hodnotách \texttt{0xFD}; \texttt{0x55};
 \texttt{0xAA}. Následuje libovolný počet 3bytových tónů. Data jsou zakončena 3
 byty o hodnotě \texttt{0x00}. Validní tón má nenulovou délku trvání, proto se
-tato sekvence nemůže vyskytnout uvnitř dat, které ji předchází. Následuje byte
-o hodnotě \texttt{0xFF} a 1bytové slovo, jehož LSB je nastaven na 1, pokud se
-má po prvním přehrání melodie opakovat. Ostatní bity tohoto slova jsou
+tato sekvence nemůže vyskytnout uvnitř předcházejících dat. Následuje byte
+o hodnotě \texttt{0xFF} a 1bytové slovo, jehož \acs{LSB} je nastaven na 1,
+pokud se má po prvním přehrání melodie opakovat. Ostatní bity tohoto slova jsou
 nevyužité. Další 3 jednobytová čísla bez znaménka jsou přičtena k amplitudě
 všech tónů při 2., 3. a 4. opakování melodie. Třetí číslo je využito i pro 5.
 a další opakování. Pokud je amplituda tónu v melodii 0, není toto číslo
 přičteno. Pokud je amplituda tónu po přičtení čísla z patičky větší než
 \num{255}, je použita hodnota \num{255}, aby se při aritmetické operaci
 zabránilo nechtěnému přetečení.
+% Kdyz o tom ted premyslim, tak by asi bylo lepsi temi cisly v paticce
+% amplitudu nasobit. V soucasnem stavu je ale system funkcni a nerad bych
+% narychlo provadenymi upravami zanesl nove chyby.
 
 Pokud není patička melodie validní nebo pokud je v hlavičce zapsáno, že melodie
 není aktivována, přepne se budík do režimu standardního přerušovaného pípání.
 To zajišťuje, že nemůže dojít k tichému přehrávání nevalidních dat.
 
-Každý tón je reprezentován 3 jednobytová čísla bez znaménka:
+Každý tón reprezentují 3 jednobytová čísla bez znaménka:
 \begin{itemize}[nosep]
     \item frekvence: $\frac{f - \SI{32}{\hertz}}{\SI{32}{\hertz}}$,
     \item amplituda: \num{0} je ticho, \num{255} je plná hlasitost,
@@ -753,13 +760,14 @@ Vzorce pro výpočet hodnot uložených v paměti z požadovaných parametrů t�
 vychází z omezení ukládaných čísel na rozsah \numrange{0}{255}.
 Vzorec pro přepočet frekvence umožňuje vytváření tónů o frekvencích od
 \SI{32}{\hertz} do \SI{8,192}{\kilo\hertz} s rozlišením \SI{32}{\hertz}.
-Volba minimální frekvence vychází z původní implementace pomocí funkce \verb|tone|
-Volba vzorce pro délku trvání vychází z původního zamýšleného využití
-melodií~-- definice vlastního přerušovaného pískání. Je tedy důležité, aby bylo
-možné definovat dlouho trvající tóny. Rozsah je \SI{25}{\milli\second} až
-\SI{6,375}{\second} s rozlišením \SI{25}{\milli\second}. Podmínka, že délka
-trvání tónu nesmí být nulová, umožňuje využít 3 po sobě jdoucí byty s hodnotou
-\texttt{0x00} pro zakončení dat v paměti.
+Volba minimální frekvence vychází z historické implementace pomocí funkce
+\verb|tone| frameworku Arduino. Volba vzorce pro délku trvání vychází
+z původního zamýšleného využití melodií~-- definice vlastního přerušovaného
+pískání. Je tedy důležité, aby bylo možné definovat dlouho trvající tóny.
+Rozsah je \SI{25}{\milli\second} až \SI{6,375}{\second} s rozlišením
+\SI{25}{\milli\second}. Podmínka, že délka trvání tónu nesmí být nulová,
+umožňuje využít 3 po sobě jdoucí byty s hodnotou \texttt{0x00} pro zakončení
+dat v paměti.
 
 Pro testování melodií byly též vytvořeny nové příkazy v CLI:
 \begin{lstlisting}[style=terminal]
@@ -777,8 +785,8 @@ Příkaz \verb|melody| slouží k zahájení přehrávání vybrané melodie
 (\numrange{0}{15}), při použití bez parametru přehrávání ukončuje.
 Pro manipulaci s daty v paměti EEPROM byl implementován příkaz
 \verb|eer| sloužící ke čtení jednoho bytu z určené adresy a \verb|eew|
-provádějící zápis jednoho bytu dat na určitou adresu. Příklad použití nových
-příkazů pro práci s daty v EEPROM:
+provádějící zápis jednoho bytu dat na určitou adresu. Následuje příklad použití
+nových příkazů pro práci s daty v EEPROM:
 \begin{lstlisting}[style=terminal]
 > eer 1023
 ---
@@ -802,18 +810,18 @@ err 0x0: OK
 
 > eer 1024
 
-Processing
-
 err 0x1: Invalid args
 
 >
 \end{lstlisting}
 
 Pro zjednodušení použití těchto příkazů byl vytvořen program
-\shellcmd{acEEPROM} poskytovaný balíčkem \gitrepo{PyAlarmClock}. Ten umožňuje
-přečtení souvislého bloku dat z EEPROM a zápis do binárního souboru, nebo
-naopak zápis dat z binárního souboru do EEPROM. Například přečtení hlaviček
-všech melodií do souboru \texttt{hlavicky.bin} provádíme následovně:
+\shellcmd{acEEPROM} poskytovaný balíčkem \gitrepo{PyAlarmClock}, kterému se
+podrobněji věnuje subkapitola~\vref{sec:PyAlarmClock}.
+Program umožňuje čtení souvislého bloku dat z EEPROM a zápis do binárního
+souboru, nebo naopak zápis dat z binárního souboru do EEPROM. Například
+přečtení hlaviček všech melodií do souboru \texttt{hlavicky.bin} provádíme
+následovně:
 \begin{lstlisting}[style=terminal]
 $ acEEPROM /dev/ttyUSB0 read 0x0010 48 hlavicky.bin
 INFO:PyAlarmClock:Initializing serial port
@@ -836,14 +844,10 @@ Poke\footnote{\url{http://jemarch.net/pokology-01102019.html}}.
 Struktura dat je popsána souborem zvaným \texttt{pickle}. Po načtení tohoto
 \texttt{pickle} do interaktivního příkazového řádku \shellcmd{poke} provádíme
 mapování dané struktury na konkrétní data v binárním souboru a dále s nimi
-pracujeme jako s objekty. Celý pickle je uložen v souboru
-\repopath{tools/AlarmClockEEPROM.pk} v repozitáři \gitrepo{AlarmClock}, pro
-demonstraci konceptu ale použijeme pouze jeho část:
+pracujeme jako s objekty. Celý pickle pro manipulaci s daty v EEPROM budíku je
+uložen v souboru \repopath{tools/AlarmClockEEPROM.pk} v repozitáři
+\gitrepo{AlarmClock}, pro demonstraci konceptu ale použijeme pouze jeho část:
 \begin{lstlisting}[language=Poke]
-/*
- * Melodies
- */
-
 set_endian(ENDIAN_LITTLE);
 
 type EEPROM_melody_header = struct {
@@ -870,7 +874,7 @@ konec souboru nebo dokud nejde k porušení omezení (\texttt{constraint}).
 Protože v našem souboru \texttt{hlavicky.bin} nejsou všechny hlavičky melodií
 validní, má pole pouze 2 prvky.
 \begin{lstlisting}[style=terminal]
-$ poke -l ~/source/repos/AlarmClock/tools/AlarmClockEEPROM.pk hlavicky.bin
+$ poke -l AlarmClock/tools/AlarmClockEEPROM.pk hlavicky.bin
      _____
  ---'   __\_______
             ______)  GNU poke 1.0

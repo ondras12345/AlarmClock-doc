@@ -78,6 +78,7 @@ zařízení, která mají mít k webovému rozhraní přístup. S jednoduchým n
 pro konfiguraci \shellcmd{iptables} nazvaným \shellcmd{ufw}
 (\foreignlanguage{english}{Uncomplicated FireWall} to lze provést následovně:
 \begin{lstlisting}[language=mybash]
+# Definování aplikace:
 sudo tee /etc/ufw/applications.d/homeassistant << EOF
 [homeassistant]
 title=Home Assistant Web UI
@@ -102,7 +103,7 @@ YAML souborů.
 
 Veškerou konfiguraci by bylo možné vkládat do hlavního konfiguračního souboru
 \filename{configuration.yaml}.
-Z hlediska zachování přehlednosti a jednoduchosti údržby je ale vhodnější
+Z hlediska zachování jednoduchosti údržby a přehlednosti je ale vhodnější
 konfiguraci rozdělit do více souborů.
 Můžeme využít funkci
 \texttt{packages}\footnote{\url{https://www.home-assistant.io/docs/configuration/packages/}},
@@ -164,7 +165,8 @@ Využíváme výchozích hodnot~-- například \lstinline!payload_off: OFF!
 a~\lstinline!payload_on: ON!. Ty se shodují se zprávami odesílanými programem
 \shellcmd{ac2mqtt}. \yamlkey{availability_topic} složí k detekci
 nefunkčního spojení s budíkem. V takovém případě přejde entita
-\HAentity{light.alarmclock_lamp} do stavu \HAstate{unavailable}.
+%\HAentity{light.alarmclock_lamp}
+do stavu \HAstate{unavailable}.
 
 Platforma \foreignlanguage{english}{MQTT Light} umožňuje i ovládání jasu
 světla, čehož využíváme u stmívatelné LED \uv{ambient}. Konfigurace je
@@ -187,13 +189,14 @@ light:
       255
       {%- endif -%}
 \end{lstlisting}
-Protože je LED pásek řízen pouze jasem, kde hodnota \num{255} představuje plný
-jas a \num{0} představuje zhasnuté světlo, je stav entity (zapnuto / vypnuto)
-z tohoto čísla. To je úlohou šablony \yamlkey{state_template}. Protože proměnná
-\texttt{value} představuje textový řetězec přijatý na \yamlkey{state_topic},
-porovnáváme ji s textovým řetězcem \lstinline[language=Python]!'0'!. Druhou
-možností by bylo převést \texttt{value} na celočíselný datový typ filtrem
-\texttt{int} a porovnávat čísla.
+Protože je výkonová LED řízena pouze jasem, kde hodnota \num{255} představuje
+plný jas a \num{0} představuje zhasnuté světlo, je stav entity (zapnuto /
+vypnuto) odvozen z tohoto čísla. To je úlohou šablony \yamlkey{state_template}.
+Protože proměnná \texttt{value} představuje textový řetězec přijatý na
+\yamlkey{state_topic}, porovnáváme ji s textovým řetězcem
+\lstinline[language=Python]!'0'!. Druhou možností by bylo převést
+\texttt{value} na celočíselný datový typ filtrem \texttt{int} a porovnávat
+čísla.
 
 \yamlkey{brightness_template} určuje, jak z přijaté MQTT zprávy odvodit jas
 světla jako číslo v rozsahu \numrange{0}{255}.
@@ -211,10 +214,11 @@ v různých situacích:
     \item Je požadované zapnutí světla s určitou hodnotou jasu. V takovém
         případě se v~MQTT zprávě pošle hodnota proměnné \texttt{brightness}.
 \end{enumerate}
+\todo[inline]{citovat HA dokumentaci}
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.3\textwidth]{homeassistant-lovelace-light}
+    \includegraphics[width=0.4\textwidth]{homeassistant-lovelace-light}
     \caption{%
         Karta \href{https://www.home-assistant.io/lovelace/light/}{Light}
         reprezentující entitu \HAentity{light.alarmclock_ambient} v prostředí
@@ -228,7 +232,7 @@ v příloze~\vref{app:HAconfig}.
 
 
 \subsubsection{Recorder}
-Ve výchozí konfiguraci je přidána integrace \HAintegration{recorder}. Ta
+Ve výchozí konfiguraci je obsažena integrace \HAintegration{recorder}. Ta
 automaticky nahrává historii stavu všech entit, přičemž data jsou ukládána do
 SQL databáze. Integrace \HAintegration{history} umožňuje tato historická data
 procházet a tvořit z nich grafy. Integrace \HAintegration{logbook} zobrazuje
@@ -236,7 +240,7 @@ tato data ve formě textových, chronologicky řazených popisů událostí.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.5\textwidth]{homeassistant-history}
+    \includegraphics[width=0.6\textwidth]{homeassistant-history}
     \caption{%
         Graf \HAintegration{history} a výpis \HAintegration{logbook} v~detailu
         entity \HAentity{light.alarmclock_ambient}
