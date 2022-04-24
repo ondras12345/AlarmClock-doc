@@ -25,6 +25,10 @@ do několika adresářů (výpis souborů není úplný):
     .5 cnc/\DTcomment{gcode programy pro CNC frézu}.
     .6 AlarmClock.FlatPrj\DTcomment{FlatCAM projekt}.
     .4 AlarmClock-encoder/\DTcomment{DPS pro otočný enkodér}.
+    .4 enclosure/\DTcomment{3D CAD návrh krabičky}.
+    .5 enclosure.FCStd\DTcomment{FreeCAD projekt}.
+    .5 back-laser.svg\DTcomment{popisky pro zadní panel}.
+    .5 *.nc\DTcomment{gcode programy pro CNC}.
     .3 AlarmClockWeb/\DTcomment{repozitář \gitrepo{AlarmClockWeb} (webová stránka)}.
     .4 README.md\DTcomment{instrukce pro instalaci}.
     .3 PyAlarmClock/\DTcomment{repozitář \gitrepo{PyAlarmClock} (Python sofware)}.
@@ -362,6 +366,18 @@ done
 \newappendix{Balíček konfigurace pro Home Assistant}
 \label{app:HAconfig}
 \lstinputlisting[language=yaml,style=numbers]{prilohy/homeassistant/alarmclock.yaml}
+
+
+\clearpage
+\newappendix{3D model krabičky}
+\label{app:krabicka}
+CAD soubor a programy pro CNC jsou součástí elektronické přílohy.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[height=0.85\textheight, width=1.00\textwidth, keepaspectratio]{prilohy/AlarmClock-hardware/enclosure/preview.png}
+    \caption{3D vizualizace krabičky}
+    \label{fig:krabicka 3d}
+\end{figure}
 
 
 \clearpage

@@ -31,6 +31,6 @@ make help
 # sestavení pdf dokumentace a elektronických příloh
 make
 
-# vytvoření finálního .zip souboru
+# vytvoření finálního .zip souboru s elektronickou přílohou
 make archive
 ```
