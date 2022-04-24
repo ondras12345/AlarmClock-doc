@@ -1,6 +1,14 @@
 \appendix
 \pagenumbering{Roman}
 
+\makeatletter
+\counterwithin{figure}{appendices}
+\renewcommand{\thefigure}{\theappendices.\@arabic\c@figure}
+
+\counterwithin{table}{appendices}
+\renewcommand{\thetable}{\theappendices.\@arabic\c@table}
+\makeatother
+
 
 \newappendix{Obsah elektronické přílohy}
 \label{app:dirtree}
@@ -378,7 +386,3 @@ CAD soubor a programy pro CNC jsou součástí elektronické přílohy.
     \caption{3D vizualizace krabičky}
     \label{fig:krabicka 3d}
 \end{figure}
-
-
-\clearpage
-\todo[inline]{cislovani obrazku a tabulek v prilohach}

@@ -12,7 +12,6 @@
 % https://texfaq.org/FAQ-linespace
 \usepackage[onehalfspacing]{setspace}
 
-% TODO predepsane okraje
 \usepackage[
     a4paper,
     left=40mm,
@@ -78,6 +77,7 @@
 \usepackage{lcd}
 \usepackage{longtable}
 \usepackage{csvsimple}
+\usepackage{chngcntr}
 
 \usetikzlibrary{fit}
 
@@ -154,6 +154,10 @@
 
 % Roztrhana matika
 \allowdisplaybreaks
+
+% kapitoly bez slove "Kapitola"
+\titleformat{\chapter}[hang]
+    {\Huge\bfseries}{\thechapter}{20pt}{\Huge\bfseries}
 
 % kapitola bez cisla
 \newcommand{\nonuchapter}[1]
