@@ -27,11 +27,10 @@ Rozhraní \emph{není kompatibilní se standardem RS-232}, který používá nap
 
 V sérii se signály \texttt{Tx} a \texttt{Rx} jsou mezi konektorem Jack v zadním
 panelu budíku a konektorem J5 (UART) na hlavní DPS zařazeny rezistory s odporem
-\SI{1}{\kilo\ohm}.\todo{1k v serii s UART} Tyto rezistory slouží jako ochrana
-před zkratem při připojení nekompatibilního zařízení (například při připojení
-\texttt{Tx} počítače na \texttt{Tx} budíku) nebo v průběhu odpojování
-a připojování TRS Jack konektoru. Nejde ale o vhodnou ochranu proti připojení
-příliš vysokého napětí na vstup \texttt{Rx}. Vstupní piny \acs{MCU} sice
-obsahují ochranné diody, jejich specifikace ale nejsou
-zveřejněny~\cite{dshATmega328} a nelze je považovat za vhodnou formu ochrany
-před přepětím.
+\SI{1}{\kilo\ohm}. Tyto rezistory slouží jako ochrana před zkratem při
+připojení nekompatibilního zařízení (například při připojení \texttt{Tx}
+počítače na \texttt{Tx} budíku) nebo v průběhu odpojování a připojování TRS
+Jack konektoru. Nejde ale o vhodnou ochranu proti připojení příliš vysokého
+napětí na vstup \texttt{Rx}. Vstupní piny \acs{MCU} sice obsahují ochranné
+diody, jejich specifikace ale nejsou zveřejněny~\cite{dshATmega328} a nelze je
+považovat za vhodnou formu ochrany před přepětím.
