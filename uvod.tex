@@ -3,47 +3,49 @@ Cílem tohoto projektu je vytvořit elektronický budík s~pokročilými funkcem
 který lze snadno vyrobit v~amatérských podmínkách a~přizpůsobit tak, aby
 vyhovoval i~požadavkům náročného uživatele.
 
-Zařízení není přímo připojené k~síti Internet. Namísto toho bylo zvoleno
+Zařízení nebude přímo připojené k~síti Internet. Namísto toho bylo zvoleno
 přípojení k~serveru rozhraním UART. Server obsluhuje síťové funkce a~poskytuje
 například webové rozhraní, které umožňuje pohodlné nastavování časů a~parametrů
-buzení. Budík lze plně využívat i~bez serveru. Server tak ani nemusí běžet po
-celý den, lze použít běžný osobní počítač. Vhodnou volbou serveru pro
-nepřetržitý provoz je nepříklad jednodeskový počítač Raspberry Pi.
+buzení. Budík musí být možné plně využívat i~bez serveru. Server tak ani nemusí
+běžet po celý den (na takovou aplikaci je vhodný například jednodeskový počítač
+Raspberry Pi), lze použít i~běžný, na noc vypínaný osobní počítač.
+
 
 Zdrojový kód firmware a~serverového software, schéma zapojení, návrh desky
-plošných spojů i~3D model krabičky jsou uvolněny pod svobodnou
+plošných spojů i~3D model krabičky budou uvolněny pod svobodnou
 licencí MIT\footnote{\url{https://cs.wikipedia.org/wiki/Licence_MIT}}.
 Projekt tak vyhovuje filozofii svobodného
 software\footnote{\url{https://www.gnu.org/philosophy/free-sw.html}}
 a~open-source
 hardware\footnote{\url{https://cs.wikipedia.org/wiki/Open-source_hardware}}.
 
-Zdrojový kód firmware je opatřed komentáři, z~nichž je generována dokumentace
-pomocí nástroje \shellcmd{doxygen}. To usnadňuje orientaci v~projektu
-a~umožňuje, aby si i~běžný uživatel se základní znalostí programování
-implementoval dodatečné funkce, které potřebuje.
+Zdrojový kód firmware musí být opatřen komentáři, z~nichž lze generovat
+dokumentaci pomocí nástroje \shellcmd{doxygen}. To je důležité pro usnadnění
+orientace v~projektu a~umožňuje, aby si i~běžný uživatel se základní znalostí
+programování implementoval dodatečné funkce, které potřebuje.
 
-Budík je zařízení, jehož selhání může uživateli způsobit problémy a~v~některých
-případech i~finanční škodu. Velká pozornost je proto věnována zajištění
-spolehlivosti. Nechtěné vzbuzení uživatele například při výpadku napájení je
-přitom upřednosťnováno před rizikem nevzbuzení. Preventivní opatření jsou
-uplatněna jak na úrovni firmware (aktivace časovače \acs{WDT}, automatické
-testy), tak i~na úrovni hardware (použití antistatického vybavení při osazování
-desky plošných spojů).
+Budík je zařízení, jehož selhání může uživateli způsobit problémy,
+a~v~některých případech i~finanční škodu. Velká pozornost proto musí být
+věnována zajištění spolehlivosti. Nechtěné vzbuzení uživatele například při
+výpadku napájení je přitom preferováno před rizikem nevzbuzení. Preventivní
+opatření budou uplatněna jak na úrovni firmware (aktivace časovače \acs{WDT},
+automatické testy), tak i~na úrovni hardware (použití antistatického vybavení
+při osazování desky plošných spojů).
 
 \paragraph{Motivace}
 Mnoho požadavků na funkce budíku vychází ze zkušenosti s~komerčně dostupnými
-řešeními. Autor této práce po několik let používal radiobudík Sencor
-SRC~330~GN. Během jeho užívání bylo odhaleno několik problému, především
-nedostatek nastavitelných časů buzení (pouze 2), nemožnost přiřadit budicímu
-času libovolnou skupinu dní v~týdnu a~problémy se zrušením budíku v~průběhu
-odložení pomocí funkce \uv{snooze}. Nepříjemná byla také chyba ve firmware,
-která se projevovala nepřerušitelným pískáním, ke kterému docházelo náhodně
-v~první hodině po stisku tlačítka nastavujícího dobu nečinnosti, po které dojde
-ke zhasnutí displeje. Protože tento komerčně dostupný budík neumožňuje zásah
-uživatele do firmware, neexistuje žádná možnost, jak tyto nedostatky odstranit.
-Mezi další problémy patřilo i~slyšitelné bzučení o~frekvenci \SI{50}{\hertz}
-vydávané interním transformátorem (zařízení je napájeno síťovým napětím).
+řešeními. Autor této práce po několik let používal budík Sencor SRC~330~GN.
+Během jeho užívání bylo odhaleno několik problému, především nedostatek
+nastavitelných časů buzení (pouze 2), nemožnost přiřadit budicímu času
+libovolnou skupinu dní v~týdnu (například pouze úterý a~čtvrtek) a~problémy se
+zrušením budíku v~průběhu odložení pomocí funkce \uv{snooze}. Nepříjemná byla
+také chyba ve firmware, která se projevovala nepřerušitelným pískáním, ke
+kterému docházelo náhodně v~první hodině po stisku tlačítka nastavujícího dobu
+nečinnosti, po které dojde ke zhasnutí displeje. Protože tento komerčně
+dostupný budík neumožňuje zásah uživatele do firmware, neexistuje žádná
+možnost, jak tyto nedostatky odstranit. Mezi další problémy patřilo
+i~slyšitelné bzučení o~frekvenci \SI{50}{\hertz} vydávané interním
+transformátorem (zařízení je napájeno síťovým napětím).
 
 \begin{figure}[htbp]
     \centering
@@ -54,16 +56,17 @@ vydávané interním transformátorem (zařízení je napájeno síťovým napě
 
 
 \paragraph{Struktura práce}
-Práce je členěna do kapitol (viz \hyperref[toc]{Obsah}). První kapitola se
+Práce je členěna do kapitol (viz \hyperref[toc]{Obsah}). Jedna kapitola se
 věnuje hardwarové části výrobku a~programu, který běží na jeho mikrokontroléru
-(firmware). Druhá kapitola se věnuje software, tedy programům bežícím na
-serveru.
+(firmware).
+Další kapitola se věnuje software, tedy programům bežícím na serveru.
 
 Samostatné celky (zdrojové kódy firmware, software, návrh hardware) jsou
-umístěny v~oddělených repozitářích systému \shellcmd{git}. V~repozitáři se
-zdrojovými kódy této práce jsou ale všechny části vloženy jako submoduly
-v~adresáři \repopath{prilohy/}. Více informací o~členění elektronické přílohy
-práce lze nalézt v~příloze~\vref{app:dirtree}.
+umístěny v~oddělených repozitářích verzovacího systému
+\shellcmd{git}\footnote{\url{https://git-scm.com/}}. V~repozitáři se zdrojovými
+kódy této práce jsou ale všechny části vloženy jako submoduly v~adresáři
+\repopath{prilohy/}. Více informací o~členění elektronické přílohy práce lze
+nalézt v~příloze~\vref{app:dirtree}.
 
 Dokument obsahuje výpisy jednoduchých programů a~ukázky zdrojového kódu.
 Ty jsou otištěny písmem s~pevnou šířkou (neproporcionálním písmem). Pro různé

@@ -1,25 +1,50 @@
 \nonuchapter{Závěr}
-\todo[inline]{zaver}
+Cílem tohoto projektu bylo vytvořit spolehlivý konfigurovatelný budík.
+Firmware zařízení prošel několikaměsíčním testováním, při kterém nebyl objeven
+žádný významný nedostatek. Budík uživatele spolehlivě probouzel v~nastavený
+čas. Velice se osvědčila funkce postupného rozsvěcení výkonové \acs{LED} před
+začátkem akustického buzení, kterou běžné budíky nedisponují.
 
-Firmware prošel několikaměsíčním testováním, při kterém nebyl objeven žádný
-nedostatek. Zařízení uživatele spolehlivě probudilo v~nastavený čas. Velice se
-osvědčila funkce postupného rozsvěcení LED před začátkem akustického buzení.
+Potenciál pro další rozšiřování funkcionality firmware je omezen nedostatkem
+místa v~programové paměti flash použitého mikrokontroléru. Bylo by ale možné
+uplatnit mnohé optimalizace (zkrácení textů vypisovaných v~textovém
+konfiguračním rozhraní, odstranění málo využívaných funkcí, přechod na
+úspornější knihovny), kterými by se situace zlepšila.
 
-Díky předchozím zkušenostem autora a~rozsáhlému testování na nepájivém
-kontaktním poli byla plně funkční již první revize desky plošných spojů.
-Drobným nedostatkem byl zbytkový svit výkonové LED ve stavu zhasnuto, který byl
-způsobem průchodem velmi malého proudu (řádově \SI{100}{\nano\ampere}) obvodem
-stmívače. Tento problém byl odstraněn přidáním rezistoru R27. Výrobní
-dokumentace byla aktualizována, SMD rezistor velikosti 1206 byl připájen na DPS
-první revize bez nutnosti výroby nového kusu.
+Nastavování časů a~parametrů buzení lze provádět několika pohodlnými způsoby
+(displej budíku, textové konfigurační rozhraní, webová stránka). Všechny tyto
+metody nabízí rychlé a~srozumitelné uživatelské rozhraní.
+
+Díky předchozím zkušenostem autora a~rozsáhlému testování jednotlivých
+elektronických obvodů na nepájivém kontaktním poli byla plně funkční již první
+revize desky plošných spojů. Drobným nedostatkem byl zbytkový svit výkonové LED
+ve stavu zhasnuto, který byl způsobem průchodem velmi malého proudu (řádově
+\SI{100}{\nano\ampere}) obvodem stmívače. Tento problém byl odstraněn přidáním
+jednoho rezistoru. Výrobní dokumentace byla aktualizována, SMD rezistor byl
+připájen na \acs{DPS} první revize bez nutnosti výroby nového kusu.
+
+Blok zvukového výstupu splňuje vznesené požadavky. Pracuje bez nutnosti
+samostatného napájení napětím jiným než \SI{5}{\volt}, ve stavu vypnutí
+neprodukuje žádný slyšitelný zvuk a~umožňuje vytvářet tóny různých frekvencí
+a~amplitud. Zjednodušením a~zobecněním implementace uživatelem definovatelných
+zvuků buzení bylo dokonce umožněno přehrávání jednoduchých melodií. Praktický
+přínos této funkce ale není příliš velký.
+
+V~příští revizi hardware by bylo vhodné upravit obvod LC filtru tak, aby bylo
+dosaženo nižšího harmonického zkreslení výstupního akustického signálu.
+Zkreslení nepůsobí příliš rušivě a~pro účely vzbuzení uživatele není překážkou,
+oproti dříve testovanému obvodu s~RC filtrem a~lineárním zesilovačem je ale
+výstupní signál spínaného zesilovače budíku méně kvalitní.
 
 DPS by bylo možné bez větších úprav uvést do sériové výroby. Bylo by ale nutné
 provést revizi kusovníku, protože poměrně velká část použitých elektronických
 součástek byla zakoupena od maloobchodního dodavatele GES Electronics, který
-v~průběhu tohoto roku ukončil svou činnost.
+v~průběhu tohoto roku ukončil svou činnost. Velkým problémem by byl
+i~celosvětový nedostatek čipů \texttt{ATmega328P}.
 
-Krabička je plně vyhovující pro tento prototyp. Technologie výroby obráběním
-CNC frézou umožnila přizpůsobit její tvar a~rozměry požadavkům tohoto
-prototypu. Její výroba ale zahrnuje mnoho zdlouhavých manuálních kroků,
-především lepení. Pro výrobu většího počtu kusů by bylo nutné její návrh
-změnit, nebo použít komerčně dostupnou krabičku.
+Navržená krabička vyrobená z~překližky je plně vyhovující pro tento prototyp.
+Technologie výroby obráběním \acs{CNC} frézou umožnila přizpůsobit její tvar
+a~rozměry požadavkům výrobku. Proces výroby ale zahrnuje mnoho zdlouhavých
+manuálních kroků, především lepení. Pro výrobu většího počtu kusů by
+pravděpodobně bylo nutné mechanický návrh změnit, nebo zvolit jednu z~komerčně
+nabízených plastových krabiček.
