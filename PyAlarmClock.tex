@@ -108,10 +108,10 @@ class AlarmClockMQTT:
             raise NotImplementedError()
 
     class CommandError(Exception):
-        """Error raised by a MQTT command handler."""
+        """Error raised by an MQTT command handler."""
 
     class Command:
-        """Representation of a MQTT command handler."""
+        """Representation of an MQTT command handler."""
 
         def do_command(self, ac: AlarmClock, msg: str):
             """Handle reception of msg.
