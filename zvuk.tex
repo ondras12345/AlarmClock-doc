@@ -47,7 +47,7 @@ straně MCU. Jako optimální se jeví frekvence kolem \SI{50}{\kilo\hertz}.
 \end{figure}
 
 \subsection{Zesilovač}
-Z~hlediska zesilování výstupního signálu existují dvě možnosti -- můžeme
+Z~hlediska zesilování výstupního signálu existují dvě možnosti~-- můžeme
 zesilovat vyfiltrovaný sinusový signál pomocí lineárního zesilovače (zesilovače
 pracujícího v~třídě A~nebo AB), nebo můžeme zesilovat obdélníkový PWM signál
 \uv{spínaným} zesilovačem (obdoba třídy D) a~filtrovat až zesílený signál.
@@ -442,7 +442,7 @@ void PWMSine_noTone(uint8_t pin)
 }
 \end{lstlisting}
 
-Pro generování PWM signálu je využit 16bitový časovač použitého MCU -- Timer1.
+Pro generování PWM signálu je využit 16bitový časovač použitého MCU~-- Timer1.
 Knihovna \texttt{TimerOne} zprostředkovává jednodušší ovládání této periferie.
 Odkaz na její zdrojový kód a~specifikace použité verze jsou uvedeny jako
 komentář na začátku souboru \filename{PWMSine.cpp}. Jde o~svobodnou knihovnu
@@ -499,7 +499,7 @@ požadovaná amplituda a~$t$ je doba uplynulá od začátku generování signál
 
 Výpočty s~desetinnými čísly s~pohyblivou řádovou čárkou by byly příliš pomalé
 pro použití v~ISR, proto jsou využity celočíselné proměnné. Část
-výpočtů je též odsunuta do funkce \verb|PWMSine_tone| -- viz proměnná
+výpočtů je též odsunuta do funkce \verb|PWMSine_tone|~-- viz proměnná
 \verb|tone_k|.
 
 Střída PWM signálu v~určitém okamžiku je určena hodnotou funkce $\sin$.
@@ -621,7 +621,7 @@ doby zpracovávaný sinusový signál měl stejnosměrnou složku \SI{2,5}{\volt
 tuto hodnotu byl nabit i~vazební kondenzátor. Náhlá změna stejnosměrné složky
 signálu na \SI{0}{\volt} při vypnutí zvukového výstupu ve firmware se tak na
 reproduktoru (za vazebním kondenzátorem) projeví jako impuls se špičkou
-\SI{-2,5}{\volt} -- viz obrázek \vref{fig:zvuk silence sim}.
+\SI{-2,5}{\volt}~-- viz obrázek \vref{fig:zvuk silence sim}.
 
 \begin{figure}[htb]
     \centering
@@ -769,6 +769,7 @@ Rozsah je \SI{25}{\milli\second} až \SI{6,375}{\second} s~rozlišením
 umožňuje využít 3 po sobě jdoucí byty s~hodnotou \texttt{0x00} pro zakončení
 dat v~paměti.
 
+\pagebreak% lepsi umisteni lstlisting
 Pro testování melodií byly též vytvořeny nové příkazy v~CLI:
 \begin{lstlisting}[style=terminal]
 Help:
@@ -869,7 +870,7 @@ Spustíme \shellcmd{poke} a~jako parametr mu předáme název binárního soubor
 \texttt{hlavicky.bin}. Přepínač \texttt{-l} slouží k~načtení pickle při
 spuštění. Vytvoříme novou proměnnou \verb|melody_headers| jako pole struktur
 \verb|EEPROM_melody_header| začínající na začátku souboru (\verb|@ 0#B|). Počet
-prvků v~poli je určen dynamicky -- prvky se přidávají, dokud se nenarazí na
+prvků v~poli je určen dynamicky~-- prvky se přidávají, dokud se nenarazí na
 konec souboru nebo dokud nejde k~porušení omezení (\texttt{constraint}).
 Protože v~našem souboru \texttt{hlavicky.bin} nejsou všechny hlavičky melodií
 validní, má pole pouze 2 prvky.

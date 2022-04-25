@@ -81,7 +81,7 @@ tohoto topic automaticky zaslána zpráva \texttt{offline}. K~tomu je využívá
 funkce MQTT \ac{LWT}.
 
 Požadujeme-li, aby budík provedl nějakou akci, pošleme zprávu do příslušného
-\texttt{command topic} -- \topic{alarmclock/cmnd/nazev_prikazu}.
+\texttt{command topic}~-- \topic{alarmclock/cmnd/nazev_prikazu}.
 Toto je interně řešeno pomocí základních tříd \texttt{AlarmClockMQTT.Entity}
 a~\texttt{AlarmClockMQTT.Command}, ze kterých dědí třídy reprezentující
 jednotlivé komponenty budíku. \texttt{Entity} reprezentuje komponentu mající

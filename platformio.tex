@@ -13,7 +13,7 @@ výhody.
 
 Nespornou výhodou PlatformIO je správa závislostí~-- knihoven, bez kterých
 není možné firmware zkompilovat. Tím, že program v~konfiguračním souboru
-\filename{platformio.ini} zaznamenává jejich přesné verze, odstraňuje potřebu
+\filename{platformio\dothyp{}ini} zaznamenává jejich přesné verze, odstraňuje potřebu
 vytvářet tuto dokumentaci ručně. Znalost verzí knihoven, se kterými byl
 firmware testován, je kritická pro budoucí sestavování. Může se totiž stát, že
 v~knihovně dojde v~novější verzi ke změně API či zanesení chyby. Přístup
@@ -76,7 +76,7 @@ vývoj (native). Testy jsou umístěny v~samostatných podsložkách v~adresář
 
 Pro demonstraci využití jednotkových testů je vhodná velmi jednoduchá jednotka
 zajišťující ukládání boolean hodnoty (jednoho bitu, pravda či nepravda) pro
-každý den v~týdnu -- třída \texttt{DaysOfWeek}. Celý stav tohoto objektu je
+každý den v~týdnu~-- třída \texttt{DaysOfWeek}. Celý stav tohoto objektu je
 reprezentován jedním osmibitovým číslem. Protože je toto číslo přenášeno
 rozhraním UART z~mikrokontroléru k~připojenému počítači, je potřeba zajistit,
 že obě strany ukládají hodnoty stejným způsobem. Manuální testování při prvotní
@@ -286,7 +286,7 @@ kontrolují stejné případy v~tamní implementaci objektu. Tím je zajištěna
 konzistence mezi firmware a~software.
 
 
-\subsubsection{Pomocné objekty -- mock objects}
+\subsubsection{Pomocné objekty~-- mock objects}
 Pro testování složitějších jednotek odděleně od ostatních lze využít pomocné
 objekty. Při testování firmware je například velmi výhodné takto nahradit kód
 komunikující s~hardware, protože poté lze testy spouštět i~v~prostředí
