@@ -1,22 +1,22 @@
 \section{PlatformIO}
 PlatformIO\footnote{\url{https://platformio.org/}} je multiplatformní, na
-architektuře nezávislý nástroj s otevřeným zdrojovým kódem pro vývoj embedded
-systémů. Podporuje mnoho \acs{SDK} (včetně Arduino) a nezávisí na konkrétním
+architektuře nezávislý nástroj s~otevřeným zdrojovým kódem pro vývoj embedded
+systémů. Podporuje mnoho \acs{SDK} (včetně Arduino) a~nezávisí na konkrétním
 vývojovém prostředí (\acs{IDE}). Oproti Arduino IDE nabízí možnost pracovat
-s příkazovým řádkem namísto grafického rozhraní a díky tomu usnadňuje
+s~příkazovým řádkem namísto grafického rozhraní a~díky tomu usnadňuje
 automatizaci různých repetitivních procesů ve vývoji firmware. Konfigurační
 soubor \filename{platformio.ini} také umožňuje nastavit všechny parametry
 sestavení, včetně přímého předávání přepínačů kompilátoru \shellcmd{gcc}.
-Je možné vytvořit projekt, který je kompatibilní s Arduino IDE i s PlatformIO,
-ale to pouze ztěžuje využívání pokročilých funkcí PlatformIO a nepřináší žádné
+Je možné vytvořit projekt, který je kompatibilní s~Arduino IDE i~s~PlatformIO,
+ale to pouze ztěžuje využívání pokročilých funkcí PlatformIO a~nepřináší žádné
 výhody.
 
 Nespornou výhodou PlatformIO je správa závislostí~-- knihoven, bez kterých
-není možné firmware zkompilovat. Tím, že program v konfiguračním souboru
+není možné firmware zkompilovat. Tím, že program v~konfiguračním souboru
 \filename{platformio.ini} zaznamenává jejich přesné verze, odstraňuje potřebu
 vytvářet tuto dokumentaci ručně. Znalost verzí knihoven, se kterými byl
 firmware testován, je kritická pro budoucí sestavování. Může se totiž stát, že
-v knihovně dojde v novější verzi ke změně API či zanesení chyby. Přístup
+v~knihovně dojde v~novější verzi ke změně API či zanesení chyby. Přístup
 Arduino IDE (knihovny sdílené mezi projekty, notifikace doporučující
 aktualizaci kdykoli je dostupná novější verze) není pro složitější projekty
 závisející na mnoha knihovnách vhodný.
@@ -47,48 +47,48 @@ lib_deps =
 	marcoschwartz/LiquidCrystal_I2C@^1.1.4
 	paulstoffregen/TimerOne@^1.1.0
 \end{lstlisting}
-Skutečný konfigurační soubor je složitější, protože obsahuje i nastavení
-jednotkových testů a různé další úpravy.
+Skutečný konfigurační soubor je složitější, protože obsahuje i~nastavení
+jednotkových testů a~různé další úpravy.
 
-Práce s nástrojem pro příkazový řádek PlatformIO Core (CLI) je velmi
+Práce s~nástrojem pro příkazový řádek PlatformIO Core (CLI) je velmi
 jednoduchá. Zkompilování firmware se provádí příkazem
 \verb|pio run --environment uno|. Přepínač \verb|--environment| určuje,
 pro jakou platformu se má firmware zkompilovat. Lze použít jeho krátkou verzi
-\verb|-e|. Výsledný soubor ve formátu Intel HEX se poté nachází v umístění
+\verb|-e|. Výsledný soubor ve formátu Intel HEX se poté nachází v~umístění
 \repopath{.pio/build/uno/firmware.hex}. Smazání všech zkompilovaných souborů
 (užitečné pro vynucení úplného překompilování) se provádí příkazem
 \verb|pio run -e uno -t clean|, kde \verb|-t| je krátká verze přepínače
 \verb|--target|. Nahrání firmware do mikrokontroléru provádíme příkazem
 \verb|pio run -e uno -t upload|.
 
-Pro další zjednodušení a automatizaci práce s tímto nástrojem byl vytvořen
-\filename{Makefile}, tedy soubor s pravidly programu GNU \shellcmd{make}.
-Tento soubor obsahuje i mechanismus pro generování nápovědy, dostupné příkazy
+Pro další zjednodušení a~automatizaci práce s~tímto nástrojem byl vytvořen
+\filename{Makefile}, tedy soubor s~pravidly programu GNU \shellcmd{make}.
+Tento soubor obsahuje i~mechanismus pro generování nápovědy, dostupné příkazy
 lze zjistit příkazem \shellcmd{make help}.
 
 \subsection{Automatické testy}
-Jednou z hlavních motivací pro nasazení technologie PlatformIO byla podpora
+Jednou z~hlavních motivací pro nasazení technologie PlatformIO byla podpora
 automatických testů. PlatformIO podporuje testování jednotlivých jednotek
 zdrojového kódu \foreignlanguage{english}{(unit testing)}, % () uvnitr {}, jinak byla za ( mezera
-a to jak na cílové platformě (embedded MCU), tak i na počítači použitém pro
-vývoj (native). Testy jsou umístěny v samostatných podsložkách v adresáři
+a~to jak na cílové platformě (embedded MCU), tak i~na počítači použitém pro
+vývoj (native). Testy jsou umístěny v~samostatných podsložkách v~adresáři
 \repopath{test/}.
 
 Pro demonstraci využití jednotkových testů je vhodná velmi jednoduchá jednotka
 zajišťující ukládání boolean hodnoty (jednoho bitu, pravda či nepravda) pro
-každý den v týdnu -- třída \texttt{DaysOfWeek}. Celý stav tohoto objektu je
+každý den v~týdnu -- třída \texttt{DaysOfWeek}. Celý stav tohoto objektu je
 reprezentován jedním osmibitovým číslem. Protože je toto číslo přenášeno
-rozhraním UART z mikrokontroléru k připojenému počítači, je potřeba zajistit,
+rozhraním UART z~mikrokontroléru k~připojenému počítači, je potřeba zajistit,
 že obě strany ukládají hodnoty stejným způsobem. Manuální testování při prvotní
 implementaci není dostatečné, protože potřebujeme zabránit možnosti náhodného
 neúmyslného poškození funkcionality při pozdějších úpravách kódu. Spouštění
 automatických testů při každé změně zdrojového kódu totiž zabírá
 několikanásobně méně času než manuální testování. Automatické testy navíc
-odstraňují možnost lidské chyby v procesu testování.
+odstraňují možnost lidské chyby v~procesu testování.
 
 Pro pochopení konceptu jednotkových testů nepotřebujeme znát vnitřní
-implementaci třídy \texttt{DaysOfWeek} a postačí nám pouhé deklarace jejích
-metod z hlavičkového souboru:
+implementaci třídy \texttt{DaysOfWeek} a~postačí nám pouhé deklarace jejích
+metod z~hlavičkového souboru:
 \begin{lstlisting}[language=myC++]
 #include <stdint.h>
 
@@ -105,8 +105,8 @@ Kód testu umístíme do souboru
 \repopath{test/test_DaysOfWeek/test_DaysOfWeek.cpp}. Připravíme si několik
 případů, pro které chceme chování jednotky testovat. Není nezbytně nutné
 otestovat všechny možné stavy, často to ani není prakticky možné. Obvykle
-postačí několik běžných stavů a případy, které jsou nějakým způsobem speciální
-a je u nich proto větší riziko chyby.
+postačí několik běžných stavů a~případy, které jsou nějakým způsobem speciální
+a~je u~nich proto větší riziko chyby.
 \begin{lstlisting}[language=myC++,style=numbers,breakatwhitespace=true]
 #include <unity.h>  // unit testing framework
 #include <stdint.h>
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
 \end{lstlisting}
 
 Spuštění testů provádíme příkazem \shellcmd{pio test}. PlatformIO testovací
-program automaticky zkompiluje, nahraje do mikrokontroléru a přes UART přečte
+program automaticky zkompiluje, nahraje do mikrokontroléru a~přes UART přečte
 výsledky testů.
 % -f test_DaysOfWeek, aby nespoustel ostatni testy
 % fixed columns, aby byly zarovnane vysledky
@@ -255,7 +255,7 @@ test_DaysOfWeek  uno            PASSED    00:00:06.002
 \end{lstlisting}
 
 Protože jednotka \texttt{DaysOfWeek} nezávisí na funkcích specifických pro
-mikrokontrolér, lze tento test spouštět i v prostředí \texttt{native}, tedy
+mikrokontrolér, lze tento test spouštět i~v~prostředí \texttt{native}, tedy
 přímo na PC, na kterém se používá PlatformIO:
 \begin{lstlisting}[style=terminal,columns=fixed]
 $ pio test -e native
@@ -280,27 +280,27 @@ test_DaysOfWeek  native         PASSED    00:00:00.419
 ================= 1 succeeded in 00:00:00.419 =================
 \end{lstlisting}
 
-V software poslouchajícím na druhé straně komunikačního rozhraní UART jsou
-využitý podobné testy, tentokrát v programovacím jazyce Python, které
-kontrolují stejné případy v tamní implementaci objektu. Tím je zajištěna
-konzistence mezi firmware a software.
+V~software poslouchajícím na druhé straně komunikačního rozhraní UART jsou
+využitý podobné testy, tentokrát v~programovacím jazyce Python, které
+kontrolují stejné případy v~tamní implementaci objektu. Tím je zajištěna
+konzistence mezi firmware a~software.
 
 
 \subsubsection{Pomocné objekty -- mock objects}
 Pro testování složitějších jednotek odděleně od ostatních lze využít pomocné
 objekty. Při testování firmware je například velmi výhodné takto nahradit kód
-komunikující s hardware, protože poté lze testy spouštět i v prostředí
+komunikující s~hardware, protože poté lze testy spouštět i~v~prostředí
 \texttt{native}, naprosto odděleně od vlastního hardware.
 
 Knihovna
 \texttt{ArduinoFake}\footnote{\url{https://github.com/FabioBatSilva/ArduinoFake}}
-nahrazuje knihovnu \texttt{Arduino.h} a poskytuje definice specifické pro
+nahrazuje knihovnu \texttt{Arduino.h} a~poskytuje definice specifické pro
 framework Arduino. Knihovna \texttt{FakeIt}, na které \texttt{ArduinoFake}
 staví, umožňuje nahrazovat libovolné metody objektů či funkce vlastní definicí,
 díky čemuž je testovaná jednotka zbavena závislostí na ostatních jednotkách.
 
 Jako jednoduchá ukázka poslouží nahrazení funkce \texttt{digitalWrite} sloužící
-k ovládání digitálních výstupních pinů:
+k~ovládání digitálních výstupních pinů:
 \begin{lstlisting}[language=myC++]
 #include <unity.h>
 #include <ArduinoFake.h>
@@ -329,8 +329,8 @@ void test_example()
 \subsection{Statická analýza kódu}
 Statická analýza kódu umožňuje automaticky detekovat potenciální chyby ve
 zdrojovém kódu programu bez jeho spuštění. Program provádějící statickou
-analýzu čte zdrojové kódy a odhaluje chyby jako indexování pole mimo jeho
-hranice, dereference nulového ukazatele, neinicializovaná proměnná a podobné.
+analýzu čte zdrojové kódy a~odhaluje chyby jako indexování pole mimo jeho
+hranice, dereference nulového ukazatele, neinicializovaná proměnná a~podobné.
 
 PlatformIO umožňuje využít více různých nástrojů pro statickou analýzu, přičemž
 pro jejich obsluhu zavádí příkaz \shellcmd{pio check}. Snadno použitelný
@@ -353,33 +353,33 @@ check_patterns =
 Volba \inikey{check_skip_packages} určuje, zda se mají při analýze přeskočit
 balíčky třetích stran, jako například framework Arduino. Při jejich
 kontrole totiž může dojít vlivem nedokonalosti nástroje \shellcmd{cppcheck}
-a jeho nekompatibility s atributem \lstinline[language={[GNU]C++}]!__asm__!
-(s částmi kódu v jazyce symbolických adres) k selhání.
+a~jeho nekompatibility s~atributem \lstinline[language={[GNU]C++}]!__asm__!
+(s~částmi kódu v~jazyce symbolických adres) k~selhání.
 
 Volba \inikey{check_flags} specifikuje přepínače, které se mají nástroji
 \shellcmd{cppcheck} předat při jeho spuštění. Příkladem takového přepínače je
 \verb|--suppress=unusedFunction|, který potlačí všechna varování týkající se
 funkcí, které jsou definovány, ale nejsou využity.
 
-Nástroj není neomylný a v některých případech dojde k falešné detekci. Přepínač
+Nástroj není neomylný a~v~některých případech dojde k~falešné detekci. Přepínač
 \verb|--inline-suppr| umožňuje potlačení varování pomocí speciálně
-formátovaných komentářů přímo v analyzovaném zdrojovém kódu. Bližší informace
-o formátu těchto speciálních komentářů lze nalézt v manuálu nástroje
+formátovaných komentářů přímo v~analyzovaném zdrojovém kódu. Bližší informace
+o~formátu těchto speciálních komentářů lze nalézt v~manuálu nástroje
 \shellcmd{cppcheck}
 v~sekci \foreignlanguage{english}{Inline suppressions}~\cite{cppcheckmanual}.
 Příklad jejich využití lze nalézt přímo ve firmware budíku.
-V souboru \repopath{lib/SerialCLI/SerialCLI.h} je definováno pole
+V~souboru \repopath{lib/SerialCLI/SerialCLI.h} je definováno pole
 \lstinline[language=C]!char Serial_buffer_[kSerial_buffer_length_ + 1];!,
 které je využíváno pro ukládání neúplného vstupu od uživatele. Vnitřní
 implementace třídy \texttt{SerialCLI} nevyžaduje, aby bylo toto pole po celou
-dobu životnosti objektu inicializované a obsahovalo validní data (například
-nulový znak \lstinline[language=C]!'\0'! v prvním prvku pole).
+dobu životnosti objektu inicializované a~obsahovalo validní data (například
+nulový znak \lstinline[language=C]!'\0'! v~prvním prvku pole).
 \shellcmd{cppcheck} ale generuje generuje varování
 \begin{lstlisting}[style=terminal,breakatwhitespace=true]
 lib/SerialCLI/SerialCLI.h:55: [medium:warning] Member variable 'SerialCLI::Serial_buffer_' is not initialized in the constructor. [uninitMemberVar]
 \end{lstlisting}
-Řešením by mohlo být pole inicializovat (v hlavičkovém souboru či v
-konstruktoru), varování lze ale potlačit i komentářem umístěným nad definici
+Řešením by mohlo být pole inicializovat (v~hlavičkovém souboru či
+v~konstruktoru), varování lze ale potlačit i~komentářem umístěným nad definici
 konstruktoru:
 \begin{lstlisting}[language=myC++]
 class SerialCLI
@@ -402,17 +402,17 @@ public:
 % https://docs.platformio.org/en/latest/plus/pio-check.html
 
 Díky nasazení statické analýzy kódu bylo ve firmware budíku odhaleno několik
-potenciálních chyb (čtení z neinicializované proměnné apod.) a stylistických
-chyb či nedostatků. Mnoho konstruktorů s jedním parametrem bylo deklarováno bez
+potenciálních chyb (čtení z~neinicializované proměnné apod.) a~stylistických
+chyb či nedostatků. Mnoho konstruktorů s~jedním parametrem bylo deklarováno bez
 klíčového slova \lstinline[language=C++]!explicit!. To mohlo vést ke vzniku
 chyb kvůli nezamýšleným implicitním konverzím. Použití
 \lstinline[language=C++]!explicit! je vyžadováno například standardem
 MISRA C++~\cite[pravidlo 12-1-3]{MISRAC++2008}
 
 Příkladem detekované neinicializované proměnné je
-\lstinline[language=C++]!PWMDimmer::value_!. Ta je definována v hlavičkovém
+\lstinline[language=C++]!PWMDimmer::value_!. Ta je definována v~hlavičkovém
 souboru \repopath{lib/PWMDimmer/PWMDimmer.h}. Konstruktor objektu
-\texttt{PWMDimmer} umístěný v souboru \repopath{lib/PWMDimmer/PWMDimmer.cpp}
+\texttt{PWMDimmer} umístěný v~souboru \repopath{lib/PWMDimmer/PWMDimmer.cpp}
 této proměnné ale nepřiřazoval žádnou hodnotu. Následující metoda proto mohla
 při zavolání na nově vytvořeném objektu vracet nesmyslné hodnoty:
 \begin{lstlisting}[language=myC++]
@@ -427,8 +427,8 @@ public:
     // ...
 };
 \end{lstlisting}
-Pro člověka není taková chyba snadno odhalitelná, mimo jiné i kvůli tomu,
-že je konstruktor umístěn v jiném souboru než definice proměnné.
+Pro člověka není taková chyba snadno odhalitelná, mimo jiné i~kvůli tomu,
+že je konstruktor umístěn v~jiném souboru než definice proměnné.
 Řešení bylo jednoduché, proměnné je nyní přiřazována hodnota při definici:
 \begin{lstlisting}[language=C++]
 class PWMDimmer

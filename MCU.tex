@@ -1,25 +1,25 @@
 \section{Mikrokontrolér}
 Volba \acs{MCU} byla ovlivněna především autorovými předchozími zkušenostmi
-s architekturou 8-bit AVR. Mikrokontroléry ATmega jsou kompatibilní
-s platformou Arduino\footnote{\url{https://www.arduino.cc/}}, která umožňuje
-jednoduchý vývoj firmware v jazyce C++ bez nutnosti znát všechna specifika
-daného MCU. To je v souladu s cíli projektu -- technicky zdatnější uživatel si
+s~architekturou 8-bit AVR. Mikrokontroléry ATmega jsou kompatibilní
+s~platformou Arduino\footnote{\url{https://www.arduino.cc/}}, která umožňuje
+jednoduchý vývoj firmware v~jazyce C++ bez nutnosti znát všechna specifika
+daného MCU. To je v~souladu s~cíli projektu -- technicky zdatnější uživatel si
 může snadno upravit firmware pro své potřeby. Pro vývoj firmware před
 dokončením návrhu desky plošných spojů navíc bylo možné využít vývojových desek
 Arduino, což vývoj celého zařízení urychlilo.
 
-Kromě rozšířenosti v amatérských projektech a dostupnosti vývojových desek ale
+Kromě rozšířenosti v~amatérských projektech a~dostupnosti vývojových desek ale
 zvolený čip \texttt{ATmega328P} nevyniká počtem I/O pinů, výpočetním
 výkonem, periferiemi ani cenou. Výhodou je ale jeho dostupnost nejen
-v pouzdrech pro povrchovou montáž (\acs{SMD}), ale i v pouzdře s vývody.
+v~pouzdrech pro povrchovou montáž (\acs{SMD}), ale i~v~pouzdře s~vývody.
 Použití SMD součástky je totiž na amatérsky vyrobeném plošném spoji složitější,
-obzvlášť pokud jde o plošný spoj jednostranný.
+obzvlášť pokud jde o~plošný spoj jednostranný.
 
 \nocite{dshATmega328} % TODO info o MCU
 
 I/O piny jsou děleny do třech portů (Port B, Port C, Port D). Podle toho jsou
 piny číslovány~-- například první pin portu B je značen \MCUpin{PB0}. Ve
-firmware jsou ale používána čísla pinů frameworku Arduino. K vzájemnému převodu
+firmware jsou ale používána čísla pinů frameworku Arduino. K~vzájemnému převodu
 těchto dvou způsobů značení slouží tabulka~\vref{tab:MCU pins}.
 
 \begin{table}[htb]
@@ -57,17 +57,17 @@ těchto dvou způsobů značení slouží tabulka~\vref{tab:MCU pins}.
     \end{tabular}
 \end{table}
 
-Mikrokontrolér je provozován s externím krystalovým rezonátorem. Pro zachování
-kompatibility s platformou Arduino byla zvolena taktovací frekvence
-\SI{16}{\mega\hertz}. V souladu s pokyny uvedenými v datasheetu MCU je krystal
-připojen mezi piny \MCUpin{XTAL1} a \MCUpin{XTAL2}. Z každého z těchto pinů je
-také přidán keramický kondenzátor o kapacitě \SI{22}{\pico\farad} do země.
+Mikrokontrolér je provozován s~externím krystalovým rezonátorem. Pro zachování
+kompatibility s~platformou Arduino byla zvolena taktovací frekvence
+\SI{16}{\mega\hertz}. V~souladu s~pokyny uvedenými v~datasheetu MCU je krystal
+připojen mezi piny \MCUpin{XTAL1} a~\MCUpin{XTAL2}. Z~každého z~těchto pinů je
+také přidán keramický kondenzátor o~kapacitě \SI{22}{\pico\farad} do země.
 Podle oficiálního schématu
 zapojení\footnote{\url{https://www.arduino.cc/en/uploads/Main/Arduino_Uno_Rev3-schematic.pdf}}
 Arduino UNO Rev3 je na těchto vývojových deskách osazován ještě rezistor
-o hodnotě \SI{1}{\mega\ohm} paralelně ke krystalu (u hlavního MCU
+o~hodnotě \SI{1}{\mega\ohm} paralelně ke krystalu (u~hlavního MCU
 \texttt{ATmega328P-PU} je použit keramický rezonátor, stejný rezistor je ale
-i u krystalového oscilátoru čipu \texttt{ATmega16U2-MU}). Ten ale není pro
-funkci obvodu potřebný a datasheet MCU neuvádí, že by bylo nutné či vhodné jej
+i~u~krystalového oscilátoru čipu \texttt{ATmega16U2-MU}). Ten ale není pro
+funkci obvodu potřebný a~datasheet MCU neuvádí, že by bylo nutné či vhodné jej
 použít~\cite{dshATmega328}.
 % https://www.avrfreaks.net/forum/atmega328p-1m-resistor-crystal

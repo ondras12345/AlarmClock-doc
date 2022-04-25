@@ -13,12 +13,12 @@
 \newappendix{Obsah elektronické přílohy}
 \label{app:dirtree}
 Zdrojové kódy firmware, software, návrh hardwarového řešení, elektronické
-simulace, jakož i zdrojový kód této práce využívající systém pro počítačovou
-sazbu \LaTeX{} jsou k práci přiloženy jako elektronická příloha. Ta je rozdělena
+simulace, jakož i~zdrojový kód této práce využívající systém pro počítačovou
+sazbu \LaTeX{} jsou k~práci přiloženy jako elektronická příloha. Ta je rozdělena
 do několika adresářů (výpis souborů není úplný):
 \dirtree{%
     .1 /.
-    .2 figures/\DTcomment{obrázky použité v práci}.
+    .2 figures/\DTcomment{obrázky použité v~práci}.
     .2 prilohy/\DTcomment{elektronické přílohy}.
     .3 AlarmClock/\DTcomment{repozitář \gitrepo{AlarmClock} (firmware)}.
     .4 docs/doxygen/\DTcomment{\shellcmd{doxygen} dokumentace}.
@@ -27,7 +27,7 @@ do několika adresářů (výpis souborů není úplný):
     .4 README.md\DTcomment{instrukce pro instalaci}.
     .3 AlarmClock-hardware/\DTcomment{repozitář \gitrepo{AlarmClock-hardware} (hardware)}.
     .4 AlarmClock/\DTcomment{hlavní DPS}.
-    .5 3d/\DTcomment{3D vizualizace přední a zadní strany DPS}.
+    .5 3d/\DTcomment{3D vizualizace přední a~zadní strany DPS}.
     .5 bom/ibom.html\DTcomment{interaktivní osazovací plán}.
     .5 cnc/\DTcomment{gcode programy pro CNC frézu}.
     .6 AlarmClock.FlatPrj\DTcomment{FlatCAM projekt}.
@@ -40,15 +40,15 @@ do několika adresářů (výpis souborů není úplný):
     .3 PyAlarmClock/\DTcomment{repozitář \gitrepo{PyAlarmClock} (Python sofware)}.
     .4 README.md\DTcomment{instrukce pro instalaci}.
     .3 homeassistant/\DTcomment{konfigurace Home Assistant}.
-    .2 script/\DTcomment{skripty a jendoduché programy používané při zpracovávání práce}.
+    .2 script/\DTcomment{skripty a~jendoduché programy používané při zpracovávání práce}.
     .2 sim/\DTcomment{simulace elektronických obvodů}.
     .3 models/\DTcomment{dodatečné SPICE modely součástek}.
     .3 *.asc\DTcomment{LTspice simulace}.
-    .3 *.txt\DTcomment{data exportovaná z LTspice simulací}.
+    .3 *.txt\DTcomment{data exportovaná z~LTspice simulací}.
     .3 graf-*.gpi\DTcomment{zdrojové kódy \shellcmd{gnuplot} grafů dat ze simulací}.
     .2 *.tex\DTcomment{\LaTeX{} zdrojové kódy práce}.
     .2 Makefile\DTcomment{nastavení build systemu GNU make}.
-    .2 reference.bib\DTcomment{informace o použité literatuře}.
+    .2 reference.bib\DTcomment{informace o~použité literatuře}.
 }
 
 
@@ -58,11 +58,11 @@ do několika adresářů (výpis souborů není úplný):
 Autorův digitální osciloskop Agilent~54621A má poškozenou disketovou mechaniku,
 proto není možné využít standardní metody získávání snímků obrazovky
 a~textových dat. Přenos dat přes disketu funguje, ale je velmi nespolehlivý
-a~často vede k jejich ztrátě. Pro účely tvorby dokumentace pro tuto práci byl
+a~často vede k~jejich ztrátě. Pro účely tvorby dokumentace pro tuto práci byl
 vyvinut jednoduchý počítačový program umožňující čtení obrázků ve formátu BMP
 přes sériový port RS-232.
 
-Je potřeba použít RS-232 kabel zapojený podle diagramu v dokumentaci
+Je potřeba použít RS-232 kabel zapojený podle diagramu v~dokumentaci
 osciloskopu.
 
 \begin{figure}[htbp]
@@ -75,13 +75,13 @@ osciloskopu.
     \label{fig:agilent RS232 pinout}
 \end{figure}
 
-Program napsaný v jazyce Python je uložen v souboru \filename{scrot}:
+Program napsaný v~jazyce Python je uložen v~souboru \filename{scrot}:
 \lstinputlisting[language=Python,style=numbers]{prilohy/scrot}
 
 Po získání nekomprimovaného obrázku ve formátu BMP je vhodné provést
-bezztrátovou konverzi do formátu PNG příkazem \shellcmd{convert} z balíčku
+bezztrátovou konverzi do formátu PNG příkazem \shellcmd{convert} z~balíčku
 \texttt{imagemagick}.
-Příklad použití v prostředí operačního systému GNU/Linux:
+Příklad použití v~prostředí operačního systému GNU/Linux:
 \begin{lstlisting}[style=terminal]
 $ ./scrot -h
 usage: scrot [-h] device file
@@ -103,15 +103,15 @@ $
 
 
 \clearpage
-\newappendix{Koncový zesilovač s TDA2030}
+\newappendix{Koncový zesilovač s~TDA2030}
 \label{app:TDA2030}
 Při testování zvukového výstupu byl použit jednoduchý nízkofrekvenční koncový
-zesilovač s integrovaným obvodem TDA2030, který autor této práce sestavil
-v roce 2016 v rámci soutěže v radioelektronice. Na následujícím obrázku je
-zobrazen osazovací plán jeho desky plošných spojů a seznam součástek. Schéma
+zesilovač s~integrovaným obvodem TDA2030, který autor této práce sestavil
+v~roce 2016 v~rámci soutěže v~radioelektronice. Na následujícím obrázku je
+zobrazen osazovací plán jeho desky plošných spojů a~seznam součástek. Schéma
 zapojení bohužel není dostupné.
-V souboru \filename{prilohy/TDA2030-dokumentace.pdf} je vše, co se zachovalo
-z dokumentace tohoto výrobku. Autorem návrhu je OK7PV Petr Vild.
+V~souboru \filename{prilohy/TDA2030-dokumentace.pdf} je vše, co se zachovalo
+z~dokumentace tohoto výrobku. Autorem návrhu je OK7PV Petr Vild.
 
 \noindent
 \includegraphics[page=2, clip, bb=20mm 89mm 175mm 270mm, width=1.0\textwidth]{prilohy/TDA2030-dokumentace.pdf}
@@ -123,7 +123,7 @@ z dokumentace tohoto výrobku. Autorem návrhu je OK7PV Petr Vild.
 \label{app:grbl config}
 Po připojení na sériový port frézy pomocí terminálového software (zde program
 \shellcmd{minicom}) můžeme přečíst veškerou konfiguraci jejího firmware. Význam
-jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
+jednotlivých nastavení je vysvětlen v~tabulce~\vref{tab:grbl config default}.
 \begingroup
 \catcode`\-=12
 \lstinputlisting[style=terminal]{prilohy/grbl-config.txt}
@@ -132,7 +132,7 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
 \begin{table}[H]
     \centering
     \caption{%
-        Popis jednotlivých nastavení Grbl a výchozí hodnoty (převzato
+        Popis jednotlivých nastavení Grbl a~výchozí hodnoty (převzato
         z~\cite{Grblconf})
     }
     \label{tab:grbl config default}
@@ -202,7 +202,7 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
     offset=12.5mm 2.6mm,
     %frame,
     pagecommand={%
-        \newappendix{Schéma zapojení a návrh hlavní DPS}
+        \newappendix{Schéma zapojení a~návrh hlavní DPS}
         \label{app:PCB main}
     },
 ]{prilohy/AlarmClock-hardware/AlarmClock/AlarmClock.pdf}
@@ -258,7 +258,7 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
     offset=12.5mm 2.6mm,
     %frame,
     pagecommand={%
-        \newappendix{Schéma zapojení a návrh DPS pro otočný enkodér}
+        \newappendix{Schéma zapojení a~návrh DPS pro otočný enkodér}
         \label{app:PCB encoder}
     },
 ]{prilohy/AlarmClock-hardware/AlarmClock-encoder/AlarmClock-encoder.pdf}
@@ -280,9 +280,9 @@ jednotlivých nastavení je vysvětlen v tabulce~\vref{tab:grbl config default}.
 \clearpage
 \newappendix{Kusovník}
 \label{app:BOM}
-Poznámka: více informací o konkrétních součástkách (odkazy na stránky
-dodavatele TME, odkazy na katalogové listy atp.) lze vyčíst z jejich atributů
-v KiCAD výkresu. Následující tabulka je pouze jejich neúplný výpis.
+Poznámka: více informací o~konkrétních součástkách (odkazy na stránky
+dodavatele TME, odkazy na katalogové listy atp.) lze vyčíst z~jejich atributů
+v~KiCAD výkresu. Následující tabulka je pouze jejich neúplný výpis.
 
 Kusovník obsahuje pouze součástky umístěné na hlavní DPS.
 
@@ -295,11 +295,11 @@ Kusovník obsahuje pouze součástky umístěné na hlavní DPS.
 \newappendix{Měření charakteristiky stmívače}
 \label{app:ambient}
 Průběh závislosti proudu protékajícího výkonovou LED na požadovaném jasu (číslo
-v rozsahu \numrange{0}{255}) lze změřit metodou bod po bodu. Digitální
-stejnosměrný miliampérmetr je připojen v sérii s LED, zadaný jas je nastavován
-přes sériový port budíku. S digitálním multimetrem Owon B35T, který podporuje
-připojení k počítači přes Bluetooth, lze provést měření zcela automaticky
-s pomocí následujícího programu:
+v~rozsahu \numrange{0}{255}) lze změřit metodou bod po bodu. Digitální
+stejnosměrný miliampérmetr je připojen v~sérii s~LED, zadaný jas je nastavován
+přes sériový port budíku. S~digitálním multimetrem Owon B35T, který podporuje
+připojení k~počítači přes Bluetooth, lze provést měření zcela automaticky
+s~pomocí následujícího programu:
 \lstinputlisting[language=Python,style=numbers]{prilohy/measure_ambient.py}
 
 % prilohy/measure_ambient.txt
@@ -375,7 +375,7 @@ done
 \clearpage
 \newappendix{3D model krabičky}
 \label{app:krabicka}
-CAD soubor a programy pro CNC jsou součástí elektronické přílohy.
+CAD soubor a~programy pro CNC jsou součástí elektronické přílohy.
 \begin{figure}[htbp]
     \centering
     \includegraphics[height=0.85\textheight, width=1.00\textwidth, keepaspectratio]{prilohy/AlarmClock-hardware/enclosure/preview.png}

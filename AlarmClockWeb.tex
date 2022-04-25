@@ -1,13 +1,13 @@
 \section{AlarmClockWeb}
-Nastavení budicích časů z rozhraní na LCD budíku je poměrně pohodlné
-a přímočaré, pokud ale uživatel potřebuje udělat rozsáhlejší úpravy, může
-preferovat konfiguraci z počítače či mobilního telefonu.
-Z tohoto důvodu byla vytvořena jednoduchá webová stránka sloužící k tomuto
-účelu. Stránka je tvořena skriptem v jazyce PHP, který se připojí na MQTT API
-budíku a z dat z něj získaných vygeneruje obsah webové stránky ve značkovacím
+Nastavení budicích časů z~rozhraní na LCD budíku je poměrně pohodlné
+a~přímočaré, pokud ale uživatel potřebuje udělat rozsáhlejší úpravy, může
+preferovat konfiguraci z~počítače či mobilního telefonu.
+Z~tohoto důvodu byla vytvořena jednoduchá webová stránka sloužící k~tomuto
+účelu. Stránka je tvořena skriptem v~jazyce PHP, který se připojí na MQTT API
+budíku a~z~dat z~něj získaných vygeneruje obsah webové stránky ve značkovacím
 jazyce HTML. Tato stránka obsahuje formulář, jehož odesláním je možné provádět
-v nastavení budíku změny. Data z formuláře jsou PHP skriptem parsována
-a následně serializována do JSON objektu kompatibilního s API budíku.
+v~nastavení budíku změny. Data z~formuláře jsou PHP skriptem parsována
+a~následně serializována do JSON objektu kompatibilního s~API budíku.
 
 
 \begin{figure}[htbp]
@@ -55,10 +55,10 @@ a následně serializována do JSON objektu kompatibilního s API budíku.
     \label{fig:web qutebrowser}
 \end{figure}
 
-Webová stránka je z hlediska využitých technologií velice jednoduchá, například
+Webová stránka je z~hlediska využitých technologií velice jednoduchá, například
 vůbec nevyžaduje JavaScript pro základní funkčnost (JavaScript je ale využíván
-pro některé doplňkové funkce). Z tohoto důvodu by měla být kompatibilní
-s naprostou většinou webových prohlížečů, včetně zastaralých verzí či textových
+pro některé doplňkové funkce). Z~tohoto důvodu by měla být kompatibilní
+s~naprostou většinou webových prohlížečů, včetně zastaralých verzí či textových
 prohlížečů pro příkazový řádek (viz obrázek~\vref{fig:web links}).
 
 \begin{figure}[htbp]
@@ -89,44 +89,44 @@ prohlížečů pro příkazový řádek (viz obrázek~\vref{fig:web links}).
 Select field, name a0-enabled                                        
     \end{lstlisting}
     {\footnotesize (Menu \uv{Enabled} je rozbalené. Ve skutečném terminálu je
-    vybraná položka zvýrazněna prohozením barvy pozadí a popředí.)}
-    \caption{AlarmClockWeb v terminálovém webovém prohlížeči \shellcmd{links}}
+    vybraná položka zvýrazněna prohozením barvy pozadí a~popředí.)}
+    \caption{AlarmClockWeb v~terminálovém webovém prohlížeči \shellcmd{links}}
     \label{fig:web links}
 \end{figure}
 
 Použitá knihovna \texttt{php-mqtt/client} vyžaduje PHP verze 7.4. Operační
 systém Debian 10 (buster) ale nabízí ve standardních repozitářích pouze PHP
 7.3. Existuje možnost doinstalovat balíčky třetích stran, to by ale mohlo
-způsobit problémy s ostatními službami běžícími na stejném systému (pokud
-potřebují PHP 7.3 a s PHP 7.4 nefungují).
-U programů napsaných v jazyce Python (jako například MQTT adaptér) je řešení
+způsobit problémy s~ostatními službami běžícími na stejném systému (pokud
+potřebují PHP 7.3 a~s~PHP 7.4 nefungují).
+U~programů napsaných v~jazyce Python (jako například MQTT adaptér) je řešení
 podobných problémů velice jednoduché, protože můžeme využít virtuální prostředí
 \texttt{virtualenv}. Pro PHP spouštěné webových serverem Apache ale žádné
 podobné jednoduché řešení neexistuje.
 Proto byl vytvořen soubor \filename{Dockerfile}, který obsahuje definici
-kontejneru. V tomto kontejneru běží zcela oddělená instance Apache s vlastní
-konfigurací a vlastní verzí PHP. To přináší i další výhody. Protože služba běží
+kontejneru. V~tomto kontejneru běží zcela oddělená instance Apache s~vlastní
+konfigurací a~vlastní verzí PHP. To přináší i~další výhody. Protože služba běží
 ve velice dobře definovaném prostředí, které je na všech systémech stejné,
-snižuje se například riziko výskytu chyb vyplývajících z konfigurace
+snižuje se například riziko výskytu chyb vyplývajících z~konfigurace
 webserveru. Jako základ je použit kontejner \texttt{php:7.4-apache}, do kterého
 je doinstalován program pro instalaci PHP knihoven \shellcmd{composer}
-a nakopírovány zdrojové kódy AlarmClockWeb.
+a~nakopírovány zdrojové kódy AlarmClockWeb.
 \lstinputlisting[language=Dockerfile,style=numbers]{prilohy/AlarmClockWeb/Dockerfile}
-Pořadí příkazů v \filename{Dockerfile} je důležité. Nejde jen o běžné požadavky
+Pořadí příkazů v~\filename{Dockerfile} je důležité. Nejde jen o~běžné požadavky
 (například soubor musí být do kontejneru nakopírován před tím, než jej můžeme
 číst). Každá instrukce \texttt{RUN}, \texttt{COPY} či \texttt{ADD} vytváří
-novou vrstvu. Jednotlivé vrstvy jsou drženy v mezipaměti a drobná změna ve
+novou vrstvu. Jednotlivé vrstvy jsou drženy v~mezipaměti a~drobná změna ve
 zdrojových kódech naší webové aplikaci proto nemusí nutně znamenat sestavení
-celého obrazu od úplného počátku. Z tohoto důvodu je vhodné sestavit
-\filename{Dockerfile} tak, aby změna v jednom ze zdrojových souborů aplikace
-nevedla k invalidaci celé mezipaměti. Tato změna totiž vyžaduje pouze
+celého obrazu od úplného počátku. Z~tohoto důvodu je vhodné sestavit
+\filename{Dockerfile} tak, aby změna v~jednom ze zdrojových souborů aplikace
+nevedla k~invalidaci celé mezipaměti. Tato změna totiž vyžaduje pouze
 nakopírování nového souboru do obrazu kontejneru, není ale třeba například
 znovu instalovat všechny softwarové balíčky.
 
 \shellcmd{docker} umožňuje distribuci již sestavených obrazů, například na
-webovém portálu Docker Hub. Pro tento malý projekt s minimem uživatelů ale
-udržování vlastní binární distribuce a řešení potenciálních bezpečnostních
-problémů s tím spojených není výhodné.
+webovém portálu Docker Hub. Pro tento malý projekt s~minimem uživatelů ale
+udržování vlastní binární distribuce a~řešení potenciálních bezpečnostních
+problémů s~tím spojených není výhodné.
 
 
 Nasazení služby AlarmClockWeb na linuxový server se zjednodušuje na několik
@@ -152,15 +152,15 @@ docker run -d \
     alarmclockweb
 \end{lstlisting}
 
-Pokud je požadována integrace se složitější webovou stránkou, lze v konfiguraci
+Pokud je požadována integrace se složitější webovou stránkou, lze v~konfiguraci
 jejího webového serveru nastavit funkci reverzní proxy. Tímto způsobem lze
-i přidat dodatečné funkce, jako například ověřování uživatelských hesel.
+i~přidat dodatečné funkce, jako například ověřování uživatelských hesel.
 Následuje příklad konfigurace webového serveru Apache.
 Předpokladem je, že kontejner \texttt{alarmclockweb} vystavuje port
 \port{8080}. Pro zamezení přímého připojení uživatele na port \port{8080}
 serveru je vhodné specifikovat při spouštění kontejneru argument
 \texttt{-p 127.0.0.1:8080:80}, kterým je připojení na port \port{8080} omezeno
-na rozhraní \texttt{loopback} s IP adresou \ipaddress{127.0.0.1}.
+na rozhraní \texttt{loopback} s~IP adresou \ipaddress{127.0.0.1}.
 \begin{lstlisting}[language=hashcomment]
 # alarmclockweb docker container
 <Location /alarmclock>

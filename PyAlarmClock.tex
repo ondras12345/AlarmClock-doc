@@ -1,17 +1,17 @@
 \section{PyAlarmClock}
 \label{sec:PyAlarmClock}
-Pro usnadnění manipulace s budíkem připojeným přes rozhraní UART k počítači
-(serveru) byla vytvořena knihovna \texttt{PyAlarmClock}. Jde o modul jazyka
-Python obsahující abstrakce pro práci s budíkem. Programátor vytvářející
+Pro usnadnění manipulace s~budíkem připojeným přes rozhraní UART k~počítači
+(serveru) byla vytvořena knihovna \texttt{PyAlarmClock}. Jde o~modul jazyka
+Python obsahující abstrakce pro práci s~budíkem. Programátor vytvářející
 počítačový program díky tomu nemusí ani znát konkrétní příkazy prostředí
-\texttt{AlarmClockCLI}. Například nastavení data a času modulu \acs{RTC} se
+\texttt{AlarmClockCLI}. Například nastavení data a~času modulu \acs{RTC} se
 provádí přiřazením objektu \texttt{datetime.datetime} vlastnosti
 \verb|RTC_time| objektu \texttt{AlarmClock} bez nutnosti znát vnitřní
-implementaci (příkaz \texttt{st} pro nastavení času a \texttt{sd} pro nastavení
+implementaci (příkaz \texttt{st} pro nastavení času a~\texttt{sd} pro nastavení
 data).
 
-Pro ilustraci konceptu poslouží jeden z ukázkových programů~--
-\repopath{src/PyAlarmClock/examples/set_time.py}. V následující ukázce je navíc
+Pro ilustraci konceptu poslouží jeden z~ukázkových programů~--
+\repopath{src/PyAlarmClock/examples/set_time.py}. V~následující ukázce je navíc
 odstraněna část zapínající podrobné protokolování všech událostí.
 \begin{lstlisting}[language=Python,style=numbers]
 #!/usr/bin/env python3
@@ -25,9 +25,9 @@ with PyAlarmClock.SerialAlarmClock('/dev/ttyUSB0') as ac:
     time.sleep(1.65)  # RTC is polled every 0.8 seconds
     print(ac.RTC_time)
 \end{lstlisting}
-Program naváže spojení s budíkem, nastaví čas uložený v RTC na aktuální čas,
+Program naváže spojení s~budíkem, nastaví čas uložený v~RTC na aktuální čas,
 počká \SI{1,65}{\second} (aby stihl firmware budíku přečíst novou hodnotu
-z RTC) a vypíše do konzole čas přečtený z budíku.
+z~RTC) a~vypíše do konzole čas přečtený z~budíku.
 \begin{lstlisting}[style=terminal]
 $ ./set_time.py
 2022-02-08 19:21:48
@@ -36,19 +36,19 @@ $
 
 
 \subsection{MQTT adaptér}
-Jedním z programů využívajících knihovnu \texttt{PyAlarmClock} je
+Jedním z~programů využívajících knihovnu \texttt{PyAlarmClock} je
 \repopath{src/PyAlarmClock\fshyp{}cmds\fshyp{}mqtt_bridge.py} (po instalaci balíčku
 dostupný jako \shellcmd{ac2mqtt}). Tento program umožňuje vzdálené ovládání
 budíku zprávami přenášenými protokolem MQTT. Tímto způsobem lze zajistit
 ovládání budíku několika programy současně bez nutnosti sdílet sériový port
-mezi více procesy. Komunikace může probíhat nejen v rámci jednoho serveru
-(\texttt{localhost}), ale i mezi více zařízeními ve stejné počítačové síti.
+mezi více procesy. Komunikace může probíhat nejen v~rámci jednoho serveru
+(\texttt{localhost}), ale i~mezi více zařízeními ve stejné počítačové síti.
 
 Použití adaptéru je velmi jednoduché. Příkaz \verb|ac2mqtt --help|
 vypíše seznam argumentů, které lze programu předávat.
 % nechci sem davat cely usage, protoze bych ho pak treba musel aktualizovat...
-Následuje jednoduchý příklad~-- program se připojí k MQTT brokeru na
-\texttt{localhost} na výchozím portu 1883 jako uživatel \texttt{DEBUG} s heslem
+Následuje jednoduchý příklad~-- program se připojí k~MQTT brokeru na
+\texttt{localhost} na výchozím portu 1883 jako uživatel \texttt{DEBUG} s~heslem
 zadaným interaktivně za běhu programu:
 \begin{lstlisting}[style=terminal]
 $ ac2mqtt /dev/ttyUSB0 -u DEBUG
@@ -75,22 +75,22 @@ konfigurovatelných časů buzení, které firmware připojeného budíku podpor
 s příznakem \texttt{retain}, proto je automaticky zaslána nově příchozímu
 subscriberovi.
 
-Zpráva v topic \topic{alarmclock/stat/available} nese informaci o tom, zda je
+Zpráva v~topic \topic{alarmclock/stat/available} nese informaci o~tom, zda je
 adaptér aktivní. Při jeho ukončení či náhodném odpojení je MQTT brokerem do
-tohoto topic automaticky zaslána zpráva \texttt{offline}. K tomu je využívána
+tohoto topic automaticky zaslána zpráva \texttt{offline}. K~tomu je využívána
 funkce MQTT \ac{LWT}.
 
 Požadujeme-li, aby budík provedl nějakou akci, pošleme zprávu do příslušného
 \texttt{command topic} -- \topic{alarmclock/cmnd/nazev_prikazu}.
 Toto je interně řešeno pomocí základních tříd \texttt{AlarmClockMQTT.Entity}
-a \texttt{AlarmClockMQTT.Command}, ze kterých dědí třídy reprezentující
+a~\texttt{AlarmClockMQTT.Command}, ze kterých dědí třídy reprezentující
 jednotlivé komponenty budíku. \texttt{Entity} reprezentuje komponentu mající
 nějaký stav, který je možné na vyžádání přečíst
 (\foreignlanguage{english}{polling}). \texttt{Command} reprezentuje příkaz,
 který je možné spustit MQTT zprávou. Příkazy nemají žádný vlastní stav.
-Třídy jednotlivých komponent mohou dědit z obou těchto základních tříd
+Třídy jednotlivých komponent mohou dědit z~obou těchto základních tříd
 zároveň~-- například \texttt{Switch} je přepínač, který lze vzdáleně ovládat
-a jehož stav je možné i číst.
+a~jehož stav je možné i~číst.
 
 \begin{lstlisting}[language=Python]
 class AlarmClockMQTT:
@@ -169,8 +169,8 @@ class AlarmClockMQTT:
 \end{lstlisting}
 
 Instance \texttt{AlarmClockMQTT} má svá asociativní pole
-\texttt{ENTITIES} a \texttt{COMMANDS}, ve kterých jsou uloženy jednotlivé
-instance entit a příkazů přiřazené ke svému \texttt{topic}.
+\texttt{ENTITIES} a~\texttt{COMMANDS}, ve kterých jsou uloženy jednotlivé
+instance entit a~příkazů přiřazené ke svému \texttt{topic}.
 
 \begin{lstlisting}[language=Python]
 class AlarmClockMQTT:
@@ -192,15 +192,15 @@ class AlarmClockMQTT:
 \end{lstlisting}
 
 Pro všechny entity, které nejsou zároveň příkazem, je implementováno čtení na
-vyžádání, které se provádí MQTT zprávou se znakem \texttt{?} v \texttt{payload}
+vyžádání, které se provádí MQTT zprávou se znakem \texttt{?} v~\texttt{payload}
 zaslanou do \texttt{topic} \topic{alarmclock/cmnd/nazev_entity}. Odpověď je
 zaslána do \topic{alarmclock/stat/nazev_entity}, \texttt{payload} zprávy je
-určen konkrétní implementací metody \verb|get_state| v objektu dané entity.
+určen konkrétní implementací metody \verb|get_state| v~objektu dané entity.
 Entity, které jsou zároveň příkazem (nebo čisté příkazy bez vlastního stavu),
-musí zprávy s \lstinline[language=Python]!payload = '?'! v případě potřeby
+musí zprávy s~\lstinline[language=Python]!payload = '?'! v~případě potřeby
 ošetřit ve vlastní implementaci metody \verb|do_command|. Do
 \topic{alarmclock/stat/nazev_entity} je poté zaslána hodnota vrácená touto
-metodou. Informace o případných chybách jsou zasílány do
+metodou. Informace o~případných chybách jsou zasílány do
 \topic{alarmclock/err}.
 
 \begin{lstlisting}[language=Python]
@@ -247,19 +247,19 @@ class AlarmClockMQTT:
             # ...
 \end{lstlisting}
 
-V následujícím příkladu je demonstrované rozsvícení připojeného světla
-\texttt{lamp} vzdáleným MQTT příkazem a následné zhasnutí pomocí rozhraní na
+V~následujícím příkladu je demonstrované rozsvícení připojeného světla
+\texttt{lamp} vzdáleným MQTT příkazem a~následné zhasnutí pomocí rozhraní na
 displeji budíku. Pro přehlednost byly přidány prázdné řádky. První zpráva
-v druhém bloku je příkaz pro rozsvícení lampy. V odpověď na ni přichází zpráva
-v topic \topic{alarmclock/stat/lamp} značící, že byla lampa rozsvícena. Protože
-firmware budíku podporuje funkci přidanou z vývojové větve
+v~druhém bloku je příkaz pro rozsvícení lampy. V~odpověď na ni přichází zpráva
+v~topic \topic{alarmclock/stat/lamp} značící, že byla lampa rozsvícena. Protože
+firmware budíku podporuje funkci přidanou z~vývojové větve
 \texttt{feature/CLI-BEL}, posílá při každé změně stavu hardware na sériový port
-netisknutelný ASCII znak BEL (\texttt{0x07}). V reakci na to si adaptér vyžádá
-stav všech hardwarových výstupů a odešle příslušné MQTT zprávy. Zpráva o stavu
-lampy je proto duplikována, je ale zajištěna zpětná kompatibilita s firmware
+netisknutelný ASCII znak BEL (\texttt{0x07}). V~reakci na to si adaptér vyžádá
+stav všech hardwarových výstupů a~odešle příslušné MQTT zprávy. Zpráva o~stavu
+lampy je proto duplikována, je ale zajištěna zpětná kompatibilita s~firmware
 bez podpory funkce asynchronní detekce změn stavu hardware.
-Díky této funkci je detekováno i vypnutí lampy přímo ovládacími prvky budíku,
-které vede k odeslání třetího bloku zpráv.
+Díky této funkci je detekováno i~vypnutí lampy přímo ovládacími prvky budíku,
+které vede k~odeslání třetího bloku zpráv.
 \begin{lstlisting}[style=terminal]
 $ mosquitto_sub -v -t alarmclock/#
 alarmclock/stat/available online
@@ -279,15 +279,15 @@ alarmclock/stat/ambient 0
 Toto rozhraní funguje velmi dobře pro jednoduché entity, jako například výše
 zmíněné světlo. Například pro konfiguraci jednotlivých budicích časů by ale
 bylo vhodnější využít komunikační protokol, který navazuje přímé spojení mezi
-klientem a serverem a páruje odpovědi ke konkretním požadavkům. Takovým
+klientem a~serverem a~páruje odpovědi ke konkretním požadavkům. Takovým
 protokolem je například HTTP, ten je ale zase naprosto nevhodný pro entity,
-u nichž potřebujeme přijímat asynchronní informace o jejich stavu.
+u~nichž potřebujeme přijímat asynchronní informace o~jejich stavu.
 
-MQTT API je v současné době používáno i pro nastavování budicích časů, ty jsou
-pro účely přenosu v textových zprávách serializovány do formátu JSON.
+MQTT API je v~současné době používáno i~pro nastavování budicích časů, ty jsou
+pro účely přenosu v~textových zprávách serializovány do formátu JSON.
 Každému budicímu času odpovídá jeden MQTT topic. Aby klient používající API
 věděl, kolik budicích časů budík podporuje, je do topic
-\topic{alarmclock/stat/number_of_alarms} zasílána zpráva s příznakem
+\topic{alarmclock/stat/number_of_alarms} zasílána zpráva s~příznakem
 \texttt{retain} obsahující jejich celkový počet.
 
 Přečtení prvního budicího času probíhá následujícím způsobem:
@@ -306,14 +306,14 @@ alarmclock/stat/alarms/alarm0 {"enabled": "OFF", "days_of_week": ["Friday"], "ti
 
 Zápis se provádí zasláním JSON objektu do topic odpovídajícího příkazu
 \texttt{WriteAlarmCommand}. Číslo zapisovaného času buzení je určeno hodnotou
-přiřazenou klíči \texttt{index} v tomto objektu.
+přiřazenou klíči \texttt{index} v~tomto objektu.
 \begin{lstlisting}[style=terminal]
 $ mosquitto_pub -t alarmclock/cmnd/alarm/write -m '{"index": 0, "enabled": "OFF", "days_of_week": ["Friday"], "time": {"hours": 12, "minutes": 0}, "snooze": {"time": 1, "count": 1}, "signalization": {"ambient": 0, "lamp": false, "buzzer": 0}}'
 \end{lstlisting}
 Zprávy o případných chybách (například nevalidní JSON objekt) jsou zasílány do
 topic \topic{alarmclock/err}.
 
-Přes MQTT API lze provést i změnu data a času \acs{RTC} budíku, a to zasláním
+Přes MQTT API lze provést i~změnu data a~času \acs{RTC} budíku, a~to zasláním
 textového řetězce ve formátu ISO8601:
 \begin{lstlisting}[style=terminal]
 $ date -Iseconds
@@ -323,9 +323,9 @@ $ mosquitto_pub -t alarmclock/cmnd/rtc -m "$(date -Iseconds)"
 
 
 
-\subsection{Instalace a automatické spouštění}
+\subsection{Instalace a~automatické spouštění}
 Aby se MQTT adaptér spouštěl automaticky po startu serveru, je vhodné vytvořit
-\shellcmd{systemd} službu. Postup je obecně zdokumentován v souboru
+\shellcmd{systemd} službu. Postup je obecně zdokumentován v~souboru
 \repopath{README.md} repozitáře \gitrepo{PyAlarmClock}. Následuje průběžně
 vysvětlovaný popis instalace PyAlarmClock na linuxovém serveru.
 \begin{lstlisting}[language=mybash, style=numbers]
@@ -387,9 +387,9 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now ac2mqtt.service
 \end{lstlisting}
 
-Spouštění, zastavování, restart a další operace se službou se poté provádí
-standardním příkazem \shellcmd{systemctl}. S jeho pomocí lze vypsat i informace
-o stavu služby a několik záznamů z protokolu:
+Spouštění, zastavování, restart a~další operace se službou se poté provádí
+standardním příkazem \shellcmd{systemctl}. S~jeho pomocí lze vypsat i~informace
+o~stavu služby a~několik záznamů z~protokolu:
 \begin{lstlisting}[style=terminal]
 $ sudo systemctl status ac2mqtt.service --no-pager -l
   ac2mqtt.service - Provide MQTT API for AlarmClock
@@ -410,10 +410,10 @@ bře 18 22:28:23 rpi-lab ac2mqtt[8781]: 2022-03-18 22:28:23,583 INFO MQTT connec
 \end{lstlisting}
 
 
-\subsection{Automatické testy a průběžná integrace}
+\subsection{Automatické testy a~průběžná integrace}
 Správná funkce knihovny \texttt{PyAlarmClock} je průběžně kontrolována
 automatickými testy. Některé testy vyžadují připojení hardware (\acs{MCU}
-s firmware \texttt{AlarmClock}), jednotkové testy ale lze spouštět zcela
+s~firmware \texttt{AlarmClock}), jednotkové testy ale lze spouštět zcela
 automaticky na libovolném stroji. Aby byly testy spouštěny při každém novém
 commitu či pull requestu, je využita bezplatná služba Github actions.
 Jednoduchý konfigurační soubor \repopath{.github/workflows/ci.yml} specifikuje,
@@ -422,20 +422,20 @@ jaké programy se mají spouštět:
 Celý proces testování se provádí se dvěma verzemi jazyka Python: Python 3.6
 a~novější Python 3.10. Starší verze je testována, aby programátor, který má na
 svém počítači nainstalovanou novější verzi, omylem nepoužil nějakou příliš
-novou funkci jazyka. Test tedy slouží k zachování zpětné kompatibility.
-V současné době nejnovější verze 3.10 je testována, protože nemusí být s verzí
+novou funkci jazyka. Test tedy slouží k~zachování zpětné kompatibility.
+V~současné době nejnovější verze 3.10 je testována, protože nemusí být s~verzí
 3.6 plně zpětně kompatibilní.
 
-Po instalaci balíčku \texttt{PyAlarmClock} a programu \shellcmd{pytest} je
+Po instalaci balíčku \texttt{PyAlarmClock} a~programu \shellcmd{pytest} je
 zavolán takzvaný linter \shellcmd{flake8}. Ten provádí statickou analýzu kódu
-a vyhledává programátorské i stylistické chyby.
+a~vyhledává programátorské i~stylistické chyby.
 
-Bezpečnostní linter \shellcmd{bandit} hledá v kódu bezpečnostní chyby. Nejde
-jen o zapomenutá hesla a tokeny, ale také o použití nebezpečných funkcí (jako
+Bezpečnostní linter \shellcmd{bandit} hledá v~kódu bezpečnostní chyby. Nejde
+jen o~zapomenutá hesla a~tokeny, ale také o~použití nebezpečných funkcí (jako
 například \lstinline[language=Python]!eval!).
 
 \shellcmd{mypy} kontroluje statickou analýzou správnost datových typů
-proměnných předávaných mezi funkcemi v programu. Python je dynamicky typovaný
+proměnných předávaných mezi funkcemi v~programu. Python je dynamicky typovaný
 programovací jazyk, ale od
 PEP~484\footnote{\url{https://peps.python.org/pep-0484/}} umožňuje přidávání
 takzvaných \foreignlanguage{english}{type hints}. Lze tak například
@@ -451,9 +451,9 @@ Za běhu programu jsou tyto anotace ignorovány, může je ale využívat práv�
 software pro statickou analýzu kódu. Jejich další funkcí je zvýšení
 srozumitelnosti dokumentace API knihovny. Potenciální uživatel knihovny
 (programátor software, který na ní závisí) si může velmi rychle utvořit
-představu o tom, jak danou funkci volat a jaký výstup od ní očekávat.
+představu o~tom, jak danou funkci volat a~jaký výstup od ní očekávat.
 
-\shellcmd{pytest} spouští jednotkové testy z \repopath{tests/unit/}.
+\shellcmd{pytest} spouští jednotkové testy z~\repopath{tests/unit/}.
 
 \begin{figure}[htbp]
     \centering

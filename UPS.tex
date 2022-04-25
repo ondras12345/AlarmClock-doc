@@ -1,10 +1,10 @@
 \section{Indikace výpadku napájení}
 Protože je budík napájen stejnosměrným napětím \SI{5}{\volt} získaným ze zdroje
-závislého na síti, může dojít k nečekanému výpadku napájení. V takovém případě
+závislého na síti, může dojít k~nečekanému výpadku napájení. V~takovém případě
 musí budík selhat bezpečně. Bezpečným selháním je okamžité vzbuzení uživatele,
-aby nemohlo při dlouho trvajícím výpadku dojít k jeho zaspání. Tento přístup
+aby nemohlo při dlouho trvajícím výpadku dojít k~jeho zaspání. Tento přístup
 byl zvolen, protože zajištění plné funkce při výpadku napájení by vyžadovalo
-přidání akumulátoru a složitých nabíjecích obvodů.
+přidání akumulátoru a~složitých nabíjecích obvodů.
 
 \begin{figure}
     \centering
@@ -15,32 +15,32 @@ přidání akumulátoru a složitých nabíjecích obvodů.
 \end{figure}
 
 Pro akustickou indikaci je využit aktivní bzučák, tedy piezoelektrický měnič
-s interním generátorem budicího signálu. Pro jeho provoz je nutné pouze
+s~interním generátorem budicího signálu. Pro jeho provoz je nutné pouze
 stejnosměrné napájecí napětí (jmenovitá hodnota je \SI{3,3}{\volt}).
 Jako zdroj energie pro bzučák je použita knoflíková baterie typu CR2032, která
-slouží i jako záložní baterie hodin reálného času. Protože jde o primární
-lithiový článek, je nutné minimalizovat proudový odběr v obou klidových
-stavech (připojené napájení s plnou funkčností budíku a odpojené napájení po
-zaznění zvukového signálu). V době výpadku již neběží na \acs{MCU} program,
-proto je nutné implementovat funkčnost akustické indikace v hardware.
+slouží i~jako záložní baterie hodin reálného času. Protože jde o~primární
+lithiový článek, je nutné minimalizovat proudový odběr v~obou klidových
+stavech (připojené napájení s~plnou funkčností budíku a~odpojené napájení po
+zaznění zvukového signálu). V~době výpadku již neběží na \acs{MCU} program,
+proto je nutné implementovat funkčnost akustické indikace v~hardware.
 
-Obvod je navržen tak, že pokud je připojené napájení \SI{5}{\volt} a na vstupu
+Obvod je navržen tak, že pokud je připojené napájení \SI{5}{\volt} a~na vstupu
 \texttt{buzzer} je napětí \SI{5}{\volt}, bzučák nepíská. Pokud je připojeno
-napájení, ale vstup \texttt{buzzer} je připojen k zemi či zcela odpojen, píská
-bzučák nepřetržitě. Pokud dojde k výpadku napájení, neprotéká diodou ze vstupu
-\texttt{buzzer} žádný proud a bzučák píská, dokud nedojde k vybití
-elektrolytického kondenzátoru v RC článku a zavření NPN tranzistoru (doba
-pískání je přibližně \SI{3}{\second}). Rezistor s odporem \SI{100}{\kilo\ohm}
-připojený paralelně ke kondenzátoru zajišťuje rychlejší vybíjení v okolí
+napájení, ale vstup \texttt{buzzer} je připojen k~zemi či zcela odpojen, píská
+bzučák nepřetržitě. Pokud dojde k~výpadku napájení, neprotéká diodou ze vstupu
+\texttt{buzzer} žádný proud a~bzučák píská, dokud nedojde k~vybití
+elektrolytického kondenzátoru v~RC článku a~zavření NPN tranzistoru (doba
+pískání je přibližně \SI{3}{\second}). Rezistor s~odporem \SI{100}{\kilo\ohm}
+připojený paralelně ke kondenzátoru zajišťuje rychlejší vybíjení v~okolí
 prahového napětí přechodu báze--emitor NPN tranzistoru, který se díky tomu
 rychleji zavře.
 
-Protože je v obvodu zahrnuta nelineární součástka (přechod báze--emitor NPN
+Protože je v~obvodu zahrnuta nelineární součástka (přechod báze--emitor NPN
 tranzistoru), nelze napětí na vybíjejícím se kondenzátoru matematicky modelovat
 jednoduchou klesající exponenciálou. Lze ale využít simulátor elektronických
 obvodů (viz obrázek~\vref{fig:UPS RC sim}). Výpadek napájení je simulován
 pomocí direktivy \verb|.ic|, která určuje počáteční podmínky simulace. Napětí
-na kondenzátoru je v čase $t=0$ nastaveno na \SI{4,4}{\volt} (\SI{5}{\volt}
+na kondenzátoru je v~čase $t=0$ nastaveno na \SI{4,4}{\volt} (\SI{5}{\volt}
 mínus úbytek napětí na křemíkové diodě).
 % - vybijeni kondiku z (5V-0.6V) na 0.6V zabere 2tau
 %   gnuplot> plot [0:5] 4.4*(exp(-x)), 0.6
@@ -48,7 +48,7 @@ mínus úbytek napětí na křemíkové diodě).
 \begin{figure}
     \centering
     \subcaptionbox{%
-        Schéma zapojení a nastavení simulace%
+        Schéma zapojení a~nastavení simulace%
         \label{fig:UPS RC sim sch}
     }{%
         \includegraphics[width=0.7\textwidth]{sim/cropped_vypadek-RC}%
@@ -71,9 +71,9 @@ mínus úbytek napětí na křemíkové diodě).
 \end{figure}
 
 Připojením vstupu \texttt{buzzer} na výstupní pin MCU můžeme zajistit, že
-bzučák reaguje například i na vyjmutí MCU z patice či běh nesprávného programu,
+bzučák reaguje například i~na vyjmutí MCU z~patice či běh nesprávného programu,
 který na tento výstup nenastavuje logickou 1.
 
-Praktickým měřením bylo ověřeno, že proud protékající diodou v závěrném směru
+Praktickým měřením bylo ověřeno, že proud protékající diodou v~závěrném směru
 (D1 na obrázku~\vref{fig:UPS sch}) nestačí ani po zesílení PNP tranzistorem Q2
 pro znatelné zvýšení rychlosti vybíjení baterie BT1.
