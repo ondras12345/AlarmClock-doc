@@ -1,5 +1,9 @@
 # DMP
-Toto je hlavní repozitář s dokumentací DMP.
+Toto je hlavní repozitář s dokumentací DMP. Obsahuje zdrojové kódy
+dokumentu (sázecí systém LaTeX) a obrázky. Zip soubor, který v práci nazývám
+elektronickou přílohou, lze stáhnout  z příslušného
+[release](https://gitlab.spseplzen.cz/studentske-projekty/maturitni-prace-21-22-elektro/4o/haj-man/budik/-/releases).
+
 Repozitáře s firmware a návrhem desky plošných spojů jsou přidané jako
 [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
