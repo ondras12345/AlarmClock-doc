@@ -6,6 +6,7 @@ all: doxygenAlarmClock pdf
 pdf:        ## Make the final pdf (uses latexmk).
 pdf: ext
 	latexmk -pdf dmp.tex
+	latexmk -pdf prezentace.tex
 
 
 .PHONY: clean
@@ -98,4 +99,4 @@ prilohy/AlarmClock/docs/doxygen/latex/refman.pdf: prilohy/AlarmClock/docs/doxyge
 .PHONY: archive
 archive:    ## Make final zip with everything (including submodules).
 archive: all
-	git-archive-all --include "dmp.pdf" --include "prilohy/AlarmClock/docs/doxygen/latex/refman.pdf" $(addprefix --include , $(shell find prilohy/AlarmClock/docs/doxygen/html/ -name '*')) slukao_dmp.zip
+	git-archive-all --include "dmp.pdf" --include "prezentace.pdf" --include "prilohy/AlarmClock/docs/doxygen/latex/refman.pdf" $(addprefix --include , $(shell find prilohy/AlarmClock/docs/doxygen/html/ -name '*')) slukao_dmp.zip

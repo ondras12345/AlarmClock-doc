@@ -1,0 +1,413 @@
+\documentclass[
+    utf8,
+    aspectratio=169,
+    %12pt,
+    17pt,  % This is about the default size of PowerPoint and OpenOffice.org Impress.
+]{beamer}
+%\usetheme{Boadilla}
+\setbeamertemplate{frametitle}{\insertframetitle\\\usebeamerfont{framesubtitle}\insertframesubtitle}
+\setbeamerfont{frametitle}{size=\normalsize}
+\setbeamerfont{framesubtitle}{size=\small}
+
+\usepackage[czech]{babel}
+\usepackage[T1]{fontenc}
+\frenchspacing
+
+\usepackage[binary-units]{siunitx}
+\usepackage{listings}
+%\usepackage[EFvoltages,siunitx,european, american inductors]{circuitikz}
+\usepackage[
+    %disable
+    % todonotes can do weird stuff with circuitikz/tikz node[above], even when
+    % disabled
+]{todonotes}
+\usepackage{lcd}
+\usepackage{tikz}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.arrows}
+
+\graphicspath{{figures/}{figures/prezentace/}}
+
+\sisetup{
+    output-decimal-marker = {,},
+    list-separator = {; },
+    list-final-separator = { a~},
+    list-pair-separator = { a~},
+    group-digits,
+    group-minimum-digits=4,
+    %range-phrase=\text{--},
+    range-units=single,
+    exponent-product=\ensuremath{\cdot}
+}
+
+%\DeclareSIUnit{\Kc}{K\check{c}}  % spatny znak
+\DeclareSIUnit{\Kc}{\text{Kč}}
+\DeclareSIUnit{\ks}{ks}
+
+\input{lstsetup}
+
+\input{LCDchars}
+% HD44780 neumi plnou diakritiku, neco ma v ROM A02, ale pak neumi podtrhavat
+\DefineLCDchar{idlouhe}{%
+    00010%
+    00100%
+    00000%
+    01100%
+    00100%
+    %00100%
+    00100%
+    01110%
+}
+\DefineLCDchar{chacek}{%
+    01010%
+    00100%
+    01110%
+    10000%
+    10000%
+    10001%
+    01110%
+}
+
+\newcommand{\fullsizegraphics}[2][]{%
+    \centering%
+    \includegraphics[width=\textwidth,height=0.70\textheight,keepaspectratio,#1]{#2}%
+}
+\def\TikZ{Ti\emph{k}Z}
+\def\Circuitikz{Circui\TikZ}
+
+\title{Chytrý budík}
+\author{Ondřej Sluka}
+%\institute{VOŠ a SPŠE Plzeň} % TODO
+\date{2022}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+    \frametitle{Motivace}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Špatné zkušenosti s~komerčně dostupnými budíky.
+                \item Nelze upravit firmware
+                \item Neopravitelné chyby
+                \item Chybějící funkce
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \fullsizegraphics{sencor-SRC-330-GN}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Cíle}
+    \begin{itemize}
+        \item \alert{Spolehlivost}
+        \item Konfigurovatelnost
+        %\item Jednoduchost výroby v amatérských podmínkách
+        \item Jednoduchost úprav% -- dokumentace firmware
+        \item Plná funkčnost bez připojení k serveru
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Struktura projektu}
+    \begin{itemize}
+        \item Firmware
+            \begin{itemize}
+                \item Základní funkce
+                \item Soběstačná jednotka
+            \end{itemize}
+        \item Hardware
+            \begin{itemize}
+                \item Požadavky určeny firmware
+                \item Dlouhé experimentování na nepájivém kontaktním poli
+            \end{itemize}
+        \item Software
+            \begin{itemize}
+                \item Doplňkové funkce
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Deska plošných spojů}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \fullsizegraphics{PCB-top}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \fullsizegraphics{PCB-bot}
+        \end{column}
+    \end{columns}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Otázky od vedoucího práce}
+    \begin{enumerate}
+        \item Která hardwarová část práce byla nejobtížnější a~proč?
+        \item Která softwarová část práce byla nejobtížnější a~proč?
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]  % fragile because of verb
+    \frametitle{Která hardwarová část práce byla nejobtížnější a~proč?}
+    \framesubtitle{Výroba krabičky}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \fullsizegraphics[bb=0px 430px 2200px 1918px, clip]{final-front}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Návrh ve FreeCAD
+                \item Definice procesu obrábění
+                %\item Správný postprocesor G-kódu (Grbl nepodporuje
+                %    \verb|G81|, \verb|G82|, \ldots)
+                \item Obrábění překližky na malé CNC fréze
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Která hardwarová část práce byla nejobtížnější a~proč?}
+    \framesubtitle{Výroba krabičky}
+    \only<1>{\fullsizegraphics{krabicka-CNC-repro}}
+    \only<2>{\fullsizegraphics{krabicka-CNC-laser}}
+    \only<3>{\fullsizegraphics{krabicka-CNC-poskozeni}}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Která hardwarová část práce byla nejobtížnější a proč?}
+    \framesubtitle{Zvukový výstup}
+    \only<1>{
+    \begin{itemize}
+        \item Nejdříve snaha generovat na MCU obdélníkový průběh
+            a filtrovat v hardware
+        \item Experimentování s existujícími knihovnami
+        \item Problémy s pamětí $\Rightarrow$ vlastní implementace
+        \item Lineární zesilovač
+        \item \uv{Spínaný} zesilovač
+    \end{itemize}
+    }
+    \only<2>{\fullsizegraphics{zvuk-stul1}}
+    \only<3>{\fullsizegraphics{zvuk-stul2}}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Která softwarová část práce byla nejobtížnější a proč?}
+    \framesubtitle{Firmware}
+    \begin{itemize}
+        \item Vývoj trval nejdéle
+        \item Největší nároky na spolehlivost
+        \item Největší míra manuálního testování (před vznikem
+            \texttt{PyAlarmClock})
+        %\item Testování v produkčním prostředí by bylo riskantní
+        %    $\rightarrow$ více instancí
+        %\item Omezené HW prostředky (\SI{32}{\kilo\byte} Flash,
+        %    \SI{2}{\kilo\byte} SRAM)
+    \end{itemize}
+    {
+        \footnotesize
+        \begin{lstlisting}[style=terminal]
+RAM:   [======    ]  62.9% (used 1289 bytes from 2048 bytes)
+Flash: [==========]  99.8% (used 32182 bytes from 32256 bytes)
+        \end{lstlisting}
+    }
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Která softwarová část práce byla nejobtížnější a proč?}
+    \framesubtitle{Návrh celého systému}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \scriptsize
+            \tikzstyle{box}=[draw, rounded corners=2mm, font={\bfseries}, align=center, inner sep=2mm]
+            \begin{tikzpicture}[>=latex,scale=0.7]
+                \node [align=center, font={\bfseries}] (mqtt_adapter label) at (0,0) {MQTT\\adaptér};
+                \node [box, below=2mm of mqtt_adapter label] (PyAlarmClock) {PyAlarmClock};
+                \node [box, fit={(mqtt_adapter label) (PyAlarmClock)}] (mqtt_adapter) {};
+                \node [box, below=15mm of PyAlarmClock] (AlarmClock) {Budík\\ATmega328P};
+                \draw [<->] (PyAlarmClock) -- (AlarmClock)
+                    node [midway,sloped,above] {\tiny UART}
+                    node [midway,sloped,below] {\tiny YAML}
+                    ;
+                \node [box, above=15mm of mqtt_adapter] (Home Assistant) {Home Assistant};
+                \draw [<->] (Home Assistant) -- (mqtt_adapter)
+                    node [midway,sloped,above] {\tiny MQTT}
+                    node [midway,sloped,below] {\tiny JSON}
+                    ;
+                \node [box, left=5mm of Home Assistant] (AlarmClockWeb) {AlarmClockWeb};
+                \draw [<->] (mqtt_adapter.north) -- (AlarmClockWeb)
+                    node [midway,sloped,above] {\tiny MQTT}
+                    node [midway,sloped,below] {\tiny JSON}
+                    ;
+                \node [align=center, font={\bfseries}] (PyAlarmClock tests label) at (AlarmClockWeb |- mqtt_adapter label) {Automatické\\testy};
+                \node [box, below=2mm of PyAlarmClock tests label] (PyAlarmClock tests lib) {PyAlarmClock};
+                \node [box, fit={(PyAlarmClock tests label) (PyAlarmClock tests lib)}] (PyAlarmClock tests) {};
+                \draw [<->, dashed] (PyAlarmClock tests lib) -- (AlarmClock)
+                    node [midway,sloped,above] {\tiny UART}
+                    node [midway,sloped,below] {\tiny YAML}
+                    ;
+                \node [box, below=10mm of PyAlarmClock tests] (terminal) {Terminál};
+                \draw [<->, dashed] (terminal) -- (AlarmClock)
+                    node [midway,sloped,above] {\tiny UART}
+                    node [midway,sloped,below] {\tiny text}
+                    ;
+            \end{tikzpicture}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Kolik částí, jaké úkoly?
+                \item Jak sdílet jeden sériový port mezi více programy?
+                \item Jak budou části komunikovat?
+                    \begin{itemize}
+                        \item HTTP API?
+                        \item MQTT API?
+                    \end{itemize}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Otázky od oponenta}
+    \begin{enumerate}
+        \item Jaké jsou použity melodie pro buzení?
+        \item Jaký je finanční rozpočet budíku?
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Jaké jsou použity melodie pro buzení?}
+    \only<1>{
+        \begin{itemize}
+            \item Běžné buzení -- přerušovaný \num{1}\si{\kilo\hertz} tón
+                (\SI{500}{\milli\second} tón, \SI{500}{\milli\second} ticho)
+                s~postupně zvyšovanou amplitudou
+            \item Neodkladné buzení -- \SI{2}{\kilo\hertz};
+                \SI{250}{\milli\second}
+            \item Složitější melodie nejsou primárním účelem
+            %\item Chybí nástroj pro snadné vytváření (používám Python script -- začátek E1M1)
+        \end{itemize}
+    }
+    \only<2>{
+        \fullsizegraphics{zvuk-sine-1k-ramp-silence}
+        % prvni rampa uz je mirnejsi, ale pri tehle casove zakladne to stejne
+        % neni videt
+    }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Jaký je finanční rozpočet budíku?}
+    \begin{itemize}
+        %\item Maloobchodní ceny
+        \item Cena za 1 kus, ale u většiny minimum např. \SI{100}{\ks}
+        \item GES vypnul e-shop $\rightarrow$ katalog 2010
+        \item Např. MCU ATmega328P koupen za \SI{98}{\Kc}, ale dnes stojí
+            \SI{230}{\Kc}
+        \vspace{5mm}
+        %\item Elektronické součástky \SI{510}{\Kc},
+        %    cuprextitová destička \SI{28}{\Kc},
+        %    reproduktor \SI{39}{\Kc}
+        \item Elektronika \SI{580}{\Kc}
+        \item Krabička: buková překližka
+            \SI[product-units=single]{4x600x1200}{\milli\meter},
+            \SI{259}{\Kc}, využito \SI{17}{\percent} $\Rightarrow$ \SI{44}{\Kc}
+    \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+    \frametitle{Dokumentace}
+    \begin{itemize}
+        %\item Poměrně veliká část času
+        \item {\rmfamily\LaTeX{}}, {\rmfamily\TikZ{}},
+            {\rmfamily\Circuitikz{}}, Listings \ldots
+        \item Vim, \texttt{git}, \texttt{make}, \ldots
+            $\rightarrow$ v podstatě se neliší od vývoje software
+        \item \texttt{git} submodules (firmware, PyAlarmClock, \ldots)
+        \item Snaha automaticky generovat z ostatních repozitářů
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile] % [fragile] is also needed for \LCD
+    \frametitle{Dokumentace}
+    %\framesubtitle{Sazba obrázků LCD displejů}
+    \begin{center}
+        \hfill
+        \LCD{2}{16}!  LCD bal{idlouhe}{chacek}ek   !
+                   !   pro LaTeX    !
+        \hfill
+        {
+            \huge
+            \textLCD{1}!{home} !
+        }
+        \hfill~
+    \end{center}
+
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            \footnotesize
+            Definice znaku ve firmware:
+            \begin{lstlisting}[language=C++]
+byte LCD_char_home[] = {
+    B00100,
+    B01110,
+    B11111,
+    B10001,
+    B10001,
+    B10001,
+    B11111,
+    B00000
+};
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \footnotesize
+            Definice znaku pro balíček \textLCD{3}|LCD|:
+            \begin{lstlisting}[language={[LaTeX]TeX}]
+\DefineLCDchar{home}{%
+    00100%
+    01110%
+    11111%
+    10001%
+    10001%
+    10001%
+    11111%
+    00000%
+}
+            \end{lstlisting}
+        \end{column}
+    \end{columns}
+    \begin{tikzpicture}[overlay, remember picture]
+        \node[single arrow, draw=black, fill=green,
+            minimum width = 12pt, single arrow head extend=4pt,
+            minimum height=12mm, % length of arrow
+            below=0.1\textheight of current page.center,
+            ] {\small\texttt{sed}};
+    \end{tikzpicture}
+    %\lstinputlisting[language=mybash]{scripts/LCDchars}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Závěr}
+    \framesubtitle{Budoucnost projektu}
+    \begin{itemize}
+        \item Revize BOM
+        \item Více nastavení bez nutnosti rekompilace
+        \item \verb|binary_sensor.asleep|
+        \item (Oboustranná DPS)
+        \item (EMC testování)
+    \end{itemize}
+\end{frame}
+
+\end{document}
