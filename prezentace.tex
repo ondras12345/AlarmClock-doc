@@ -101,15 +101,23 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{Cíle}
-    \begin{itemize}
-        \item \alert{Spolehlivost}
-        \item Konfigurovatelnost
-        %\item Jednoduchost výroby v amatérských podmínkách
-        \item Jednoduchost úprav% -- dokumentace firmware
-        \item Plná funkčnost bez připojení k serveru
-    \end{itemize}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \begin{itemize}
+                \item \alert{Spolehlivost}
+                \item Konfigurovatelnost
+                %\item Jednoduchost výroby v amatérských podmínkách
+                \item Jednoduchost úprav% -- dokumentace firmware
+                \item Plná funkčnost bez připojení k~serveru
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \LCD{2}{16}!{home}0/5 12---67 OFF!
+                       !12:34+01*1  25lS!
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -125,7 +133,7 @@
                 \item Požadavky určeny firmware
                 \item Dlouhé experimentování na nepájivém kontaktním poli
             \end{itemize}
-        \item Software
+        \item Serverový software
             \begin{itemize}
                 \item Doplňkové funkce
             \end{itemize}
@@ -205,8 +213,8 @@
     \begin{itemize}
         \item Vývoj trval nejdéle
         \item Největší nároky na spolehlivost
-        \item Největší míra manuálního testování (před vznikem
-            \texttt{PyAlarmClock})
+        \item Největší míra manuálního testování
+            %(před vznikem \texttt{PyAlarmClock})
         %\item Testování v produkčním prostředí by bylo riskantní
         %    $\rightarrow$ více instancí
         %\item Omezené HW prostředky (\SI{32}{\kilo\byte} Flash,
