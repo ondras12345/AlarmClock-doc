@@ -67,7 +67,7 @@ if [ $prev_exit -eq 0 ] ; then
     exit_status=1
 
 elif [ $prev_exit -eq 1 ] ; then
-    bold_msg "Zaklani kontrola pravopisu ok."
+    bold_msg "Zakladni kontrola pravopisu ok."
 
 else
     err_msg "grep vratil chybu."
