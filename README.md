@@ -1,4 +1,4 @@
-# DMP
+# AlarmClock-doc
 Toto je hlavní repozitář s dokumentací k projektu [AlarmClock](https://github.com/ondras12345/AlarmClock).
 Obsahuje zdrojové kódy dokumentu (sázecí systém LaTeX) a obrázky. Zip soubor,
 který v práci nazývám elektronickou přílohou, lze stáhnout  z příslušného
